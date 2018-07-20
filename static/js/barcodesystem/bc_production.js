@@ -1,13 +1,7 @@
 /**
  * Created by LILI on 2018/7/10.
  */
-/*
-    $('.detailed-list').find('tbody').append('<tr><td>5</td></tr>'); 找到class为.de...的子元素tbody，添加一个标签
-    var a = $('.detailed-list').find('thead tr th').eq(2).text(data.count);
-    $.get('/production/detailed_list', {'a': a}, function (data) {
-        var a = data.a;
-    });
-*/
+
 
 $(function () {
     $('.add-detailed').click(function () {
