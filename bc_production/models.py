@@ -12,7 +12,6 @@ class Scjhb(models.Model):
     sl = models.FloatField(verbose_name='数量')
     cs = models.IntegerField(verbose_name='批次数', blank=True, null=True)  # 生产批次(盘数/锅数/车)
     dw = models.IntegerField(choices=SCDW, verbose_name='单位', blank=True, null=True)
-    jybg = models.OneToOneField('bc_test.Qjybg', on_delete=models.CASCADE, verbose_name='检验报告', blank=True, null=True)
     zt = models.BooleanField(verbose_name='启用状态', default=True)
     bz = models.CharField(verbose_name='备注', max_length=50, blank=True, null=True)
     bc = models.IntegerField(verbose_name='班次', blank=True, null=True)

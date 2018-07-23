@@ -2,7 +2,107 @@
 .navbar{
     border: 0;
 }
-
 .navbar-default{
     background-color: #f8f8f8;
+}
+.table-condensed>tbody>tr>td,
+.table-condensed>tbody>tr>th,
+.table-condensed>tfoot>tr>td,
+.table-condensed>tfoot>tr>th,
+.table-condensed>thead>tr>td,
+.table-condensed>thead>tr>th{
+    padding: 0px;
+}
+.tr th{
+    text-align: center;
+}
+.scph{
+    padding: 5px;
+    width: 100px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+.jhrq{
+    padding: 5px;
+    width: 135px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+.scsx{
+    padding: 5px;
+    width: 80px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+.cpbh{
+    padding: 5px;
+    width: 80px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+.cpmc{
+    padding: 5px;
+    width: 80px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+.pfbh{
+    padding: 5px;
+    width: 80px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+.pfmc{
+    padding: 5px;
+    width: 80px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+.rwcs{
+    padding: 5px;
+    width: 80px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+.scsl{
+    padding: 5px;
+    width: 80px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+.scxh{
+    padding: 5px;
+    width: 80px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+.scbz{
+    padding: 5px;
+    width: 80px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+.scbc{
+    padding: 5px;
+    width: 80px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+.wrsx{
+    padding: 5px;
+    width: 120px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+.scxdr{
+    padding: 5px;
+    width: 80px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+.sczt{
+    padding: 5px;
+    width: 30px;
+    border: 1px solid #ccc;
+    text-align: center;
 }

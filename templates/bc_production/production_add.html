@@ -26,24 +26,23 @@
     <form class="form-horizontal" method="post" action="/production/production_add" id="form_submit">
         {%csrf_token%}
         <div class="form-group has-feedback">
-            <label class="col-sm-2 control-label">计划单号</label>
+            <label class="col-sm-2 control-label">计划单号<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
             <div class="col-sm-4">
                 <input type="text" class="form-control" name="spl" id="spl" aria-describedby="inputSuccess2Status">
             </div>
-            <label class="col-sm-1 control-label">日期</label>
+            <label class="col-sm-1 control-label">日期<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
             <div class="col-sm-4">
                 <input type="date" class="form-control" name="rq" id="rq">
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">产品编号</label>
+            <label class="col-sm-2 control-label">产品编号<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
+
             <div class="col-sm-4">
                 <select class="form-control" name="cpid" id="cpid">
-                    <option>1</option>
-                    <option>2</option>
                 </select>
             </div>
-            <label class="col-sm-1 control-label">数量</label>
+            <label class="col-sm-1 control-label">数量<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
             <div class="col-sm-4">
                 <input type="number" class="form-control" name="sl" id="sl">
             </div>
@@ -62,21 +61,18 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">检验报告</label>
-            <div class="col-sm-4">
-                <input type="text" class="form-control" name="jybg" id="jybg" placeholder="">
-            </div>
-            <label class="col-sm-1 control-label">班次</label>
+            <label class="col-sm-2 control-label">班次</label>
             <div class="col-sm-4">
                 <input type="number" class="form-control" name="bc" id="bc">
             </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">备注</label>
+            <label class="col-sm-1 control-label">备注</label>
             <div class="col-sm-4">
                 <input type="text" class="form-control" name="bz" id="bz">
             </div>
-            <div class="col-sm-offset-1 col-sm-4">
+        </div>
+        <div class="form-group">
+
+            <div class="col-sm-offset-2 col-sm-4">
                 <label class="control-label">
                     <input type="checkbox" name="zt" checked="checked" value="1"> 启用状态
                 </label>
@@ -89,40 +85,48 @@
             </div>
             <a href="javascript:;" class="add-detailed glyphicon glyphicon-plus navbar-right"></a>
         </div>
-        <table class="table table-condensed detailed-list">
+        <table class="table table-condensed">
             <thead>
-                <tr>
-                    <th>生产批号</th>
-                    <th>生产单号</th>
-                    <th>计划日期</th>
-                    <th>生产顺序</th>
+                <tr class="tr">
+                    <th>生产批号<span class="glyphicon glyphicon-asterisk" style="color: red"></span></th>
+                    <th>计划日期<span class="glyphicon glyphicon-asterisk" style="color: red"></span></th>
+                    <th>生产顺序<span class="glyphicon glyphicon-asterisk" style="color: red"></span></th>
                     <th>产品编号</th>
                     <th>产品名称</th>
                     <th>配方编号</th>
                     <th>配方名称</th>
-                    <th>任务次数</th>
+                    <th>任务次数<span class="glyphicon glyphicon-asterisk" style="color: red"></span></th>
                     <th>数量(kg)</th>
                     <th>生产线号</th>
                     <th>备注</th>
                     <th>班次</th>
                     <th>防交叉污染顺序</th>
                     <th>下单人</th>
-                    <th>启用状态</th>
-                    <th>删除</th>
+                    <th>启用</th>
                 </tr>
             </thead>
-            <tbody class="tbody">
-            {%for i in lists%}
+            <tbody>
                 <tr>
-                    <td><input type="number" class="form-control col-sm-1" value="{{i}}"></td>
-                    <td>{{i}}</td>
-                    <td>{{i}}</td>
-                    <td><a href="#" class="glyphicon glyphicon-remove"></a></td>
+                    <td><input type="text" name="scph" class="scph"></td>
+                    <td><input type="date" name="jhrq" class="jhrq"></td>
+                    <td><input type="number" name="scsx" class="scsx"></td>
+                    <td><input type="text" name="cpbh" class="cpbh"></td>
+                    <td><input type="text" name="cpmc" class="cpmc"></td>
+                    <td><input type="text" name="pfbh" class="pfbh"></td>
+                    <td><input type="text" name="pfmc" class="pfmc"></td>
+                    <td><input type="text" name="rwcs" class="rwcs"></td>
+                    <td><input type="text" name="scsl" class="scsl"></td>
+                    <td><input type="text" name="scxh" class="scxh"></td>
+                    <td><input type="text" name="scbz" class="scbz"></td>
+                    <td><input type="text" name="scbc" class="scbc"></td>
+                    <td><input type="text" name="wrsx" class="wrsx"></td>
+                    <td><input type="text" name="scxdr" class="scxdr"></td>
+                    <td><input type="checkbox" name="sczt" checked="checked" class="sczt" value="1"></td>
+                    <td><a href="#" class="glyphicon glyphicon-plus"></a></td>
                 </tr>
-
-            {%endfor%}
             </tbody>
         </table>
+        <a>ssssss</a>
     </form>
 </div>
 
