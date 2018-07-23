@@ -4,9 +4,22 @@
 
 
 $(function () {
-    $('.add-detailed').click(function () {
-        var number = $('.tbody').children('tr').length;  // 把类为.tbody的元素下的tr子元素的数量统计出来
-        alert(number);
-        location.href = '/production/detailed_list?number='+number; // 然后发送一个请求并附带一个a参数，目的是上后台知道tr的元素个数
+    $.get('/production/select_product1', function (data) {
+        $.each(JSON.parse(data.cpml_list) ,function (index, item) {
+            $('#cpid').append('<option>'+item.pk+'</option>')
+        });
+        select_product();
     });
+    function select_product() {
+        var cpid = $('#cpid').val();
+        $.get('/production/select_product2', {cpid: cpid}, function (data) {
+            if (data.product_null){
+                alert('Not found');
+            }
+            $('.cpbh').val(data.cpbh);
+            $('.cpmc').val(data.cpmc);
+            $('.pfbh').val(data.pfbh);
+            $('.pfmc').val(data.pfmc);
+        });
+    };
 });
