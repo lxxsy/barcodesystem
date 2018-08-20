@@ -50,7 +50,7 @@ class PbXadmin(object):
         ),
     )
     inlines = [Pbfs, ]
-    add_form_template = 'bc_formula/formula_add.html'
+    #add_form_template = 'bc_formula/formula_add.html'
     # change_form_template = 'index.html'
     # fields = ('pbbh', 'pbname', 'pftype') # 填加数据或者查看数据时，可以设置显示的字段
 xadmin.site.register(Pb, PbXadmin)

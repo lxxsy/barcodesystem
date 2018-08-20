@@ -8,7 +8,7 @@ class Cpml(models.Model):
     xkz = models.CharField(max_length=50, blank=True, verbose_name='产品许可证')
     pw = models.CharField(max_length=50, blank=True, verbose_name='批准文号')
     bz = models.CharField(max_length=50, blank=True, verbose_name='标准编号')
-    pbbh = models.OneToOneField('bc_formula.Pb', on_delete=models.CASCADE, verbose_name='配方编号')
+    pbbh = models.ForeignKey('bc_formula.Pb', on_delete=models.CASCADE, verbose_name='配方编号')
     cpsx = models.FloatField(blank=True, null=True, verbose_name=' 打包上限')
     cpxx = models.FloatField(blank=True, null=True, verbose_name='成品打包下限')
     gg = models.CharField(max_length=20, blank=True, verbose_name='规格')

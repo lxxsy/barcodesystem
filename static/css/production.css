@@ -16,93 +16,25 @@
 .tr th{
     text-align: center;
 }
-.scph{
+.tbody input{
     padding: 5px;
+    border: 1px solid #ccc;
+    text-align: center;
+    width: 80px;
+}
+table .scph{
     width: 100px;
-    border: 1px solid #ccc;
-    text-align: center;
 }
-.jhrq{
-    padding: 5px;
-    width: 135px;
-    border: 1px solid #ccc;
-    text-align: center;
+table .jhrq{
+    padding: 4px;
+    width: 130px;
 }
-.scsx{
-    padding: 5px;
-    width: 80px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-.cpbh{
-    padding: 5px;
-    width: 80px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-.cpmc{
-    padding: 5px;
-    width: 80px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-.pfbh{
-    padding: 5px;
-    width: 80px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-.pfmc{
-    padding: 5px;
-    width: 80px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-.rwcs{
-    padding: 5px;
-    width: 80px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-.scsl{
-    padding: 5px;
-    width: 80px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-.scxh{
-    padding: 5px;
-    width: 80px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-.scbz{
-    padding: 5px;
-    width: 80px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-.scbc{
-    padding: 5px;
-    width: 80px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-.wrsx{
-    padding: 5px;
+table .wrsx{
     width: 120px;
-    border: 1px solid #ccc;
-    text-align: center;
 }
-.scxdr{
-    padding: 5px;
-    width: 80px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-.sczt{
-    padding: 5px;
+table .sczt{
     width: 30px;
-    border: 1px solid #ccc;
-    text-align: center;
+}
+.tips{
+    color: red;
 }

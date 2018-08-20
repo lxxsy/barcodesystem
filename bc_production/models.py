@@ -12,7 +12,7 @@ class Scjhb(models.Model):
     sl = models.FloatField(verbose_name='数量')
     cs = models.IntegerField(verbose_name='批次数', blank=True, null=True)  # 生产批次(盘数/锅数/车)
     dw = models.IntegerField(choices=SCDW, verbose_name='单位', blank=True, null=True)
-    zt = models.BooleanField(verbose_name='启用状态', default=True)
+    zt = models.BooleanField(verbose_name='启用', default=True)
     bz = models.CharField(verbose_name='备注', max_length=50, blank=True, null=True)
     bc = models.IntegerField(verbose_name='班次', blank=True, null=True)
 
@@ -41,7 +41,7 @@ class Todaywork(models.Model):
     optionid = models.ForeignKey('auth.User', on_delete=models.CASCADE, verbose_name='下单人')  # 关联用户表
     bc = models.IntegerField(verbose_name='班次', blank=True, null=True)
     fwrsx = models.IntegerField(verbose_name='防交叉污染顺序', blank=True, null=True)
-    zt = models.BooleanField(verbose_name='启用状态', default=True)
+    zt = models.BooleanField(verbose_name='启用', default=True)
 
     class Meta:
         db_table = 'todaywork'

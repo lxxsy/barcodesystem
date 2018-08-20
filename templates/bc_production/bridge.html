@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/static/js/jquery-1.12.4.min.js"></script>
+    <script src="/static/js/barcodesystem/bc_production/bc_production_add.js"></script>
+    <script>
+        $(function () {
+            var scjhb_bh = $('#scjhb_bh').val();
+            console.log(scjhb_bh);
+            location.href = '/production/select_production'
+        });
+    </script>
+</head>
+<body>
+<input type="hidden" id="scjhb_bh" value="{{object_id}}">
+</body>
+</html>

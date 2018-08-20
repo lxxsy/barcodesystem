@@ -1,24 +1,98 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from .models import *
 from bc_product.models import *
 from django.core import serializers, paginator
+from django.db import transaction
+from django.contrib.auth.models import User
+import psycopg2
 
 
+@transaction.atomic()
 def production_add(request):
+    new_scsl = []
+    new_scxh = []
+    new_scbc = []
+    new_wrsx = []
     if request.method == 'POST':
         spl = request.POST.get('spl')
         rq = request.POST.get('rq')
-        pbb = request.POST.get('jizhu', 0)
-        return redirect('/admin/bc_formula/pb/')
+        cpid = request.POST.get('cpid')
+        sl = request.POST.get('sl')
+        cs = request.POST.get('cs')
+        dw = request.POST.get('dw')
+        bc = request.POST.get('bc')
+        bz = request.POST.get('bz')
+        zt = request.POST.get('zt', 0)
+        scph = request.POST.getlist('scph')
+        jhrq = request.POST.getlist('jhrq')
+        scsx = request.POST.getlist('scsx')
+        cpbh = request.POST.getlist('cpbh')
+        cpmc = request.POST.getlist('cpmc')
+        pfbh = request.POST.getlist('pfbh')
+        pfmc = request.POST.getlist('pfmc')
+        rwcs = request.POST.getlist('rwcs')
+        scsl = request.POST.getlist('scsl')
+        scxh = request.POST.getlist('scxh')
+        scbz = request.POST.getlist('scbz')
+        scbc = request.POST.getlist('scbc')
+        wrsx = request.POST.getlist('wrsx')
+        scxdr = request.POST.get('scxdr')
+        if (spl == '' or rq == '' or cpid == '' or sl == '' or scph == [] or
+                jhrq == [] or scsx == [] or cpbh == [] or cpmc == [] or
+                pfbh == [] or pfmc == [] or rwcs == [] or scxdr == []):
+            return render(request, 'bc_production/production_add.html')
+        if cs == '':
+            cs = None
+        if bc == '':
+            bc = None
+        dw = 0 if dw == 'kg' else 1
+        zt = True if zt == '1' else False
+        scjhb = Scjhb.objects.create(spl=spl, rq=rq, cpid_id=cpid, sl=sl, cs=cs, dw=dw, zt=zt, bz=bz, bc=bc)
+        num = len(scph)
+        for scsl_single in scsl:
+            if scsl_single == '':
+                scsl_single = None
+                new_scsl.append(scsl_single)
+            else:
+                new_scsl.append(scsl_single)
+        for scxh_single in scxh:
+            if scxh_single == '':
+                scxh_single = None
+                new_scxh.append(scxh_single)
+            else:
+                new_scxh.append(scxh_single)
+        for scbc_single in scbc:
+            if scbc_single == '':
+                scbc_single = None
+                new_scbc.append(scbc_single)
+            else:
+                new_scbc.append(scbc_single)
+        for wrsx_single in wrsx:
+            if wrsx_single == '':
+                wrsx_single = None
+                new_wrsx.append(wrsx_single)
+            else:
+                new_wrsx.append(wrsx_single)
+        user = User.objects.get(username=scxdr)
+        for j in range(num):
+            Todaywork.objects.create(ph=scph[j], spl=scjhb, pldate=jhrq[j], workno=scsx[j], cpid=cpbh[j], cpname=cpmc[j],
+                                     pbbh=pfbh[j], pbname=pfmc[j], worksl=rwcs[j], plsl=new_scsl[j], scxh=new_scxh[j],
+                                     bz=scbz[j], optionid_id=user.id, bc=new_scbc[j], fwrsx=new_wrsx[j], zt=zt)
+        return redirect('/admin/bc_production/scjhb/')
     else:
-        return render(request, 'bc_formula/formula_add.html')
+        return render(request, 'bc_production/production_add.html')
 
 
 def select_product(request, num):
+    '''
+        接收ajax请求，查询数据并提交,num变化查询的数据会变化
+    '''
+    # 查询所有产品，序列化为json格式，不然传递不过去，不接收查询集
     if num == 1:
         cpml_list = serializers.serialize('json', Cpml.objects.all())
         return JsonResponse({'cpml_list': cpml_list})
+    # 查询产品和配方的id与名字
     elif num == 2:
         cpid = request.GET.get('cpid')
         cpml = Cpml.objects.filter(cpid=cpid)
@@ -30,3 +104,43 @@ def select_product(request, num):
             return JsonResponse({'cpbh': cpbh, 'cpmc': cpmc, 'pfbh': pfbh, 'pfmc': pfmc})
         else:
             return JsonResponse({'product_null': ''})
+    # 查询生产计划，判断有无此单号
+    elif num == 3:
+        spl = request.GET.get('spl')
+        scjhb = Scjhb.objects.filter(spl=spl)
+        bool = 1
+        if scjhb:
+            bool = 0
+        return JsonResponse({'bool': bool})
+    # 查询计划明细表，判断有无此生产批号
+    elif num == 4:
+        scph = request.GET.get('scph')
+        todaywork = Todaywork.objects.filter(pk=scph)
+        scph_bool = 1
+        if todaywork:
+            scph_bool = 0
+        return JsonResponse({'scph_bool': scph_bool})
+
+
+def select_production(request):
+    pass
+
+
+def a(request):
+    num = [3, 4]
+    name = ['中料', 'a']
+    try:
+        connection = psycopg2.connect(database='barcodesystem', user='postgres', password='941128', port=5432, host='localhost')
+        cursor = connection.cursor()
+        cursor.callproc('add_production', (num, name))
+        connection.commit()
+    except Exception as e:
+        cursor.close()
+        connection.close()
+        print('----------------------------')
+        print(e)
+        return HttpResponse('错误')
+    else:
+        cursor.close()
+        connection.close()
+        return HttpResponse('ok')
