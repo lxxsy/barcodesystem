@@ -142,16 +142,32 @@
         <input type="submit" class="btn btn-primary btn-block" value="提交">
     </form>
 </div>
+
 <div class="container">
     <form class="form-horizontal" method="post" action="/production/file" enctype="multipart/form-data" id="form_file">
         <input type="file" name="files" id="files">
+        <span class="err"></span>
         <input type="submit" value="上传">
     </form>
 </div>
 <script>
     $('#form_file').submit(function () {
-        var a = $('#files').val();
-        console.log(a);
+        var file_list = $('#files').val().split('\\'); //['C:', 'fakepath', '成品追溯方案V1.docx']
+        var file_dict = document.getElementById('files').files[0]; //{name: "成品追溯方案V1.docx", lastModified: 1535081198501, lastModifiedDate: Fri Aug 24 2018 11:26:38 GMT+0800 (中国标准时间), webkitRelativePath: "", size: 885819}
+        var file_name = file_list[file_list.length-1]; // '成品追溯方案V1.docx'
+        var file_path = $('#files').val().toLowerCase().split('.');// ["c:\fakepath\成品追溯方案v1", "docx"]
+        var file_type = file_path[file_path.length-1];// 'docx'
+        var file_size = file_dict.size;// 885819 实际等于865KB  1KB约等于1024字节
+        console.log(file_size);
+        console.log(file_dict);
+        console.log(file_path);
+        if(file_type != "docx" && file_type != "doc"){
+            $('#files').next().text('文件格式不符合要求').show();
+        }else if(file_dict.size > 5300000){
+            $('#files').next().text('请上传不超过5M的文件').show();
+        }else {
+            $('#files').next().hide();
+        };
         return false;
     });
 </script>

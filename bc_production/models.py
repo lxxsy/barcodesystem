@@ -17,8 +17,8 @@ class Scjhb(models.Model):
     bc = models.IntegerField(verbose_name='班次', blank=True, null=True)
     xdr = models.ForeignKey('auth.User', on_delete=models.CASCADE, verbose_name='下单人')
 
-    # def __str__(self):
-     #    return self.scph
+    def __str__(self):
+        return self.scph
 
     class Meta:
         db_table = 'scjhb'
