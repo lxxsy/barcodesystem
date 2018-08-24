@@ -18,7 +18,7 @@ xadmin.site.register(CommAdminView, GlobalSettings)
 
 
 class Pbfs(object):
-    style ='table'  # 属性设置为表格，那么在嵌套关联中回忆表格的形式展现
+    style ='table'  # 属性设置为表格，那么在嵌套关联中会以表格的形式展现
     model = Pbf
     extra = 1
     form_layout = (
@@ -44,13 +44,13 @@ class PbXadmin(object):
             Row('pbbh', 'pbname'),
             Row('pftype', 'shr'),
             Row('fwrsx', 'scxh'),
-            Row('bz'),
-            Row('yx', 'sh'),
+            Row('bz', 'sh'),
+            Row('yx'),
             css_class='unsort no_title'
         ),
     )
     inlines = [Pbfs, ]
-    #add_form_template = 'bc_formula/formula_add.html'
+    # add_form_template = 'bc_formula/formula_add.html'
     # change_form_template = 'index.html'
     # fields = ('pbbh', 'pbname', 'pftype') # 填加数据或者查看数据时，可以设置显示的字段
 xadmin.site.register(Pb, PbXadmin)

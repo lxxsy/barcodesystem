@@ -2,18 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title></title>
     <script src="/static/js/jquery-1.12.4.min.js"></script>
-    <script src="/static/js/barcodesystem/bc_production/bc_production_add.js"></script>
     <script>
         $(function () {
+            var user_name = $('#user_name').val();
             var scjhb_bh = $('#scjhb_bh').val();
+            console.log(user_name);
             console.log(scjhb_bh);
-            location.href = '/production/select_production'
+            if (user_name){
+                location.href = '/production/add_production?user_name='+user_name;
+            };
+            if (scjhb_bh){
+                location.href = '/production/update_production?scjhb_bh='+scjhb_bh;
+            };
         });
     </script>
 </head>
 <body>
 <input type="hidden" id="scjhb_bh" value="{{object_id}}">
+<input type="hidden" id="user_name" value="{{user.username}}">
 </body>
 </html>

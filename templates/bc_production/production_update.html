@@ -28,12 +28,12 @@
         <div class="form-group has-feedback">
             <label class="col-sm-2 control-label">计划单号<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" name="spl" id="spl" value="" aria-describedby="inputSuccess2Status">
+                <input type="text" class="form-control" name="spl" id="spl" value="{{spl}}" aria-describedby="inputSuccess2Status">
                 <span class="tips"></span>
             </div>
             <label class="col-sm-1 control-label">日期<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
             <div class="col-sm-4">
-                <input type="date" class="form-control" name="rq" id="rq" value="2018-07-23">
+                <input type="date" class="form-control" name="rq" id="rq" value="{{rq|date:'Y-m-d'}}">
                 <span class="tips"></span>
             </div>
         </div>
@@ -41,41 +41,51 @@
             <label class="col-sm-2 control-label">产品编号<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
             <div class="col-sm-4">
                 <select class="form-control" name="cpid" id="cpid">
+                    <option value="{{cpid}}">{{cpid}}</option>
                 </select>
             </div>
             <label class="col-sm-1 control-label">数量<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
             <div class="col-sm-4">
-                <input type="number" class="form-control" name="sl" id="sl" value="">
+                <input type="number" class="form-control" name="sl" id="sl" value="{{sl}}">
                 <span class="tips"></span>
             </div>
         </div>
         <div class="form-group">
             <label class="col-sm-2 control-label">批次数</label>
             <div class="col-sm-4">
-                <input type="number" class="form-control" name="cs" id="cs">
+                <input type="number" class="form-control" name="cs" id="cs" value="{{cs|default:''}}">
             </div>
             <label class="col-sm-1 control-label">单位</label>
             <div class="col-sm-4">
                 <select class="form-control" name="dw" id="dw">
-                    <option>kg</option>
-                    <option>g</option>
+                    {%if dw == 'kg'%}
+                        <option value="kg">kg</option>
+                        <option value="g">g</option>
+                    {%else%}
+                        <option value="g">g</option>
+                        <option value="kg">kg</option>
+                    {%endif%}
                 </select>
             </div>
         </div>
         <div class="form-group">
             <label class="col-sm-2 control-label">班次</label>
             <div class="col-sm-4">
-                <input type="number" class="form-control" name="bc" id="bc">
+                <input type="number" class="form-control" name="bc" id="bc" value="{{bc|default:''}}">
             </div>
             <label class="col-sm-1 control-label">备注</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" name="bz" id="bz">
+                <input type="text" class="form-control" name="bz" id="bz" value="{{bz}}">
             </div>
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-4">
                 <label class="control-label">
+                    {%if zt%}
                     <input type="checkbox" name="zt" checked="checked" value="1" id="zt"> 启用
+                    {%else%}
+                    <input type="checkbox" name="zt" value="1" id="zt"> 启用
+                    {%endif%}
                 </label>
             </div>
         </div>
@@ -106,6 +116,7 @@
                 </tr>
             </thead>
             <tbody class="tbody">
+                {}
                 <tr class="bodytr">
                     <td><input type="text" name="scph" class="scph" value=""><span class="tips"></span></td>
                     <td><input type="date" name="jhrq" class="jhrq"><span class="tips"></span></td>

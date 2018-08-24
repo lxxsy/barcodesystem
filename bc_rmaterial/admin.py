@@ -10,7 +10,7 @@ class YlinfoXadmin(object):
         Fieldset('',
             Row('ylid', 'ylname'),
             Row('dw', 'piedw'),
-            Row('zbq', 'goodzbq'),
+            Row('zczbq', 'zjzbq'),
             Row('minsl', 'maxsl'),
             Row('park', 'pieprice'),
             Row('tymc', 'ysbz'),

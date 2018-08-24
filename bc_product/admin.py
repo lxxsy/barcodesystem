@@ -9,15 +9,29 @@ class CpmlXadmin(object):
     form_layout = (
         Fieldset('',
                  Row('cpid', 'cpmc'),
-                 Row('cpgg', 'dz'),
-                 Row('xkz', 'pw'),
-                 Row('bz', 'gg'),
+                 Row('bzgg', 'cpxkz'),
+                 Row('bz', 'pw'),
+                 Row('cctj', 'gg'),
                  Row('cpsx', 'cpxx'),
-                 Row('zbq', 'cctj'),
+                 Row('zczbq', 'zjzbq'),
                  Row('tempname', 'sptm'),
-                 Row('cpsb', 'cptp'),
-                 Row('pbbh'),
+                 Row('cpsb', 'cpsm'),
+                 Row('pbbh', 'cpgg'),
                  css_class='unsort no_title'
                  ),
     )
+
+
+class CprkXadmin(object):
+    list_display = ['cpph', 'cpid', 'cpmc', 'bz', 'rkczy']
+    search_fields = ['cpph', 'cpid']
+    form_layout = (
+        Fieldset('',
+                 Row('cpph', 'cpid'),
+                 Row('cpmc', 'rkdate'),
+                 Row('rksl', 'bz'),
+                 Row('rkczy', 'rklxid'),
+                ),
+    )
 xadmin.site.register(Cpml, CpmlXadmin)
+xadmin.site.register(Cprk, CprkXadmin)

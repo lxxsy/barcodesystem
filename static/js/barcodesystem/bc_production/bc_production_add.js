@@ -1,8 +1,6 @@
 /**
  * Created by LILI on 2018/7/10.
  */
-
-
 $(function () {
     var error_spl = true;
     var error_rq = true;

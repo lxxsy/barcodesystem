@@ -37,7 +37,7 @@ class Pbf(models.Model):
     bzgl = models.FloatField(verbose_name='标准值')
     topz = models.FloatField(verbose_name='上限值')
     lowz = models.FloatField(verbose_name='下限值')
-    dw = models.CharField(max_length=20, blank=True, null=True, choices=JLDW, default='0', verbose_name='单位(Kg or g)')
+    dw = models.CharField(max_length=20, blank=True, null=True, choices=JLDW, default='0', verbose_name='单位  ')
     cno = models.IntegerField(blank=True, null=True, verbose_name='使用电子秤端口号')
     jno = models.IntegerField(verbose_name='加料顺序')
     lt = models.BooleanField(default=True, verbose_name='称零头')

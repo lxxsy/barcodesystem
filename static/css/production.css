@@ -5,6 +5,9 @@
 .navbar-default{
     background-color: #f8f8f8;
 }
+.form-control[readonly]{
+    background-color: #fff;
+}
 .table-condensed>tbody>tr>td,
 .table-condensed>tbody>tr>th,
 .table-condensed>tfoot>tr>td,

@@ -2,7 +2,7 @@ from django.db import models
 from django.dispatch import receiver
 from django.db.models.signals import *
 
-
+'''
 class Qypqy(models.Model):
     ID = models.CharField(primary_key=True, verbose_name='样品编号', max_length=50)
     cyrq = models.DateField(auto_now_add=True, verbose_name='抽样日期')
@@ -23,30 +23,27 @@ class Qypqy(models.Model):
         db_table = 'qypqy'
         verbose_name = '样品取样'
         verbose_name_plural = '样品取样'
+'''
 
 
 class Qjybg(models.Model):
-    JYLB = (
-        ('jc', '进场检验'),
-        ('cc', '出场检验'),
-    )
     bgbh = models.CharField(verbose_name='报告编号', primary_key=True, max_length=20)
-    qypqy = models.OneToOneField('Qypqy', on_delete=models.CASCADE, verbose_name='样品编号')
-    qjybz = models.ForeignKey('Qjybz', on_delete=models.CASCADE, verbose_name='检验标准')
-    cpmc = models.CharField(max_length=50, verbose_name='名称')
+    qypqy = models.OneToOneField('bc_production.Scjhb', on_delete=models.CASCADE, verbose_name='检验批号')
+    cpmc = models.CharField(max_length=50, verbose_name='产品名称')
     scrq = models.DateField(verbose_name='生产日期')
-    ylpc = models.CharField(verbose_name='批号', max_length=50)
     gg = models.CharField(verbose_name='规格', max_length=50, blank=True)
-    cyrq = models.DateField(verbose_name='抽样日期', blank=True)
-    jyyj = models.CharField(verbose_name='检验依据', max_length=1000, blank=True, null=True)
-    jyjl = models.CharField(verbose_name='检验结论', max_length=1000, blank=True, null=True)
-    fl = models.CharField(verbose_name='分类', choices=JYLB, max_length=20)  # 进厂检验、出厂检验
     pzr = models.CharField(verbose_name='批准人', max_length=20, blank=True, null=True)
-    shr = models.CharField(verbose_name='审核人', max_length=20, blank=True, null=True)
-    bzr = models.CharField(verbose_name='制编人', max_length=20, blank=True, null=True)
-    sh = models.BooleanField(verbose_name='审核状态', default=True)
     bz = models.CharField(verbose_name='备注', max_length=500, blank=True, null=True)
-    jybgfile = models.FileField(upload_to='bc_test/jybg/%Y/%m/%d', verbose_name='检验报告文件', blank=True, null=True)
+    jybgfile = models.FileField(upload_to='bc_test/jybg/%Y/%m/%d', verbose_name='检验报告文件', null=True)
+    # cyrq = models.DateField(verbose_name='抽样日期', blank=True)
+    # jyyj = models.CharField(verbose_name='检验依据', max_length=1000, blank=True, null=True)
+    # jyjl = models.CharField(verbose_name='检验结论', max_length=1000, blank=True, null=True)
+    # fl = models.CharField(verbose_name='分类', choices=JYLB, max_length=20)  # 进厂检验、出厂检验
+    # shr = models.CharField(verbose_name='审核人', max_length=20, blank=True, null=True)
+    # bzr = models.CharField(verbose_name='制编人', max_length=20, blank=True, null=True)
+    # sh = models.BooleanField(verbose_name='审核状态', default=True)
+    # qjybz = models.ForeignKey('Qjybz', on_delete=models.CASCADE, verbose_name='检验标准')
+    # ylpc = models.CharField(verbose_name='批号', max_length=50)
 
     def __str__(self):
         return self.bgbh
@@ -56,7 +53,7 @@ class Qjybg(models.Model):
         verbose_name = '检验报告'
         verbose_name_plural = '检验报告'
 
-
+'''
 class Qjybgf(models.Model):
     bgbh = models.ForeignKey('Qjybg', on_delete=models.CASCADE, verbose_name='报告编号')
     jcxm = models.ForeignKey('Qjcxm', on_delete=models.CASCADE, verbose_name='检测项目编号')
@@ -118,8 +115,9 @@ class Qjcxm(models.Model):
         db_table = 'qjcxm'
         verbose_name = '检测项目'
         verbose_name_plural = '检测项目基础表'
+'''
 
-
+'''
 class Qjcff(models.Model):
     jcff = models.CharField(verbose_name='检测方法', max_length=100)
     jcffdz = models.FileField(upload_to='bc_test/jcff/%Y/%m/%d', verbose_name='检测方法文件', blank=True, null=True)
@@ -131,3 +129,4 @@ class Qjcff(models.Model):
         db_table = 'Qjcff'
         verbose_name = '检测方法'
         verbose_name_plural = '检测方法基础表'
+'''
