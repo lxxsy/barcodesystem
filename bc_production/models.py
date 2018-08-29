@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Scjhb(models.Model):
-    scph = models.CharField(primary_key=True, verbose_name='生产批号', max_length=20)  # 新增 ，关联第三方ERP批号-
+    scph = models.CharField(primary_key=True, verbose_name='生产批号', max_length=20)  # 新增 ，关联第三方ERP批号
     scrq = models.DateField(verbose_name='生产日期')  # 生产计划日期
     cpid = models.ForeignKey('bc_product.Cpml', on_delete=models.CASCADE, verbose_name='产品编号')
     cpname = models.CharField(verbose_name='产品名称', max_length=50)

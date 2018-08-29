@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{title|default:'增加产品'}}</title>
+    <link rel="stylesheet" href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <script src="/static/js/jquery-1.12.4.min.js"></script>
+    <script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="/static/js/barcodesystem/bc_product/bc_product.js"></script>
+    <link rel="stylesheet" href="/static/css/production.css">
+</head>
+<body>
+<div class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/admin/bc_product/cpml" id="production" style="color: royalblue">
+                <span class="glyphicon glyphicon-chevron-left"></span>返回
+            </a>
+        </div>
+    </div>
+</div>
+<div class="navbar navbar-default">
+    <div class="container">
+        <div class="navbar-header">
+            <span class="navbar-brand">{{explain|default:'增加产品'}}</span>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <form class="form-horizontal" method="post" action="/product/product_save" enctype="multipart/form-data" id="form_submit">
+        {%csrf_token%}
+        <div class="form-group has-feedback">
+            <label class="col-sm-2 control-label">产品编号<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" name="cpid" id="cpid" value="{{cpid}}" aria-describedby="inputSuccess2Status">
+                <span class="tips"></span>
+            </div>
+
+            <label class="col-sm-2 control-label">产品名称<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" name="cpmc" id="cpmc" value="{{cpmc}}">
+                <span class="tips"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">包装规格</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" name="bzgg" id="bzgg" value="{{bzgg}}">
+            </div>
+            <label class="col-sm-2 control-label">产品许可证</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" name="cpxkz" id="cpxkz" value="{{cpxkz}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">批准文号</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" name="pw" id="pw" value="{{pw}}">
+            </div>
+            <label class="col-sm-2 control-label">标准编号</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" name="bz" id="bz" value="{{bz}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">配方编号<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
+            <div class="col-sm-4">
+                <select class="form-control" name="pbbh" id="pbbh">
+                    {%if pbbh%}
+                        <option value="{{pbbh}}">{{pbbh}}</option>
+                    {%endif%}
+                </select>
+            </div>
+            <label class="col-sm-2 control-label">规格</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" name="gg" id="gg" value="{{gg}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">成品打包上限</label>
+            <div class="col-sm-4">
+                <input type="number" class="form-control" name="cpsx" id="cpsx" value="{{cpsx}}">
+            </div>
+            <label class="col-sm-2 control-label">成品打包下限</label>
+            <div class="col-sm-4">
+                <input type="number" class="form-control" name="cpxx" id="cpxx" value="{{cpxx}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">最长保质期(天)</label>
+            <div class="col-sm-4">
+                <input type="number" class="form-control" name="zczbq" id="zczbq" value="{{zczbq}}">
+            </div>
+            <label class="col-sm-2 control-label">最佳保质期(天)</label>
+            <div class="col-sm-4">
+                <input type="number" class="form-control" name="zjzbq" id="zjzbq" value="{{zjzbq}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">储存条件</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" name="cctj" id="cctj" value="{{cctj}}">
+            </div>
+            <label class="col-sm-2 control-label">产品规格(含量，重量)<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" name="cpgg" id="cpgg" value="{{cpgg}}">
+                <span class="tips"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">产品商标</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" name="cpsb" id="cpsb" value="{{cpsb}}">
+            </div>
+            <label class="col-sm-2 control-label">产品说明<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
+            <div class="col-sm-4">
+                <input type="file" name="cpsm" id="cpsm" value="{{cpsm}}">
+                <span class="tips"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">成品标签模板<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
+            <div class="col-sm-4">
+                <input type="file" name="tempname" value="{{tempname}}" id="tempname">
+                <span class="tips"></span>
+            </div>
+        </div>
+        <input type="hidden" name="proof" value="{{cpid}}">
+        <input type="submit" class="btn btn-primary btn-block" value="提交">
+    </form>
+</div>
+</body>
+</html>

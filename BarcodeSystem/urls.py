@@ -21,9 +21,7 @@ urlpatterns = [
     # path('admin/', admin.site.urls),
     # 使用xadmin后台，不使用系统自带的admin
     path('admin/', xadmin.site.urls),
-    # path('', include('bc_product.urls')),
-    # path('rmaterial/', include('bc_rmaterial.urls')),
-    path('aaa/', include('bc_formula.urls')),
+    path('product/', include('bc_product.urls')),
     path('production/', include('bc_production.urls')),
 
 ]

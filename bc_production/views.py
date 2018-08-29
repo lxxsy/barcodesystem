@@ -30,13 +30,13 @@ def production_save(request):
         bc = None
     zt = True if zt == '1' else False
     user = User.objects.filter(username=xdr)
+    if (scph == '' or scrq == '' or cpid == '' or cpname == '' or pbbh == '' or pbname == ''
+            or sl == '' or dw == '' or xdr == ''):
+        return render(request, 'bc_production/production_add1.html')
     if proof is None:
-        if (scph == '' or scrq == '' or cpid == '' or cpname == '' or pbbh == '' or pbname == ''
-                or sl == '' or dw == '' or xdr == ''):
-            return render(request, 'bc_production/production_add1.html')
         try:
             Scjhb.objects.create(scph=scph, scrq=scrq, cpid_id=cpid, cpname=cpname, pbbh=pbbh,
-                                 pbname=pbname, sl=sl, cs=cs, bzgg=bzgg, dw=dw, zt=zt, bz=bz, bc=bc, xdr=user[0])
+                                    pbname=pbname, sl=sl, cs=cs, bzgg=bzgg, dw=dw, zt=zt, bz=bz, bc=bc, xdr=user[0])
         except Exception as e:
             print(e)
         return redirect('/admin/bc_production/scjhb/')

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'bc_product',
     'bc_production',
     'bc_test',
+    'bc_backstage',
 ]
 
 MIDDLEWARE = [

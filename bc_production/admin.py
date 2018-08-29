@@ -26,7 +26,6 @@ class ScjhbXadmin(object):
     )
     '''
     # inlines = [Todayworks, ]
-    add_form_template = 'bc_production/bridge.html'
-    # add_form_template = 'bc_production/production_add1.html'
-    change_form_template = 'bc_production/bridge.html'
+    add_form_template = 'bc_production/production_bridge.html'
+    change_form_template = 'bc_production/production_bridge.html'
 xadmin.site.register(Scjhb, ScjhbXadmin)
