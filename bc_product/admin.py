@@ -4,19 +4,18 @@ from xadmin.layout import Fieldset, Row
 
 
 class CpmlXadmin(object):
-    list_display = ['cpid', 'cpmc', 'pbbh', 'tempname']
+    list_display = ['cpid', 'cpmc', 'pbbh', 'gg']
     search_fields = ['cpid', 'cpmc']
     form_layout = (
         Fieldset('',
                  Row('cpid', 'cpmc'),
-                 Row('bzgg', 'cpxkz'),
-                 Row('bz', 'pw'),
-                 Row('cctj', 'gg'),
+                 Row('gg', 'dbz'),
+                 Row('pw', 'bz'),
+                 Row('cpxkz', 'zbq'),
                  Row('cpsx', 'cpxx'),
-                 Row('zczbq', 'zjzbq'),
-                 Row('tempname', 'sptm'),
-                 Row('cpsb', 'cpsm'),
-                 Row('pbbh', 'cpgg'),
+                 Row('pbbh', 'cctj'),
+                 Row('cpsb', 'cppic'),
+                 Row('tempname', 'cpsm'),
                  css_class='unsort no_title'
                  ),
     )
@@ -35,6 +34,7 @@ class CprkXadmin(object):
                  Row('rkczy', 'rklxid'),
                 ),
     )
+
 
 xadmin.site.register(Cpml, CpmlXadmin)
 xadmin.site.register(Cprk, CprkXadmin)

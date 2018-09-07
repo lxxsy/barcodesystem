@@ -10,13 +10,13 @@ class YlinfoXadmin(object):
         Fieldset('',
             Row('ylid', 'ylname'),
             Row('dw', 'piedw'),
-            Row('zczbq', 'zjzbq'),
+            Row('zbq', 'goodzbq'),
             Row('minsl', 'maxsl'),
             Row('park', 'pieprice'),
             Row('tymc', 'ysbz'),
             # Row('maxsl', 'zf'),
-            Row('barcode', 'bz'),
             Row('stockid', 'zf'),
+            Row('barcode', 'bz'),
             Row('ylzt'),
             css_class='unsort no_title'
         ),
@@ -31,6 +31,8 @@ class YlflXadmin(object):
 class StockinfoXadmin(object):
     list_display = ['stockid', 'stockname']
     search_fields = ['stockid', 'stockname']
+
+
 xadmin.site.register(Ylinfo, YlinfoXadmin)
 xadmin.site.register(Ylfl, YlflXadmin)
 xadmin.site.register(Stockinfo, StockinfoXadmin)

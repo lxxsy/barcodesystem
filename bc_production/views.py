@@ -5,45 +5,7 @@ from bc_product.models import *
 from django.core import serializers, paginator
 from django.db import transaction
 from django.contrib.auth.models import User
-import psycopg2
-
-
-def production_save(request):
-    proof = request.POST.get('proof')
-    scph = request.POST.get('scph')
-    scrq = request.POST.get('scrq')
-    cpid = request.POST.get('cpid')
-    cpname = request.POST.get('cpname')
-    pbbh = request.POST.get('pbbh')
-    pbname = request.POST.get('pbname')
-    sl = request.POST.get('sl')
-    cs = request.POST.get('cs')
-    bzgg = request.POST.get('bzgg')
-    dw = request.POST.get('dw')
-    bc = request.POST.get('bc')
-    bz = request.POST.get('bz')
-    xdr = request.POST.get('xdr')
-    zt = request.POST.get('zt', 0)
-    if cs == '':
-        cs = None
-    if bc == '':
-        bc = None
-    zt = True if zt == '1' else False
-    user = User.objects.filter(username=xdr)
-    if (scph == '' or scrq == '' or cpid == '' or cpname == '' or pbbh == '' or pbname == ''
-            or sl == '' or dw == '' or xdr == ''):
-        return render(request, 'bc_production/production_add1.html')
-    if proof is None:
-        try:
-            Scjhb.objects.create(scph=scph, scrq=scrq, cpid_id=cpid, cpname=cpname, pbbh=pbbh,
-                                    pbname=pbname, sl=sl, cs=cs, bzgg=bzgg, dw=dw, zt=zt, bz=bz, bc=bc, xdr=user[0])
-        except Exception as e:
-            print(e)
-        return redirect('/admin/bc_production/scjhb/')
-    else:
-        Scjhb.objects.filter(scph=proof).update(scph=scph, scrq=scrq, cpid_id=cpid, cpname=cpname, pbbh=pbbh,
-                                                pbname=pbname, sl=sl, cs=cs, bzgg=bzgg, dw=dw, zt=zt, bz=bz, bc=bc, xdr=user[0])
-        return redirect('/admin/bc_production/scjhb/')
+import re
 
 
 def select_product(request, num):
@@ -68,20 +30,23 @@ def select_product(request, num):
             return JsonResponse({'product_null': ''})
     # 查询生产计划，判断有无此单号
     elif num == 3:
-        scph = request.GET.get('scph')
+        spl = request.GET.get('spl')
         original = request.GET.get('Original')
         bool = 1
-        if scph == original:
+        if spl == original:
             return JsonResponse({'bool': bool})
-        scjhb = Scjhb.objects.filter(scph=scph)
+        scjhb = Scjhb.objects.filter(spl=spl)
         if scjhb:
             bool = 0
         return JsonResponse({'bool': bool})
     # 查询计划明细表，判断有无此生产批号
     elif num == 4:
         scph = request.GET.get('scph')
-        todaywork = Todaywork.objects.filter(pk=scph)
+        arr = request.GET.getlist('arr')
         scph_bool = 1
+        if arr.count(scph):
+            return JsonResponse({'scph_bool': scph_bool})
+        todaywork = Todaywork.objects.filter(pk=scph)
         if todaywork:
             scph_bool = 0
         return JsonResponse({'scph_bool': scph_bool})
@@ -91,14 +56,16 @@ def update_production(request):
     '''
         修改生产计划时，由此视图处理
     '''
+    user_name = request.GET.get('user_name')
     scjhb_bh = request.GET.get('scjhb_bh')
-    scjhb = Scjhb.objects.get(scph=scjhb_bh)
+    scjhb = Scjhb.objects.get(spl=scjhb_bh)
+    todaywork_list = scjhb.todaywork_set.all().order_by('ph')
     context = {
-        'scph': scjhb.scph, 'scrq': scjhb.scrq, 'cpid': scjhb.cpid, 'cpname': scjhb.cpname, 'pbbh': scjhb.pbbh,
-        'pbname': scjhb.pbname, 'sl': scjhb.sl, 'cs': scjhb.cs, 'bzgg': scjhb.bzgg, 'dw': scjhb.dw, 'zt': scjhb.zt,
-        'bz': scjhb.bz, 'bc': scjhb.bc, 'xdr': scjhb.xdr
+        'spl': scjhb.spl, 'scrq': scjhb.scrq, 'cpid': scjhb.cpid, 'sl': scjhb.sl, 'cs': scjhb.cs,
+        'dw': scjhb.dw, 'zt': scjhb.zt, 'bz': scjhb.bz, 'bc': scjhb.bc, 'todaywork_list': todaywork_list,
+        'title': '修改生产计划', 'user_name': user_name
     }
-    return render(request, 'bc_production/production_update1.html', context)
+    return render(request, 'bc_production/production_update.html', context)
 
 
 def add_production(request):
@@ -107,50 +74,38 @@ def add_production(request):
     '''
     user_name = request.GET.get('user_name')
     context = {
-        'user_name': user_name
+        'user_name': user_name, 'title': '增加生产计划'
     }
-    return render(request, 'bc_production/production_add1.html', context)
+    return render(request, 'bc_production/production_add.html', context)
 
 
 def file(request):
     pass
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-'''
 @transaction.atomic()
 def production_save(request):
+    '''
         保存生产计划时，由此视图处理
+    '''
     new_scsl = []
     new_scxh = []
     new_scbc = []
-    new_wrsx = []
     if request.method == 'POST':
+        proof = request.POST.get('proof')
+        print('--------------------------')
+        print(proof)
+        print('------------------------------')
         spl = request.POST.get('spl')
-        rq = request.POST.get('rq')
+
+        scrq = request.POST.get('scrq')
         cpid = request.POST.get('cpid')
         sl = request.POST.get('sl')
         cs = request.POST.get('cs')
         dw = request.POST.get('dw')
         bc = request.POST.get('bc')
         bz = request.POST.get('bz')
+        xdr = request.POST.get('xdr')
         zt = request.POST.get('zt', 0)
         scph = request.POST.getlist('scph')
         jhrq = request.POST.getlist('jhrq')
@@ -164,18 +119,17 @@ def production_save(request):
         scxh = request.POST.getlist('scxh')
         scbz = request.POST.getlist('scbz')
         scbc = request.POST.getlist('scbc')
-        wrsx = request.POST.getlist('wrsx')
-        scxdr = request.POST.get('scxdr')
-        if (spl == '' or rq == '' or cpid == '' or sl == '' or scph == [] or
+        pattern = re.compile(r'\.+')
+        if (spl == '' or scrq == '' or cpid == '' or sl == '' or pattern.search(sl) or xdr == '' or scph == [] or
                 jhrq == [] or scsx == [] or cpbh == [] or cpmc == [] or
-                pfbh == [] or pfmc == [] or rwcs == [] or scxdr == []):
+                pfbh == [] or pfmc == [] or rwcs == []):
             return render(request, 'bc_production/production_add1.html')
-        if cs == '':
+        if not cs.isdigit():
             cs = None
-        if bc == '':
+        if not bc.isdigit():
             bc = None
         zt = True if zt == '1' else False
-        scjhb = Scjhb.objects.create(spl=spl, rq=rq, cpid_id=cpid, sl=sl, cs=cs, dw=dw, zt=zt, bz=bz, bc=bc)
+        user = User.objects.get(username=xdr)
         num = len(scph)
         for scsl_single in scsl:
             if scsl_single == '':
@@ -195,38 +149,33 @@ def production_save(request):
                 new_scbc.append(scbc_single)
             else:
                 new_scbc.append(scbc_single)
-        for wrsx_single in wrsx:
-            if wrsx_single == '':
-                wrsx_single = None
-                new_wrsx.append(wrsx_single)
-            else:
-                new_wrsx.append(wrsx_single)
-        user = User.objects.get(username=scxdr)
-        for j in range(num):
-            Todaywork.objects.create(ph=scph[j], spl=scjhb, pldate=jhrq[j], workno=scsx[j], cpid=cpbh[j], cpname=cpmc[j],
-                                     pbbh=pfbh[j], pbname=pfmc[j], worksl=rwcs[j], plsl=new_scsl[j], scxh=new_scxh[j],
-                                     bz=scbz[j], optionid_id=user.id, bc=new_scbc[j], fwrsx=new_wrsx[j], zt=zt)
-        return redirect('/admin/bc_production/scjhb/')
+        if not proof:
+            scjhb = Scjhb.objects.create(spl=spl, scrq=scrq, cpid_id=cpid, sl=sl, cs=cs, dw=dw, zt=zt, bz=bz, bc=bc,
+                                         xdr_id=user.id)
+            for j in range(num):
+                Todaywork.objects.create(ph=scph[j], spl_id=scjhb, pldate=jhrq[j], workno=scsx[j], cpid=cpbh[j], cpname=cpmc[j],
+                                        pbbh=pfbh[j], pbname=pfmc[j], worksl=rwcs[j], plsl=new_scsl[j], scxh=new_scxh[j],
+                                        bz=scbz[j], bc=new_scbc[j], zt=zt)
+            return redirect('/admin/bc_production/scjhb/')
+        else:
+            todaywork_list = Scjhb.objects.get(spl=proof).todaywork_set.all()
+            Todaywork.objects.filter(ph__in=todaywork_list).delete()
+            a = Scjhb.objects.filter(spl=proof)
+            a.update(spl=spl, scrq=scrq, cpid_id=cpid, sl=sl, cs=cs, dw=dw, zt=zt, bz=bz,
+                                                   bc=bc, xdr_id=user.id)
+            #scjhb = Scjhb.objects.filter(spl=proof).update(spl=spl, scrq=scrq, cpid_id=cpid, sl=sl, cs=cs, dw=dw, zt=zt, bz=bz,
+            #                                       bc=bc, xdr_id=user.id)
+            print('11111111111111111111111111111')
+            print(a)
+            print(spl)
+            for j in range(num):
+                Todaywork.objects.create(ph=scph[j], spl_id=a[0], pldate=jhrq[j], workno=scsx[j], cpid=cpbh[j], cpname=cpmc[j],
+                                        pbbh=pfbh[j], pbname=pfmc[j], worksl=rwcs[j], plsl=new_scsl[j], scxh=new_scxh[j],
+                                        bz=scbz[j], bc=new_scbc[j], zt=zt)
+            return redirect('/admin/bc_production/scjhb/')
     else:
         return render(request, 'bc_production/production_add1.html')
-'''
 
-'''
-def select_production(request):
-
-        修改生产计划时，由此视图处理
-
-    scjhb_bh = request.GET.get('scjhb_bh')
-    scjhb = Scjhb.objects.get(spl=scjhb_bh)
-    todaywork_list = scjhb.todaywork_set.all()
-    print('-----------------------------')
-    print(scjhb.cs)
-    context = {
-        'spl': scjhb.spl, 'rq': scjhb.rq, 'cpid': scjhb.cpid, 'sl': scjhb.sl, 'cs': scjhb.cs,
-        'dw': scjhb.dw, 'zt': scjhb.zt, 'bz': scjhb.bz, 'bc': scjhb.bc, 'todaywork_list': todaywork_list,
-    }
-    return render(request, 'bc_production/production_update.html', context)
-'''
 
 
 '''

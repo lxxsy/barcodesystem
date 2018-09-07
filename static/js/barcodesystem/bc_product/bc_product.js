@@ -6,7 +6,7 @@ $(function () {
     var error_cpid = true;
     var error_cpmc = true;
     var error_pbbh = true;
-    var error_cpgg = true;
+    var error_gg = true;
     var error_cpsm = true;
     var error_tempname = true;
     var Original = $('#cpid').val();
@@ -24,8 +24,8 @@ $(function () {
     $('#cpmc').blur(function () {
         cpmc_judge();
     });
-    $('#cpgg').blur(function () {
-        cpgg_judge();
+    $('#gg').blur(function () {
+        gg_judge();
     });
     $('#cpsm').change(function () {
         cpsm_judge();
@@ -40,13 +40,16 @@ $(function () {
         };
         cpid_judge();
         cpmc_judge();
-        cpgg_judge();
+        gg_judge();
         cpsm_judge();
         tempname_judge();
-        if (error_cpid === true && error_cpmc === true && error_pbbh === true && error_cpgg === true &&
+        alert('a');
+        if (error_cpid === true && error_cpmc === true && error_pbbh === true && error_gg === true &&
             error_cpsm === true && error_tempname === true){
+            alert('b');
             return true;
         }else{
+            alert('c');
             return false;
         };
     });
@@ -90,14 +93,14 @@ $(function () {
             error_cpmc = true;
         };
     };
-    function cpgg_judge() {
-        var cpgg = $('#cpgg').val();
-        if (cpgg.length === 0){
-            $('#cpgg').next().text('产品规格不能为空!').show();
-            error_cpgg = false;
+    function gg_judge() {
+        var gg = $('#gg').val();
+        if (gg.length === 0){
+            $('#gg').next().text('产品规格不能为空!').show();
+            error_gg = false;
         }else {
-            $('#cpgg').next().hide();
-            error_cpgg = true;
+            $('#gg').next().hide();
+            error_gg = true;
         };
     };
     function cpsm_judge() {
@@ -109,8 +112,8 @@ $(function () {
             var cpsm_name = cpsm_dict.name.toLowerCase().split('.');
             var cpsm_type = cpsm_name[cpsm_name.length-1];
             var cpsm_size = cpsm_dict.size;
-            if (cpsm_type != 'docx' && cpsm_type != 'doc' && cpsm_type != 'eddx'){
-                $('#cpsm').next().text('文件格式必须是docx,doc,xls的一种').show();
+            if (cpsm_type != 'htm' && cpsm_type != 'html' && cpsm_type != 'xml'){
+                $('#cpsm').next().text('文件格式必须是htm,html,xml的一种').show();
                 error_cpsm = false;
             }else if (cpsm_size > 5000000){
                 $('#cpsm').next().text('请上传不超过5M的文件').show();
@@ -130,8 +133,8 @@ $(function () {
             var tempname_name = tempname_dict.name.toLowerCase().split('.');
             var tempname_type = tempname_name[tempname_name.length-1];
             var tempname_size = tempname_dict.size;
-            if (tempname_type != 'docx' && tempname_type != 'doc' && tempname_type != 'eddx'){
-                $('#tempname').next().text('文件格式必须是docx,doc,xls的一种').show();
+            if (tempname_type != 'htm' && tempname_type != 'html' && tempname_type != 'xml'){
+                $('#tempname').next().text('文件格式必须是htm,html,xml的一种').show();
                 error_tempname = false;
             }else if (tempname_size > 5000000){
                 $('#tempname').next().text('请上传不超过5M的文件').show();

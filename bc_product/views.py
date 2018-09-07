@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from bc_formula.models import *
 from django.core import serializers
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, FileResponse, StreamingHttpResponse
 from .models import *
 import re
+import os
 
 
 def product_save(request):
@@ -11,50 +12,44 @@ def product_save(request):
         proof = request.POST.get('proof')
         cpid = request.POST.get('cpid')
         cpmc = request.POST.get('cpmc')
-        bzgg = request.POST.get('bzgg')
-        cpxkz = request.POST.get('cpxkz')
+        gg = request.POST.get('gg')
+        dbz = request.POST.get('dbz')
         pw = request.POST.get('pw')
         bz = request.POST.get('bz')
         pbbh = request.POST.get('pbbh')
-        gg = request.POST.get('gg')
+        cpxkz = request.POST.get('cpxkz')
         cpsx = request.POST.get('cpsx')
         cpxx = request.POST.get('cpxx')
-        zczbq = request.POST.get('zczbq')
-        zjzbq = request.POST.get('zjzbq')
+        zbq = request.POST.get('zbq')
         cctj = request.POST.get('cctj')
-        cpgg = request.POST.get('cpgg')
         cpsb = request.POST.get('cpsb')
+        cppic = request.POST.get('cppic')
         cpsm = request.FILES.get('cpsm')
         tempname = request.FILES.get('tempname')
-        print('1111111111111111111111')
-        print(cpsm)
         pattern = re.compile(r'\.+')
         cpsm_name_list = cpsm.name.split('.')
         cpsm_size = cpsm.size
         tempname_list = tempname.name.split('.')
         tempname_size = tempname.size
-        if (cpid == '' or cpmc == '' or pbbh == '' or cpgg == '' or cpsm == '' or tempname == '' or
-                pattern.search(cpsx) or pattern.search(cpxx) or pattern.search(zczbq) or pattern.search(zjzbq) or
+        if (cpid == '' or cpmc == '' or pbbh == '' or gg == '' or cpsm == '' or tempname == '' or
+                cppic == '' or pattern.search(cpsx) or pattern.search(cpxx) or pattern.search(zbq) or
                 cpsm_size > 5000000 or tempname_size > 5000000):
             return render(request, 'bc_product/product.html')
         cpsm_name_type = cpsm_name_list[len(cpsm_name_list) - 1]
-        if cpsm_name_type != 'doc' and cpsm_name_type != 'docx' and cpsm_name_type != 'eddx':
+        if cpsm_name_type != 'html' and cpsm_name_type != 'htm' and cpsm_name_type != 'xml':
             return render(request, 'bc_product/product.html')
         tempname_list_type = tempname_list[len(tempname_list)-1]
-        if tempname_list_type != 'doc' and tempname_list_type != 'docx' and tempname_list_type != 'eddx':
+        if tempname_list_type != 'html' and tempname_list_type != 'htm' and tempname_list_type != 'xml':
             return render(request, 'bc_product/product.html')
         if not cpsx.isdigit():
             cpsx = None
         if not cpxx.isdigit():
             cpxx = None
-        if not zczbq.isdigit():
-            zczbq = None
-        if not zjzbq.isdigit():
-            zjzbq = None
+        if not zbq.isdigit():
+            zbq = None
         if not proof:
-            Cpml.objects.create(cpid=cpid, cpmc=cpmc, bzgg=bzgg, cpxkz=cpxkz, pw=pw, bz=bz, pbbh_id=pbbh, cpsx=cpsx,
-                                cpxx=cpxx, gg=gg, tempname=tempname, zczbq=zczbq, zjzbq=zjzbq, cctj=cctj, cpsm=cpsm,
-                                cpgg=cpgg, cpsb=cpsb)
+            Cpml.objects.create(cpid=cpid, cpmc=cpmc, gg=gg, dbz=dbz, cpxkz=cpxkz, pw=pw, bz=bz, pbbh_id=pbbh, cpsx=cpsx,
+                                cpxx=cpxx, tempname=tempname, zbq=zbq, cctj=cctj, cpsm=cpsm, cppic=cppic, cpsb=cpsb)
             return redirect('/admin/bc_product/cpml/')
         else:
             cpml = Cpml.objects.get(cpid=proof)
@@ -67,9 +62,9 @@ def product_save(request):
             print('***************************************')
             print(cpsm_g)
             print('----------------------------------------------')
-            Cpml.objects.filter(cpid=proof).update(cpid=cpid, cpmc=cpmc, bzgg=bzgg, cpxkz=cpxkz, pw=pw, bz=bz,
-                                                   pbbh_id=pbbh, cpsx=cpsx, cpxx=cpxx, gg=gg, tempname=tempname,
-                                                   zczbq=zczbq, zjzbq=zjzbq, cctj=cctj, cpsm=cpsm_gs, cpgg=cpgg, cpsb=cpsb)
+            Cpml.objects.filter(cpid=proof).update(cpid=cpid, cpmc=cpmc, gg=gg, dbz=dbz, cpxkz=cpxkz, pw=pw, bz=bz,
+                                                   pbbh_id=pbbh, cpsx=cpsx, cpxx=cpxx, tempname=tempname,
+                                                   zbq=zbq, cctj=cctj, cpsm=cpsm, cppic=cppic, cpsb=cpsb)
             return redirect('/admin/bc_product/cpml/')
     else:
         return render(request, 'bc_product/product.html')
@@ -94,13 +89,29 @@ def product_query(request, num):
 def product_update(request):
     cpid = request.GET.get('cpid')
     cpml = Cpml.objects.get(cpid=cpid)
-    print('--------------------------------------')
-    print(cpml.cpsm)
-    print('---------------------------------------')
     context = {
-        'cpid': cpml.cpid, 'cpmc': cpml.cpmc, 'bzgg': cpml.bzgg, 'cpxkz': cpml.cpxkz, 'pw': cpml.pw, 'bz': cpml.bz,
-        'pbbh': cpml.pbbh, 'cpsx': cpml.cpsx, 'cpxx': cpml.cpxx, 'gg': cpml.gg, 'tempname': cpml.tempname,
-        'zczbq': cpml.zczbq, 'zjzbq': cpml.zjzbq, 'cctj': cpml.cctj, 'cpsm': cpml.cpsm, 'cpgg': cpml.cpgg,
+        'cpid': cpml.cpid, 'cpmc': cpml.cpmc, 'gg': cpml.gg, 'cpxkz': cpml.cpxkz, 'pw': cpml.pw, 'bz': cpml.bz,
+        'pbbh': cpml.pbbh, 'cpsx': cpml.cpsx, 'cpxx': cpml.cpxx, 'dbz': cpml.dbz, 'tempname': cpml.tempname,
+        'zbq': cpml.zbq, 'cctj': cpml.cctj, 'cpsm': cpml.cpsm, 'cppic': cpml.cppic,
         'cpsb': cpml.cpsb, 'title': '修改产品', 'explain': '修改产品'
     }
     return render(request, 'bc_product/product.html', context)
+
+
+def a(request):
+    cpml = Cpml.objects.get(cpid='CP105')
+    a = cpml.cpsm
+    print(a.name)
+    # q = []
+    f = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'static')
+    #with open(os.path.join(f, a.name)) as f:
+        #ff = f.read()
+    #fff = ff.split('\n')
+    #for i in fff:
+    #    print(q.append(i.split('：')))
+    print('111111111111111111111111')
+    #qq = dict(q)
+    context = {
+        'cpmc': cpml.cpmc, 'ff': a
+    }
+    return render(request, 'bc_product/ceshi.html', context)

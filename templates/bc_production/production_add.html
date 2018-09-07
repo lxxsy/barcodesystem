@@ -1,7 +1,7 @@
 {% extends 'base.html'%}
 
 {%block head%}
-<script src="/static/js/barcodesystem/bc_production/bc_production_add.js"></script>
+<script src="/static/js/barcodesystem/bc_production/bc_production.js"></script>
 <link rel="stylesheet" href="/static/css/production.css">
 {%endblock head%}
 
@@ -23,7 +23,7 @@
     </div>
 </div>
 <div class="container">
-    <form class="form-horizontal" method="post" action="/production/production_add" id="form_submit">
+    <form class="form-horizontal" method="post" action="/production/production_save" id="form_submit">
         {%csrf_token%}
         <div class="form-group has-feedback">
             <label class="col-sm-2 control-label">计划单号<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
@@ -31,10 +31,9 @@
                 <input type="text" class="form-control" name="spl" id="spl" value="" aria-describedby="inputSuccess2Status">
                 <span class="tips"></span>
             </div>
-
-            <label class="col-sm-1 control-label">日期<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
+            <label class="col-sm-2 control-label">日期<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
             <div class="col-sm-4">
-                <input type="date" class="form-control" name="rq" id="rq" value="">
+                <input type="date" class="form-control" name="scrq" id="scrq" value="">
                 <span class="tips"></span>
             </div>
         </div>
@@ -44,7 +43,7 @@
                 <select class="form-control" name="cpid" id="cpid">
                 </select>
             </div>
-            <label class="col-sm-1 control-label">数量<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
+            <label class="col-sm-2 control-label">生产数量<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
             <div class="col-sm-4">
                 <input type="number" class="form-control" name="sl" id="sl" value="">
                 <span class="tips"></span>
@@ -55,7 +54,7 @@
             <div class="col-sm-4">
                 <input type="number" class="form-control" name="cs" id="cs">
             </div>
-            <label class="col-sm-1 control-label">单位</label>
+            <label class="col-sm-2 control-label">单位</label>
             <div class="col-sm-4">
                 <select class="form-control" name="dw" id="dw">
                     <option value="kg">kg</option>
@@ -68,7 +67,7 @@
             <div class="col-sm-4">
                 <input type="number" class="form-control" name="bc" id="bc">
             </div>
-            <label class="col-sm-1 control-label">备注</label>
+            <label class="col-sm-2 control-label">备注</label>
             <div class="col-sm-4">
                 <input type="text" class="form-control" name="bz" id="bz">
             </div>
@@ -78,6 +77,7 @@
                 <label class="control-label">
                     <input type="checkbox" name="zt" checked="checked" value="1" id="zt"> 启用
                 </label>
+                <input type="hidden" name="xdr" id="xdr" value="{{user_name}}">
             </div>
         </div>
         <div class="navbar navbar-default">
@@ -97,12 +97,10 @@
                     <th>配方编号</th>
                     <th>配方名称</th>
                     <th>任务次数<span class="glyphicon glyphicon-asterisk" style="color: red"></span></th>
-                    <th>数量(kg)</th>
+                    <th>数量</th>
                     <th>生产线号</th>
                     <th>备注</th>
                     <th>班次</th>
-                    <th>防交叉污染顺序</th>
-                    <th>下单人</th>
                     <th>启用</th>
                 </tr>
             </thead>
@@ -120,17 +118,13 @@
                     <td><input type="number" name="scxh" class="scxh"></td>
                     <td><input type="text" name="scbz" class="scbz"></td>
                     <td><input type="text" name="scbc" class="scbc"></td>
-                    <td><input type="text" name="wrsx" class="wrsx"></td>
-                    <td><input type="text" name="scxdr" class="scxdr"></td>
                     <td><input type="checkbox" name="sczt" checked="checked" class="sczt" value="1" disabled></td>
                     <td><a href="javascript:;" class="glyphicon glyphicon-remove f_delete"></a></td>
                 </tr>
             </tbody>
         </table>
         <input type="submit" class="btn btn-primary btn-block" value="提交">
-
-            <a href="/production/a">sss&nbsp;&nbsp;&lt;sss&gt; <span>aaa</span></a>
-
+            <!--<a href="/production/a">sss&nbsp;&nbsp;&lt;sss&gt; <span>aaa</span></a>-->
     </form>
 </div>
 {%endblock body%}

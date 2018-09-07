@@ -2,8 +2,13 @@
  * Created by LILI on 2018/7/10.
  */
 $(function () {
+    var Original = $('#spl').val();
+    var arr = [];
+    $('.scph').each(function () {
+        arr.push($(this).val());
+    });
     var error_spl = true;
-    var error_rq = true;
+    var error_scrq = true;
     var error_cpid = true;
     var error_sl = true;
     var error_scph = true;
@@ -23,12 +28,15 @@ $(function () {
         页面加载完毕触发ajax请求，获取所有的产品id，渲染到产品编号表单控件中，接着运行函数使计划副表产品与配方信息渲染出来
      */
     $.get('/production/select_product1', function (data) {
+        var cpid = $('#cpid').val();
         $.each(JSON.parse(data.cpml_list) ,function (index, item) {
-            $('#cpid').append('<option value='+item.pk+'>'+item.pk+'</option>');
+            if (item.pk != cpid){
+                $('#cpid').append('<option value='+item.pk+'>'+item.pk+'</option>');
+            };
         });
         select_product();
     });
-    $('#rq').val(year+'-'+month+'-'+day);
+    $('#scrq').val(year+'-'+month+'-'+day);
     /*
         点击增加生产计划副表时触发，追加一行表格
      */
@@ -46,8 +54,6 @@ $(function () {
                     '<td><input type="number" name="scxh" class="scxh"></td>'+
                     '<td><input type="text" name="scbz" class="scbz"></td>'+
                     '<td><input type="text" name="scbc" class="scbc"></td>'+
-                    '<td><input type="text" name="wrsx" class="wrsx"></td>'+
-                    '<td><input type="text" name="scxdr" class="scxdr"></td>'+
                     '<td><input type="checkbox" name="sczt" checked="checked" class="sczt" value="1" disabled></td>'+
                     '<td><a href="javascript:;" class="glyphicon glyphicon-remove f_delete"></a></td>'+
                 '</tr>');
@@ -81,8 +87,8 @@ $(function () {
     /*
         日期失去焦点触发，判断输入的值是否合理
      */
-    $('#rq').blur(function () {
-        rq_judge();
+    $('#scrq').blur(function () {
+        scrq_judge();
     });
     /*
         数量失去焦点触发，判断输入的值是否合理
@@ -97,7 +103,6 @@ $(function () {
         var $this_scph = $(this);
         var scph = $(this).val();
         scph_judge($this_scph, scph);
-        //console.log($(this).val());
     });
     /*
         判断计划明细表的计划日期是否合理
@@ -123,7 +128,7 @@ $(function () {
             error_cpid = false;
         };
         spl_judge();
-        rq_judge();
+        scrq_judge();
         sl_judge();
         $('.tbody tr').each(function () {
             var $this_scph = $(this).find('.scph');
@@ -151,7 +156,7 @@ $(function () {
                 return false;
             };
         });
-        if(error_cpid === true && error_spl === true && error_rq === true && error_sl === true && error_scph === true
+        if(error_cpid === true && error_spl === true && error_scrq === true && error_sl === true && error_scph === true
             && error_jhrq === true && error_ScsxRwcs === true){
             return true;
         }else {
@@ -180,48 +185,48 @@ $(function () {
      */
     function spl_judge() {
         var spl = $('#spl').val();
-        var re = /\w+/;
+        var re = /\W+/;
         if (spl.length===0){
-            $('#spl').next().text('不能为空').show();
+            $('#spl').next().text('计划单号不能为空！').show();
             error_spl = false;
         }else{
             if (re.test(spl)){
-                $.get('/production/select_product3', {spl: spl}, function (data) {
+                $('#cpid').next().text('计划单号含有不允许符号!').show();
+                error_spl = false;
+            }else{
+                $.get('/production/select_product3', {Original: Original, spl: spl}, function (data) {
                     if (data.bool === 0){
-                        $('#spl').next().text('计划单号已存在').show();
+                        $('#spl').next().text('计划单号已存在!').show();
                         error_spl = false;
                     }else {
                         $('#spl').next().hide();
                         error_spl = true;
                     };
                 });
-            }else{
-                $('#spl').next().text('至少需要一位字符或数字').show();
-                error_spl = false;
             };
         };
     };
     /*
         功能：判断日期的输入是否合理
      */
-    function rq_judge() {
-        var rq = $('#rq').val();
-        var arry = rq.split('-');
-        if (rq === ''){
-            $('#rq').next().text('请输入准确的日期格式').show();
-            error_rq = false;
+    function scrq_judge() {
+        var scrq = $('#scrq').val();
+        var arry = scrq.split('-');
+        if (scrq === ''){
+            $('#scrq').next().text('请输入准确的日期格式').show();
+            error_scrq = false;
         }else if(arry[0] < year || arry[0].length != 4){
-            $('#rq').next().text('请正确填写年份').show();
-            error_rq = false;
+            $('#scrq').next().text('请填写正确年份').show();
+            error_scrq = false;
         }else if(arry[1] < month){
-            $('#rq').next().text('请正确填写月份').show();
-            error_rq = false;
+            $('#scrq').next().text('请填写正确月份').show();
+            error_scrq = false;
         }else if(arry[2] < day){
-            $('#rq').next().text('填写的日期小于当前日期').show();
-            error_rq = false;
+            $('#scrq').next().text('填写的日期小于当前日期').show();
+            error_scrq = false;
         }else {
-            $('#rq').next().hide();
-            error_rq = true;
+            $('#scrq').next().hide();
+            error_scrq = true;
         };
     };
     /*
@@ -251,24 +256,30 @@ $(function () {
         功能： 判断计划明细表生产批号的输入是否合理
      */
     function scph_judge($this_scph, scph) {
-        var re = /\w+/;
+        var re = /\W+/;
         if (scph === ''){
-            $($this_scph).next().text('不能为空').show();
+            $($this_scph).next().text('生产批号不能为空！').show();
             error_scph = false;
         }else {
             if (re.test(scph)){
-                $.get('/production/select_product4', {scph: scph}, function (data) {
-                    if (data.scph_bool === 0){
-                        $($this_scph).next().text('生产批号已存在').show();
-                        error_scph = false;
-                    }else {
-                        $($this_scph).next().hide();
-                        error_scph = true;
-                    };
-                });
-            }else {
-                $($this_scph).next().text('至少需要一位数字或字符').show();
+                $($this_scph).next().text('生产批号含有不允许符号!').show();
                 error_scph = false;
+            }else {
+                $.ajax({
+                    url:'/production/select_product4',
+                    data:{"arr":arr, "scph": scph},
+                    type:"get",
+                    traditional:true,
+                    success:function(data){
+                        if (data.scph_bool === 0){
+                            $($this_scph).next().text('生产批号已存在').show();
+                            error_scph = false;
+                        }else {
+                            $($this_scph).next().hide();
+                            error_scph = true;
+                        };
+                    }
+                });
             };
         };
     };
@@ -276,26 +287,26 @@ $(function () {
         功能： 判断计划明细表计划日期的输入是否合理
      */
     function jhrq_judge($this_jhrq, jhrq) {
-        var rq = $('#rq').val();
-        var rq_arry = rq.split('-');
+        var scrq = $('#scrq').val();
+        var scrq_arry = scrq.split('-');
         var jhrq_arry = jhrq.split('-');
-        if (rq === '' || jhrq === ''){
+        if (scrq === '' || jhrq === ''){
             $($this_jhrq).next().text('请把生产计划表或明细表日期填写完整').show();
             error_jhrq = false;
         }else {
-            if (rq_arry[0].length != 4 || jhrq_arry[0].length != 4){
+            if (scrq_arry[0].length != 4 || jhrq_arry[0].length != 4){
                 $($this_jhrq).next().text('请正确填写年份').show();
                 error_jhrq = false;
-            }else if(jhrq_arry[0] < rq_arry[0]){
+            }else if(jhrq_arry[0] < scrq_arry[0]){
                 $($this_jhrq).next().text('计划明细表年份不能小于计划年份').show();
                 error_jhrq = false;
-            }else if(jhrq_arry[0] > rq_arry[0]){
+            }else if(jhrq_arry[0] > scrq_arry[0]){
                 $($this_jhrq).next().hide();
                 error_jhrq = true;
-            }else if(jhrq_arry[1] < rq_arry[1]){
+            }else if(jhrq_arry[1] < scrq_arry[1]){
                 $($this_jhrq).next().text('计划明细表月份不能小于计划月份').show();
                 error_jhrq = false;
-            }else if(jhrq_arry[2] < rq_arry[2]){
+            }else if(jhrq_arry[2] < scrq_arry[2]){
                 $($this_jhrq).next().text('计划明细表日期不能小于计划日期').show();
                 error_jhrq = false;
             }else {
