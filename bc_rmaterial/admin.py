@@ -21,6 +21,8 @@ class YlinfoXadmin(object):
             css_class='unsort no_title'
         ),
     )
+    add_form_template = 'bc_rmaterial/rmaterial_add.html'
+    #change_form_template = 'bc_production/production_update.html'
 
 
 class YlflXadmin(object):

@@ -2,7 +2,6 @@
  * Created by LILI on 2018/7/10.
  */
 $(function () {
-    var Original = $('#spl').val();
     var arr = [];
     $('.scph').each(function () {
         arr.push($(this).val());
@@ -23,16 +22,13 @@ $(function () {
     };
     if (day.toString().length === 1){
         day = '0'+day;
-    };
+    }
     /*
         页面加载完毕触发ajax请求，获取所有的产品id，渲染到产品编号表单控件中，接着运行函数使计划副表产品与配方信息渲染出来
      */
     $.get('/production/select_product1', function (data) {
-        var cpid = $('#cpid').val();
         $.each(JSON.parse(data.cpml_list) ,function (index, item) {
-            if (item.pk != cpid){
-                $('#cpid').append('<option value='+item.pk+'>'+item.pk+'</option>');
-            };
+            $('#cpid').append('<option value='+item.pk+'>'+item.pk+'</option>');
         });
         select_product();
     });
@@ -53,30 +49,10 @@ $(function () {
                     '<td><input type="number" name="scsl" class="scsl"></td>'+
                     '<td><input type="number" name="scxh" class="scxh"></td>'+
                     '<td><input type="text" name="scbz" class="scbz"></td>'+
-                    '<td><input type="text" name="scbc" class="scbc"></td>'+
                     '<td><input type="checkbox" name="sczt" checked="checked" class="sczt" value="1" disabled></td>'+
                     '<td><a href="javascript:;" class="glyphicon glyphicon-remove f_delete"></a></td>'+
                 '</tr>');
         select_product();
-    });
-    /*
-        产品编号输入框的值发生变化时触发，根据值使副表的产品及配方信息发生变化
-     */
-    $('#cpid').change(function () {
-        select_product();
-    });
-    /*
-        点击主表启用触发，判断此控件是勾选还是未勾选，得到判断值后使所有的多选框控件变成这个判断值
-     */
-    $('#zt').click(function () {
-        var bool = $(this).prop('checked');
-        $(':checkbox').prop('checked', bool);
-    });
-    /*
-        点击副表删除按钮触发，搜寻此按钮的tr父级，然后删除
-     */
-    $('.tbody').on('click', '.f_delete', function () {
-        $(this).parents('tr').remove();
     });
     /*
         计划单号失去焦点触发，判断输入的值是否合理
@@ -91,10 +67,29 @@ $(function () {
         scrq_judge();
     });
     /*
+        产品编号输入框的值发生变化时触发，根据值使副表的产品及配方信息发生变化
+     */
+    $('#cpid').change(function () {
+        select_product();
+    });
+    /*
         数量失去焦点触发，判断输入的值是否合理
      */
     $('#sl').blur(function () {
         sl_judge();
+    });
+    /*
+        点击主表启用触发，判断此控件是勾选还是未勾选，得到判断值后使所有的多选框控件变成这个判断值
+     */
+    $('#zt').click(function () {
+        var bool = $(this).prop('checked');
+        $(':checkbox').prop('checked', bool);
+    });
+    /*
+        点击副表删除按钮触发，搜寻此按钮的tr父级，然后删除
+     */
+    $('.tbody').on('click', '.f_delete', function () {
+        $(this).parents('tr').remove();
     });
     /*
         判断计划明细表的生产批号是否合理
@@ -169,7 +164,7 @@ $(function () {
     function select_product() {
         var cpid = $('#cpid').val();
         $.get('/production/select_product2', {cpid: cpid}, function (data) {
-            if (data.product_null){
+            if (data.product_null === ''){
                 alert('Not found');
             }else{
                 $('.cpbh').val(data.cpbh);
@@ -191,10 +186,10 @@ $(function () {
             error_spl = false;
         }else{
             if (re.test(spl)){
-                $('#cpid').next().text('计划单号含有不允许符号!').show();
+                $('#spl').next().text('计划单号含有不允许符号!').show();
                 error_spl = false;
             }else{
-                $.get('/production/select_product3', {Original: Original, spl: spl}, function (data) {
+                $.get('/production/select_product3', {spl: spl}, function (data) {
                     if (data.bool === 0){
                         $('#spl').next().text('计划单号已存在!').show();
                         error_spl = false;
@@ -267,7 +262,7 @@ $(function () {
             }else {
                 $.ajax({
                     url:'/production/select_product4',
-                    data:{"arr":arr, "scph": scph},
+                    data:{"scph": scph},
                     type:"get",
                     traditional:true,
                     success:function(data){
@@ -335,4 +330,3 @@ $(function () {
         };
     };
 });
-

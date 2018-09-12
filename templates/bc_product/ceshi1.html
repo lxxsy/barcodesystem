@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+    <script src="/static/js/jquery-1.12.4.min.js"></script>
+    <style>
+        body{
+            margin: 0px;
+        }
+        #a{
+            border: 0px solid #fff;
+        }
+        .a{
+            margin: 60px 300px;
+        }
+        @media (max-width:960px){
+            .left_con{width:58%;}
+            .right_con{width:38%;}
+        }
+        @media (max-width:417px){
+            .left_con{width:100%;}
+            .right_con{width:100%;}
+        }
+    </style>
+</head>
+<body>
+<div class="a left_con right_con">
+    <div>产品名称：<span>{{ cpmc }}</span></div>
+    <div>生产日期<span></span></div>
+    <div>生产批号<span></span></div>
+    <iframe name="content_frame" marginwidth=0 marginheight=0 width=100% src="/static/{{ ff }}" frameborder=0 scrolling="no">aaa</iframe>
+    <form>
+        <label>姓名</label>
+        <input type="text" name="name">
+    </form>
+</div>
+</body>
+</html>

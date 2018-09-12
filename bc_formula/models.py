@@ -15,7 +15,7 @@ class Pb(models.Model):
     bz = models.CharField(max_length=220, blank=True, null=True, verbose_name='备注')
 
     def __str__(self):
-        return self.pbbh
+        return str(self.pbbh)
 
     class Meta:
         db_table = 'pb'

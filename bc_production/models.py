@@ -14,7 +14,7 @@ class Scjhb(models.Model):
     bz = models.CharField(verbose_name='备注', max_length=50, blank=True, null=True)
 
     def __str__(self):
-        return self.spl
+        return str(self.spl)
 
     class Meta:
         db_table = 'scjhb'

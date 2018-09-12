@@ -9,6 +9,7 @@ class UserSettingsAdmin(object):
     model_icon = 'fa fa-cog'
     hidden_menu = True
 
+
 xadmin.site.register(UserSettings, UserSettingsAdmin)
 
 
@@ -24,8 +25,8 @@ class LogAdmin(object):
     link.short_description = ""
     link.allow_tags = True
     link.is_column = False
-
-    list_display = ('action_time', 'user', 'ip_addr', '__str__', 'link')
+    remove_permissions = ['add', 'change', 'delete']
+    list_display = ('action_time', 'user', 'ip_addr', '__str__')
     list_filter = ['user', 'action_time']
     search_fields = ['ip_addr', 'message']
     model_icon = 'fa fa-cog'

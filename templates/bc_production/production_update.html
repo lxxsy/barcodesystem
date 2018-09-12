@@ -1,39 +1,38 @@
-{% extends 'base.html' %}
+{% extends base_template %}
+{% load i18n %}
 
-{%block head%}
-<script src="/static/js/barcodesystem/bc_production/bc_production.js"></script>
-<link rel="stylesheet" href="/static/css/production.css">
-{%endblock head%}
+{% load xadmin_tags %}
+{% load crispy_forms_tags %}
+{% block extrastyle %}
+    <link rel="stylesheet" href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <script src="/static/js/jquery-1.12.4.min.js"></script>
+    <script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="/static/js/template-web.js"></script>
+    <script src="/static/js/barcodesystem/bc_production/bc_production_update.js"></script>
+    <link rel="stylesheet" href="/static/css/production.css">
+{% endblock %}
 
-{%block body%}
-<div class="navbar navbar-default">
-    <div class="container">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="/admin/bc_production/scjhb" id="production" style="color: royalblue">
-                <span class="glyphicon glyphicon-chevron-left"></span>返回
-            </a>
-        </div>
-    </div>
-</div>
-<div class="navbar navbar-default">
-    <div class="container">
-        <div class="navbar-header">
-            <span class="navbar-brand">修改生产计划</span>
-        </div>
-    </div>
-</div>
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+
+{% block nav_title %}{% if model_icon %}<i class="{{model_icon}}"><sub class="fa fa-{% if add%}plus{%else%}pencil{%endif%}"></sub></i> {% endif %}
+{{ title }}{% endblock %}
+
+{% block content %}
 <div class="container">
+    <input type="hidden" id="scjhb_bh" value="{{ object_id }}">
     <form class="form-horizontal" method="post" action="/production/production_save" id="form_submit">
+    </form>
+    <script id="scjhb" type="text/template">
         {%csrf_token%}
         <div class="form-group has-feedback">
             <label class="col-sm-2 control-label">计划单号<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" name="spl" id="spl" value="{{spl}}" aria-describedby="inputSuccess2Status">
+                <input type="text" class="form-control" name="spl" id="spl" value="<%- spl %>" aria-describedby="inputSuccess2Status">
                 <span class="tips"></span>
             </div>
             <label class="col-sm-1 control-label">日期<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
             <div class="col-sm-4">
-                <input type="date" class="form-control" name="scrq" id="scrq" value="{{scrq|date:'Y-m-d'}}">
+                <input type="date" class="form-control" name="scrq" id="scrq" value="<%- scrq %>">
                 <span class="tips"></span>
             </div>
         </div>
@@ -41,51 +40,51 @@
             <label class="col-sm-2 control-label">产品编号<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
             <div class="col-sm-4">
                 <select class="form-control" name="cpid" id="cpid">
-                    <option value="{{cpid}}">{{cpid}}</option>
+                    <option value="<%- cpid %>"><%- cpid %></option>
                 </select>
             </div>
             <label class="col-sm-1 control-label">数量<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
             <div class="col-sm-4">
-                <input type="number" class="form-control" name="sl" id="sl" value="{{sl}}">
+                <input type="number" class="form-control" name="sl" id="sl" value="<%- sl %>">
                 <span class="tips"></span>
             </div>
         </div>
         <div class="form-group">
             <label class="col-sm-2 control-label">批次数</label>
             <div class="col-sm-4">
-                <input type="number" class="form-control" name="cs" id="cs" value="{{cs|default:''}}">
+                <input type="number" class="form-control" name="cs" id="cs" value="<%- cs %>">
             </div>
             <label class="col-sm-1 control-label">单位</label>
             <div class="col-sm-4">
                 <select class="form-control" name="dw" id="dw">
-                    {%if dw == 'kg'%}
-                        <option value="kg">kg</option>
-                        <option value="g">g</option>
-                    {%else%}
-                        <option value="g">g</option>
-                        <option value="kg">kg</option>
-                    {%endif%}
+                    <% if (dw == 'kg')
+                        { %> <option value="kg">kg</option>
+                             <option value="g">g</option> <% }
+                    else
+                        { %> <option value="g">g</option>
+                             <option value="kg">kg</option> <% }
+                    %>
                 </select>
             </div>
         </div>
         <div class="form-group">
             <label class="col-sm-2 control-label">班次</label>
             <div class="col-sm-4">
-                <input type="number" class="form-control" name="bc" id="bc" value="{{bc|default:''}}">
+                <input type="number" class="form-control" name="bc" id="bc" value="<%- bc %>">
             </div>
             <label class="col-sm-1 control-label">备注</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" name="bz" id="bz" value="{{bz}}">
+                <input type="text" class="form-control" name="bz" id="bz" value="<%- bz %>">
             </div>
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-4">
                 <label class="control-label">
-                    {%if zt%}
-                    <input type="checkbox" name="zt" checked="checked" value="1" id="zt"> 启用
-                    {%else%}
-                    <input type="checkbox" name="zt" value="1" id="zt"> 启用
-                    {%endif%}
+                    <% if (zt)
+                            { %> <input type="checkbox" name="zt" checked="checked" id="zt" value="1">启用 <% }
+                        else
+                            { %> <input type="checkbox" name="zt" id="zt" value="1">启用 <% }
+                    %>
                 </label>
                 <input type="hidden" name="xdr" id="xdr" value="{{user_name}}">
             </div>
@@ -110,40 +109,42 @@
                     <th>数量</th>
                     <th>生产线号</th>
                     <th>备注</th>
-                    <th>班次</th>
                     <th>启用</th>
                 </tr>
             </thead>
             <tbody class="tbody">
-                {% for todaywork in todaywork_list %}
+              <% for(var i = 0; i < todaywork_list.length; i++){ %>
                 <tr class="bodytr">
-                    <td><input type="text" name="scph" class="scph" value="{{ todaywork.ph }}"><span class="tips"></span></td>
-                    <td><input type="date" name="jhrq" class="jhrq" value="{{ todaywork.pldate|date:'Y-m-d' }}"><span class="tips"></span></td>
-                    <td><input type="number" name="scsx" class="scsx" value="{{ todaywork.workno }}"><span class="tips"></span></td>
-                    <td><input type="text" name="cpbh" class="cpbh" value="{{ todaywork.cpid }}" readonly></td>
-                    <td><input type="text" name="cpmc" class="cpmc" value="{{ todaywork.cpname }}" readonly></td>
-                    <td><input type="text" name="pfbh" class="pfbh" value="{{ todaywork.pbbh }}" readonly></td>
-                    <td><input type="text" name="pfmc" class="pfmc" value="{{ todaywork.pbname }}" readonly></td>
-                    <td><input type="number" name="rwcs" class="rwcs" value="{{ todaywork.worksl|default:'1' }}"><span class="tips"></span></td>
-                    <td><input type="number" name="scsl" class="scsl" value="{{ todaywork.plsl|default:'' }}"></td>
-                    <td><input type="number" name="scxh" class="scxh" value="{{ todaywork.scxh|default:'' }}"></td>
-                    <td><input type="text" name="scbz" class="scbz" value="{{ todaywork.bz }}"></td>
-                    <td><input type="text" name="scbc" class="scbc" value="{{ todaywork.bc|default:'' }}"></td>
-                    <td><input type="checkbox" name="sczt" checked="checked" class="sczt" value="1" disabled>{% if zt %}{% else %}<input type="checkbox" name="sczt" class="sczt" value="1" disabled>{% endif %}</td>
+                    <td><input type="text" name="scph" class="scph" value="<%= todaywork_list[i].pk %>"><span class="tips"></span></td>
+                    <td><input type="date" name="jhrq" class="jhrq" value="<%= $imports.dateFormat(todaywork_list[i].fields.pldate, 'yyyy-MM-dd') %>"><span class="tips"></span></td>
+                    <td><input type="number" name="scsx" class="scsx" value="<%= todaywork_list[i].fields.workno %>"><span class="tips"></span></td>
+                    <td><input type="text" name="cpbh" class="cpbh" value="<%= todaywork_list[i].fields.cpid %>" readonly></td>
+                    <td><input type="text" name="cpmc" class="cpmc" value="<%= todaywork_list[i].fields.cpname %>" readonly></td>
+                    <td><input type="text" name="pfbh" class="pfbh" value="<%= todaywork_list[i].fields.pbbh %>" readonly></td>
+                    <td><input type="text" name="pfmc" class="pfmc" value="<%= todaywork_list[i].fields.pbname %>" readonly></td>
+                    <td><input type="number" name="rwcs" class="rwcs" value="<%= todaywork_list[i].fields.worksl %>"><span class="tips"></span></td>
+                    <td><input type="number" name="scsl" class="scsl" value="<%= todaywork_list[i].fields.plsl %>"></td>
+                    <td><input type="number" name="scxh" class="scxh" value="<%= todaywork_list[i].fields.scxh %>"></td>
+                    <td><input type="text" name="scbz" class="scbz" value="<%= todaywork_list[i].fields.bz %>"></td>
+                    <td>
+                        <% if (todaywork_list[i].fields.zt)
+                            { %> <input type="checkbox" name="sczt" checked="checked" class="sczt" value="1" disabled> <% }
+                        else
+                            { %> <input type="checkbox" name="sczt" class="sczt" value="1" disabled> <% }
+                        %>
+                    </td>
                     <td><a href="javascript:;" class="glyphicon glyphicon-remove f_delete"></a></td>
                 </tr>
-                {% endfor %}
+              <% } %>
             </tbody>
         </table>
         <input type="hidden" name="proof" id="proof" value="{{spl}}">
-        {% for i in todaywork_list %}
-        <input type="hidden" name="scph_proof" value="{{ i.ph }}">
-        {% endfor %}
-        <input type="submit" class="btn btn-primary btn-block" value="提交">
-        <!--
-            <a href="/production/a">sss&nbsp;&nbsp;&lt;sss&gt; <span>aaa</span></a>
-            -->
-    </form>
+        <div class="form-actions well well-sm clearfix">
+            <button type="submit" class="btn btn-primary" name="_save"><i class="fa fa-save"></i>保存</button>
+            <input type="submit" class="btn btn-default" value="保存并增加另一个" name="_addanother">
+            <input type="submit" class="btn btn-default" value="保存并继续编辑" name="_continue">
+            <a href="/admin/bc_production/scjhb/{{ object_id }}/delete/" class="btn btn-danger pull-right"><i class="fa fa-trash-o"></i> 删除</a>
+        </div>
+    </script>
 </div>
-<!--<input type="hidden" id="scjhb_bh" value="">-->
-{%endblock body%}
+{% endblock %}

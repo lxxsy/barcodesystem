@@ -16,6 +16,7 @@
 .table-condensed>thead>tr>th{
     padding: 0px;
 }
+
 .tr th{
     text-align: center;
 }
@@ -23,7 +24,7 @@
     padding: 5px;
     border: 1px solid #ccc;
     text-align: center;
-    width: 90px;
+    width: 100px;
 }
 table .scph{
     width: 120px;
@@ -38,3 +39,35 @@ table .sczt{
 .tips{
     color: red;
 }
+
+/* 继承xadmin改写的css*/
+select {
+    max-width: 400px;
+}
+.control-label {
+    padding: 7px 10px;
+    font-weight: bold;
+}
+
+/*原料基础表css*/
+#piedw{
+    text-align:right;
+    padding-right: 0px;
+}
+#zbq{
+    text-align:right;
+    padding-right: 0px;
+}
+#goodzbq{
+    text-align:right;
+    padding-right: 0px;
+}
+.state{
+    position: relative;
+    left: 360px;
+    top: -26px;
+}
+.control-label{
+    font-size: 16px;
+}
+

@@ -23,5 +23,6 @@ urlpatterns = [
     path('admin/', xadmin.site.urls),
     path('product/', include('bc_product.urls')),
     path('production/', include('bc_production.urls')),
+    path('rmaterial/', include('bc_rmaterial.urls')),
 
 ]

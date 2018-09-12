@@ -311,7 +311,9 @@ body {
   color: #333333;
   background-color: #ffffff;
 }
-
+body .table {
+  font-size: 16px;
+}
 input,
 button,
 select,

@@ -36,10 +36,10 @@ def product_save(request):
                 cpsm_size > 5000000 or tempname_size > 5000000):
             return render(request, 'bc_product/product.html')
         cpsm_name_type = cpsm_name_list[len(cpsm_name_list) - 1]
-        if cpsm_name_type != 'html' and cpsm_name_type != 'htm' and cpsm_name_type != 'xml':
+        if cpsm_name_type != 'html' and cpsm_name_type != 'htm' and cpsm_name_type != 'dot':
             return render(request, 'bc_product/product.html')
         tempname_list_type = tempname_list[len(tempname_list)-1]
-        if tempname_list_type != 'html' and tempname_list_type != 'htm' and tempname_list_type != 'xml':
+        if tempname_list_type != 'html' and tempname_list_type != 'htm' and tempname_list_type != 'dot':
             return render(request, 'bc_product/product.html')
         if not cpsx.isdigit():
             cpsx = None
@@ -99,7 +99,7 @@ def product_update(request):
 
 
 def a(request):
-    cpml = Cpml.objects.get(cpid='CP105')
+    cpml = Cpml.objects.get(cpid='CP102')
     a = cpml.cpsm
     print(a.name)
     # q = []

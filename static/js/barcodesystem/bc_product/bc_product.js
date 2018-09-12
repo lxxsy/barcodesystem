@@ -112,7 +112,7 @@ $(function () {
             var cpsm_name = cpsm_dict.name.toLowerCase().split('.');
             var cpsm_type = cpsm_name[cpsm_name.length-1];
             var cpsm_size = cpsm_dict.size;
-            if (cpsm_type != 'htm' && cpsm_type != 'html' && cpsm_type != 'xml'){
+            if (cpsm_type != 'htm' && cpsm_type != 'html' && cpsm_type != 'dot'){
                 $('#cpsm').next().text('文件格式必须是htm,html,xml的一种').show();
                 error_cpsm = false;
             }else if (cpsm_size > 5000000){
@@ -133,7 +133,7 @@ $(function () {
             var tempname_name = tempname_dict.name.toLowerCase().split('.');
             var tempname_type = tempname_name[tempname_name.length-1];
             var tempname_size = tempname_dict.size;
-            if (tempname_type != 'htm' && tempname_type != 'html' && tempname_type != 'xml'){
+            if (tempname_type != 'htm' && tempname_type != 'html' && tempname_type != 'dot'){
                 $('#tempname').next().text('文件格式必须是htm,html,xml的一种').show();
                 error_tempname = false;
             }else if (tempname_size > 5000000){

@@ -37,6 +37,7 @@ class Pbfs(object):
 
 
 class PbXadmin(object):
+    # remove_permissions = ['add', 'change', 'delete']
     list_display = ['pbbh', 'pbname', 'pftype', 'bz', 'yx']
     search_fields = ['pbbh', 'pbname']
     form_layout = (
