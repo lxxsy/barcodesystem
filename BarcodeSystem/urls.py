@@ -24,5 +24,5 @@ urlpatterns = [
     path('product/', include('bc_product.urls')),
     path('production/', include('bc_production.urls')),
     path('rmaterial/', include('bc_rmaterial.urls')),
-
+    path('formula/', include('bc_formula.urls')),
 ]

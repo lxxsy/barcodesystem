@@ -43,13 +43,10 @@ $(function () {
         gg_judge();
         cpsm_judge();
         tempname_judge();
-        alert('a');
         if (error_cpid === true && error_cpmc === true && error_pbbh === true && error_gg === true &&
             error_cpsm === true && error_tempname === true){
-            alert('b');
             return true;
         }else{
-            alert('c');
             return false;
         };
     });

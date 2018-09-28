@@ -21,7 +21,7 @@ class CpmlXadmin(object):
     )
     add_form_template = 'bc_product/product.html'
     # add_form_template = 'bc_product/aaa.html'
-    change_form_template = 'bc_product/product_bridge.html'
+    # change_form_template = 'bc_product/product_bridge.html'
 
 
 class CprkXadmin(object):

@@ -22,7 +22,7 @@ class YlinfoXadmin(object):
         ),
     )
     add_form_template = 'bc_rmaterial/rmaterial_add.html'
-    #change_form_template = 'bc_production/production_update.html'
+    change_form_template = 'bc_rmaterial/rmaterial_update.html'
 
 
 class YlflXadmin(object):

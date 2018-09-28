@@ -5,15 +5,45 @@ $(function () {
     var error_piedw = true;
     var error_zf = true;
     var error_stockid = true;
+    var ylinfo_id = $('#ylinfo_id').val();
     /*
-        获取原料分类与仓库
+        获取要修改的原料id，请求视图加载模板并渲染数据
+     */
+    $.ajax({
+        url:'/rmaterial/update_rmaterial',
+        data:{"ylinfo_id":ylinfo_id},
+        type:"get",
+        async:false,
+        success:function(data){
+            template.defaults.imports.dateFormat = function(date, format){
+                return date;
+            };
+            if (data.bool === 1){
+                $('#form_submit').html(template('ylinfo', {ylid: data.ylid, ylname: data.ylname, dw: data.dw,
+                    piedw: data.piedw, zbq: data.zbq, goodzbq: data.goodzbq, park: data.park, pieprice: data.pieprice,
+                    minsl: data.minsl, maxsl: data.maxsl, zf: data.zf, stockid: data.stockid, tymc: data.tymc,
+                    ysbz: data.ysbz, barcode: data.barcode, bz: data.bz, ylzt: data.ylzt}));
+            }else {
+                alert('出现异常情况');
+            };
+        }
+    });
+    var Original = $('#ylid').val();
+    /*
+        加载原料分类与仓库
      */
     $.get('/rmaterial/query_rmaterial1', function (data) {
+        var zf = $('#zf').val();
+        var stockid = $('#stockid').val();
         $.each(JSON.parse(data.ylfl_list) ,function (index, item) {
-            $('#zf').append('<option value='+item.pk+'>'+item.pk+'</option>');
+            if (item.pk != zf) {
+                $('#zf').append('<option value=' + item.pk + '>' + item.pk + '</option>');
+            };
         });
         $.each(JSON.parse(data.stockinfo_list) ,function (index, item) {
-            $('#stockid').append('<option value='+item.pk+'>'+item.pk+'</option>');
+            if (item.pk != stockid){
+                $('#stockid').append('<option value='+item.pk+'>'+item.pk+'</option>');
+            };
         });
     });
     /*
@@ -53,7 +83,7 @@ $(function () {
             return false;
         };
     });
-    /*
+     /*
         功能: 判断原料代码
      */
     function ylid_judge() {
@@ -67,7 +97,7 @@ $(function () {
                 $('#ylid').next().text('原料代码含有不允许符号!').show();
                 error_ylid = false;
             }else{
-                $.get('/rmaterial/query_rmaterial2', {ylid: ylid}, function (data) {
+                $.get('/rmaterial/query_rmaterial2', {Original: Original, ylid: ylid}, function (data) {
                     if (data.bool === 0){
                         $('#ylid').next().text('原料代码已存在!').show();
                         error_ylid = false;
@@ -79,8 +109,8 @@ $(function () {
             };
         };
     };
-    /*
-        功能: 判断原料名称
+     /*
+        功能: 判断原料代码
      */
     function ylname_judge() {
         var ylname = $('#ylname').val();

@@ -7,6 +7,34 @@ import re
 import os
 
 
+def product_query(request, num):
+    if num == 1:
+        pb_list = serializers.serialize('json', Pb.objects.all())
+        return JsonResponse({'pb_list': pb_list})
+    elif num == 2:
+        cpid = request.GET.get('cpid')
+        original = request.GET.get('Original')
+        bool = 1
+        if cpid == original:
+            return JsonResponse({'bool': bool})
+        cpml = Cpml.objects.filter(cpid=cpid)
+        if cpml:
+            bool = 0
+        return JsonResponse({'bool': bool})
+
+
+def product_update(request):
+    cpid = request.GET.get('cpid')
+    cpml = Cpml.objects.get(cpid=cpid)
+    context = {
+        'cpid': cpml.cpid, 'cpmc': cpml.cpmc, 'gg': cpml.gg, 'cpxkz': cpml.cpxkz, 'pw': cpml.pw, 'bz': cpml.bz,
+        'pbbh': cpml.pbbh, 'cpsx': cpml.cpsx, 'cpxx': cpml.cpxx, 'dbz': cpml.dbz, 'tempname': cpml.tempname,
+        'zbq': cpml.zbq, 'cctj': cpml.cctj, 'cpsm': cpml.cpsm, 'cppic': cpml.cppic,
+        'cpsb': cpml.cpsb, 'title': '修改产品', 'explain': '修改产品'
+    }
+    return render(request, 'bc_product/product.html', context)
+
+
 def product_save(request):
     if request.method == 'POST':
         proof = request.POST.get('proof')
@@ -68,34 +96,6 @@ def product_save(request):
             return redirect('/admin/bc_product/cpml/')
     else:
         return render(request, 'bc_product/product.html')
-
-
-def product_query(request, num):
-    if num == 1:
-        pb_list = serializers.serialize('json', Pb.objects.all())
-        return JsonResponse({'pb_list': pb_list})
-    elif num == 2:
-        cpid = request.GET.get('cpid')
-        original = request.GET.get('Original')
-        bool = 1
-        if cpid == original:
-            return JsonResponse({'bool': bool})
-        cpml = Cpml.objects.filter(cpid=cpid)
-        if cpml:
-            bool = 0
-        return JsonResponse({'bool': bool})
-
-
-def product_update(request):
-    cpid = request.GET.get('cpid')
-    cpml = Cpml.objects.get(cpid=cpid)
-    context = {
-        'cpid': cpml.cpid, 'cpmc': cpml.cpmc, 'gg': cpml.gg, 'cpxkz': cpml.cpxkz, 'pw': cpml.pw, 'bz': cpml.bz,
-        'pbbh': cpml.pbbh, 'cpsx': cpml.cpsx, 'cpxx': cpml.cpxx, 'dbz': cpml.dbz, 'tempname': cpml.tempname,
-        'zbq': cpml.zbq, 'cctj': cpml.cctj, 'cpsm': cpml.cpsm, 'cppic': cpml.cppic,
-        'cpsb': cpml.cpsb, 'title': '修改产品', 'explain': '修改产品'
-    }
-    return render(request, 'bc_product/product.html', context)
 
 
 def a(request):

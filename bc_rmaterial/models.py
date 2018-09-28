@@ -2,16 +2,12 @@ from django.db import models
 
 
 class Ylinfo(models.Model):
-    JLDW = (
-        ('ONE', 'kg'),
-        ('TWO', 'g'),
-    )
     ylid = models.CharField(primary_key=True, max_length=50, verbose_name='代码')
     ylname = models.CharField(max_length=50, verbose_name='原料名称')
-    dw = models.CharField(default='ONE', max_length=50, choices=JLDW, verbose_name='计量单位')  # 默认kg
+    dw = models.CharField(max_length=50, verbose_name='计量单位')  # 默认kg
     piedw = models.IntegerField(verbose_name='单包重量')
     zbq = models.IntegerField(blank=True, null=True, default=365, verbose_name='最长质保期')
-    goodzbq = models.IntegerField(blank=True, null=True, verbose_name='最佳质保期')
+    goodzbq = models.IntegerField(blank=True, null=True, verbose_name='最佳质保期', default=0)
     park = models.IntegerField(blank=True, null=True, verbose_name='仓位')
     pieprice = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True, verbose_name='单价')
     minsl = models.IntegerField(blank=True, null=True, verbose_name='最小库存')

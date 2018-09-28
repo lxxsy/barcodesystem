@@ -2,17 +2,11 @@
  * Created by LILI on 2018/7/10.
  */
 $(function () {
-    var arr = [];
-    $('.scph').each(function () {
-        arr.push($(this).val());
-    });
     var error_spl = true;
     var error_scrq = true;
     var error_cpid = true;
     var error_sl = true;
-    var error_scph = true;
-    var error_jhrq = true;
-    var error_ScsxRwcs = true;
+    var error_cs = true;
     var date = new Date();
     var year = date.getFullYear();
     var month = date.getMonth()+1;
@@ -30,30 +24,9 @@ $(function () {
         $.each(JSON.parse(data.cpml_list) ,function (index, item) {
             $('#cpid').append('<option value='+item.pk+'>'+item.pk+'</option>');
         });
-        select_product();
     });
-    $('#scrq').val(year+'-'+month+'-'+day);
-    /*
-        点击增加生产计划副表时触发，追加一行表格
-     */
-    $('.add-detailed').click(function () {
-        $('.tbody').append('<tr>'+
-                    '<td><input type="text" name="scph" class="scph"><span class="tips"></span></td>'+
-                    '<td><input type="date" name="jhrq" class="jhrq"><span class="tips"></span></td>'+
-                    '<td><input type="number" name="scsx" class="scsx"><span class="tips"></span></td>'+
-                    '<td><input type="text" name="cpbh" class="cpbh" readonly></td>'+
-                    '<td><input type="text" name="cpmc" class="cpmc" readonly></td>'+
-                    '<td><input type="text" name="pfbh" class="pfbh" readonly></td>'+
-                    '<td><input type="text" name="pfmc" class="pfmc" readonly></td>'+
-                    '<td><input type="number" name="rwcs" class="rwcs" value="1"><span class="tips"></span></td>'+
-                    '<td><input type="number" name="scsl" class="scsl"></td>'+
-                    '<td><input type="number" name="scxh" class="scxh"></td>'+
-                    '<td><input type="text" name="scbz" class="scbz"></td>'+
-                    '<td><input type="checkbox" name="sczt" checked="checked" class="sczt" value="1" disabled></td>'+
-                    '<td><a href="javascript:;" class="glyphicon glyphicon-remove f_delete"></a></td>'+
-                '</tr>');
-        select_product();
-    });
+    $('#scrq').val(year+'-'+month+'-'+day); // 获取当前日期并渲染到计划日期输入框中
+
     /*
         计划单号失去焦点触发，判断输入的值是否合理
      */
@@ -67,114 +40,58 @@ $(function () {
         scrq_judge();
     });
     /*
-        产品编号输入框的值发生变化时触发，根据值使副表的产品及配方信息发生变化
+        产品编号失去焦点后触发
      */
-    $('#cpid').change(function () {
-        select_product();
+    $('#datas').blur(function () {
+        datas_judge();
     });
     /*
         数量失去焦点触发，判断输入的值是否合理
      */
     $('#sl').blur(function () {
         sl_judge();
+        /*
+        var bool = true;
+        var sl = $(this).val();
+        var cs = $('#cs').val();
+        var re = /^[0-9]+$/;
+        if (re.test(cs) && re.test(sl)){
+            select_product(cs, bool);
+        };*/
     });
     /*
-        点击主表启用触发，判断此控件是勾选还是未勾选，得到判断值后使所有的多选框控件变成这个判断值
+        批次数失去焦点触发，判断输入的值是否合理
      */
-    $('#zt').click(function () {
-        var bool = $(this).prop('checked');
-        $(':checkbox').prop('checked', bool);
-    });
-    /*
-        点击副表删除按钮触发，搜寻此按钮的tr父级，然后删除
-     */
-    $('.tbody').on('click', '.f_delete', function () {
-        $(this).parents('tr').remove();
-    });
-    /*
-        判断计划明细表的生产批号是否合理
-     */
-    $('.tbody').on('blur', '.scph', function () {
-        var $this_scph = $(this);
-        var scph = $(this).val();
-        scph_judge($this_scph, scph);
-    });
-    /*
-        判断计划明细表的计划日期是否合理
-     */
-    $('.tbody').on('blur', '.jhrq', function () {
-        var $this_jhrq = $(this);
-        var jhrq = $(this).val();
-        jhrq_judge($this_jhrq, jhrq);
-    });
-    /*
-        判断计划表明细生产顺序或任务次数是否合理
-     */
-    $('.tbody').on('blur', '.scsx, .rwcs', function () {
-        var $this_ScsxRwcs = $(this);
-        var ScsxRwcs = $(this).val();
-        ScsxRwcs_judge($this_ScsxRwcs, ScsxRwcs);
+    $('#cs').blur(function () {
+        cs_judge();
+        /*
+        $('.tbody').children().remove();
+        var re = /^[0-9]+$/;
+        var bool = true;
+        var cs = $(this).val();
+        var sl = $('#sl').val();
+        if (re.test(cs) && (re.test(sl) || sl === '')){
+            for (var i = 0; i<cs; i++){
+                tbody_append(bool);
+            };
+        };*/
     });
     /*
         提交表单触发，判断表单内容是否合理，合理提交到后台
      */
     $('#form_submit').submit(function () {
-        if ($('#cpid').val() === ''){
-            error_cpid = false;
-        };
         spl_judge();
         scrq_judge();
+        datas_judge();
         sl_judge();
-        $('.tbody tr').each(function () {
-            var $this_scph = $(this).find('.scph');
-            var $this_jhrq = $(this).find('.jhrq');
-            var $this_scsx = $(this).find('.scsx');
-            var $this_rwcs = $(this).find('.rwcs');
-            var scph = $(this).find('.scph').val();
-            var jhrq = $(this).find('.jhrq').val();
-            var scsx = $(this).find('.scsx').val();
-            var rwcs = $(this).find('.rwcs').val();
-            scph_judge($this_scph, scph);
-            if (error_scph === false){
-                return false;
-            };
-            jhrq_judge($this_jhrq, jhrq);
-            if (error_jhrq === false){
-                return false;
-            };
-            ScsxRwcs_judge($this_scsx, scsx);
-            if (error_ScsxRwcs === false){
-                return false;
-            };
-            ScsxRwcs_judge($this_rwcs, rwcs);
-            if (error_ScsxRwcs === false){
-                return false;
-            };
-        });
-        if(error_cpid === true && error_spl === true && error_scrq === true && error_sl === true && error_scph === true
-            && error_jhrq === true && error_ScsxRwcs === true){
+        cs_judge();
+        if(error_cpid === true && error_spl === true && error_scrq === true && error_sl === true &&
+            error_cs === true){
             return true;
         }else {
             return false;
         };
     });
-    /*
-        功能：操作计划明细表的产品，配方输入框的值
-     */
-    function select_product() {
-        var cpid = $('#cpid').val();
-        $.get('/production/select_product2', {cpid: cpid}, function (data) {
-            if (data.product_null === ''){
-                alert('Not found');
-            }else{
-                $('.cpbh').val(data.cpbh);
-                $('.cpmc').val(data.cpmc);
-                $('.pfbh').val(data.pfbh);
-                $('.pfmc').val(data.pfmc);
-                $('.jhrq').val(year+'-'+month+'-'+day);
-            };
-        });
-    };
     /*
         功能： 判断计划单号的输入是否合理
      */
@@ -224,20 +141,37 @@ $(function () {
             error_scrq = true;
         };
     };
+     /*
+        功能：判断产品编号的输入是否合理
+     */
+    function datas_judge() {
+        var current_value = $('#datas').val();
+        if (current_value === ''){
+            $('#datas').next().text('产品编号不能为空!').show();
+            error_cpid = false;
+        }else {
+            $.get('/production/select_product5', {current_value: current_value}, function (data) {
+                if (data.cpml_bool === 0){
+                    $('#datas').next().text('没有此产品编号!').show();
+                    error_cpid = false;
+                }else {
+                    $('#datas').next().hide();
+                    error_cpid = true;
+                };
+            });
+        };
+    };
     /*
         功能： 判断数量的输入是否合理
      */
     function sl_judge() {
         var sl = $('#sl').val();
         var re = /\.+/;
-        if (sl[0] === '0'){
-            $('#sl').next().text('第一位数字不能为0').show();
+        if(sl.length === 0){
+            $('#sl').next().text('请输入正确数字').show();
             error_sl = false;
-        }else if(sl < 0){
-            $('#sl').next().text('不能小于0').show();
-            error_sl = false;
-        }else if(sl === ''){
-            $('#sl').next().text('不能为空或不是一个数字').show();
+        }else if(sl <= 0){
+            $('#sl').next().text('不能小于或等于0').show();
             error_sl = false;
         }else if(re.test(sl)){
             $('#sl').next().text('不能为小数').show();
@@ -248,85 +182,46 @@ $(function () {
         };
     };
     /*
-        功能： 判断计划明细表生产批号的输入是否合理
+        功能： 判断批次数的输入是否合理
      */
-    function scph_judge($this_scph, scph) {
-        var re = /\W+/;
-        if (scph === ''){
-            $($this_scph).next().text('生产批号不能为空！').show();
-            error_scph = false;
+    function cs_judge() {
+        var cs = $('#cs').val();
+        var re = /\.+/;
+        if(cs.length === 0){
+            $('#cs').next().text('请输入正确数字').show();
+            error_cs = false;
+        }else if(cs <= 0){
+            $('#cs').next().text('不能小于或等于0').show();
+            error_cs = false;
+        }else if(re.test(cs)){
+            $('#cs').next().text('不能为小数').show();
+            error_cs = false;
         }else {
-            if (re.test(scph)){
-                $($this_scph).next().text('生产批号含有不允许符号!').show();
-                error_scph = false;
-            }else {
-                $.ajax({
-                    url:'/production/select_product4',
-                    data:{"scph": scph},
-                    type:"get",
-                    traditional:true,
-                    success:function(data){
-                        if (data.scph_bool === 0){
-                            $($this_scph).next().text('生产批号已存在').show();
-                            error_scph = false;
-                        }else {
-                            $($this_scph).next().hide();
-                            error_scph = true;
-                        };
-                    }
-                });
-            };
-        };
-    };
-    /*
-        功能： 判断计划明细表计划日期的输入是否合理
-     */
-    function jhrq_judge($this_jhrq, jhrq) {
-        var scrq = $('#scrq').val();
-        var scrq_arry = scrq.split('-');
-        var jhrq_arry = jhrq.split('-');
-        if (scrq === '' || jhrq === ''){
-            $($this_jhrq).next().text('请把生产计划表或明细表日期填写完整').show();
-            error_jhrq = false;
-        }else {
-            if (scrq_arry[0].length != 4 || jhrq_arry[0].length != 4){
-                $($this_jhrq).next().text('请正确填写年份').show();
-                error_jhrq = false;
-            }else if(jhrq_arry[0] < scrq_arry[0]){
-                $($this_jhrq).next().text('计划明细表年份不能小于计划年份').show();
-                error_jhrq = false;
-            }else if(jhrq_arry[0] > scrq_arry[0]){
-                $($this_jhrq).next().hide();
-                error_jhrq = true;
-            }else if(jhrq_arry[1] < scrq_arry[1]){
-                $($this_jhrq).next().text('计划明细表月份不能小于计划月份').show();
-                error_jhrq = false;
-            }else if(jhrq_arry[2] < scrq_arry[2]){
-                $($this_jhrq).next().text('计划明细表日期不能小于计划日期').show();
-                error_jhrq = false;
-            }else {
-                $($this_jhrq).next().hide();
-                error_jhrq = true;
-            };
-        };
-    };
-    /*
-        功能： 判断计划明细表生产顺序或任务次数的输入是否合理，因判断逻辑一样
-     */
-    function ScsxRwcs_judge($this_ScsxRwcs, ScsxRwcs) {
-        var re = /\./;
-        if (ScsxRwcs === ''){
-            $($this_ScsxRwcs).next().text('不能为空或不是数字').show();
-            error_ScsxRwcs = false;
-        }else if(ScsxRwcs < '0'){
-            $($this_ScsxRwcs).next().text('不能小于0').show();
-            error_ScsxRwcs = false
-        }else if(re.test(ScsxRwcs)){
-            $($this_ScsxRwcs).next().text('不能为小数').show();
-            error_ScsxRwcs = false;
-        }else {
-            $($this_ScsxRwcs).next().hide();
-            error_ScsxRwcs = true;
+            $('#cs').next().hide();
+            error_cs = true;
         };
     };
 });
+    /*
+        功能：操作计划明细表的产品，配方输入框的值
+
+    function select_product(cs, bool) {
+        var cpid = $('#cpid').val();
+        var sl = $('#sl').val();
+        var num = parseInt(sl/cs);
+        $.get('/production/select_product2', {cpid: cpid}, function (data) {
+            if (data.product_null != ''){
+                $('.cpbh').val(data.cpbh);
+                $('.cpmc').val(data.cpmc);
+                $('.pfbh').val(data.pfbh);
+                $('.pfmc').val(data.pfmc);
+                $('.scxh').val(data.pfsc);
+                if (bool === false){
+                    $('.jhrq').eq(-1).val(year+'-'+month+'-'+day);
+                }else {
+                    $('.jhrq').val(year+'-'+month+'-'+day);
+                };
+                $('.scsl').val(num);
+            };
+        });
+    };*/

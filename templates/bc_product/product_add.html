@@ -1,0 +1,126 @@
+{% extends base_template %}
+{% load i18n %}
+
+{% load xadmin_tags %}
+{% load crispy_forms_tags %}
+{% block extrastyle %}
+    <link rel="stylesheet" href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <script src="/static/js/jquery-1.12.4.min.js"></script>
+    <script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="/static/js/barcodesystem/bc_product/bc_product_add.js"></script>
+    <link rel="stylesheet" href="/static/css/production.css">
+{% endblock %}
+
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+
+{% block nav_title %}{% if model_icon %}<i class="{{model_icon}}"><sub class="fa fa-{% if add%}plus{%else%}pencil{%endif%}"></sub></i> {% endif %}
+{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <form class="form-horizontal" method="post" action="/product/product_save" enctype="multipart/form-data" id="form_submit">
+            {%csrf_token%}
+            <div class="form-group has-feedback">
+                <label class="col-sm-2 control-label">产品编号<span class="" style="color: red">*</span></label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="cpid" id="cpid" value="" aria-describedby="inputSuccess2Status">
+                    <span class="tips"></span>
+                </div>
+                <label class="col-sm-2 control-label">产品名称<span class="" style="color: red">*</span></label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="cpmc" id="cpmc" value="">
+                    <span class="tips"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">规格</label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="gg" id="gg" value="">
+                </div>
+                <label class="col-sm-2 control-label">单包重</label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="dbz" id="dbz" value="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">批准文号</label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="pw" id="pw" value="">
+                </div>
+                <label class="col-sm-2 control-label">标准编号</label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="bz" id="bz" value="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">配方编号<span class="" style="color: red">*</span></label>
+                <div class="col-sm-4 form-box">
+                    <input list="data" class="form-control" id="datas" name="datas" autocomplete="off">
+                    <span class="tips"></span>
+                    <datalist id="data">
+                        <select class="form-control" name="pbbh" id="pbbh">
+                        </select>
+                    </datalist>
+                </div>
+                <label class="col-sm-2 control-label">产品许可证</label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="cpxkz" id="cpxkz" value="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">包装上限</label>
+                <div class="col-sm-4 form-box">
+                    <input type="number" class="form-control" name="cpsx" id="cpsx" value="">
+                </div>
+                <label class="col-sm-2 control-label">包装下限</label>
+                <div class="col-sm-4 form-box">
+                    <input type="number" class="form-control" name="cpxx" id="cpxx" value="">
+                </div>
+            </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">保质期</label>
+            <div class="col-sm-4 form-box">
+                <input type="number" class="form-control" name="zbq" id="zbq" value="">
+            </div>
+            <label class="col-sm-2 control-label">储存条件</label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="cctj" id="cctj" value="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">产品商标</label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="cpsb" id="cpsb" value="">
+            </div>
+            <label class="col-sm-2 control-label">产品图片<span class="" style="color: red">*</span></label>
+            <div class="col-sm-4 form-box">
+                <input type="file" class="form-control" name="cppic" id="cppic">
+                <span class="tips"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">产品说明<span class="" style="color: red">*</span></label>
+            <div class="col-sm-4 form-box">
+                <input type="file" class="form-control" name="cpsm" id="cpsm" value="">
+                <span class="tips"></span>
+            </div>
+            <label class="col-sm-2 control-label">成品标签模板<span class="" style="color: red">*</span></label>
+            <div class="col-sm-4 form-box">
+                <input type="file" class="form-control" name="tempname" value="" id="tempname">
+                <span class="tips"></span>
+            </div>
+        </div>
+            <div class="form-actions well-sm clearfix">
+                <div class="btn-group clearfix show-xs save-group col-xs-12">
+                    <button type="submit" class="default btn btn-primary col-xs-10" name="_save" data-loading-text="保存中.."><i class="fa fa-save"></i> 保存</button>
+                    <button type="button" class="more btn btn-primary col-xs-2" data-toggle="collapse" data-target=".nav-collapse.more-btns"><i class="fa fa-ellipsis-vertical"></i></button>
+                </div>
+                <button type="submit" class="default btn btn-primary hide-xs" name="_save"><i class="fa fa-save"></i> 保存</button>
+                <div class="nav-collapse collapse more-btns">
+                    <input type="submit" class="btn btn-default" value="保存并增加另一个" name="_addanother"  />
+                    <input type="submit" class="btn btn-default" value="保存并继续编辑" name="_continue" />
+                </div>
+            </div>
+    </form>
+    </div>
+{% endblock %}

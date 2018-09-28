@@ -23,7 +23,7 @@ class Scjhb(models.Model):
 
 
 class Todaywork(models.Model):
-    ph = models.CharField(verbose_name='生产批号', primary_key=True, max_length=50)
+    ph = models.CharField(verbose_name='生产批号', unique=True, max_length=50)
     spl = models.ForeignKey('Scjhb', on_delete=models.CASCADE, verbose_name='生产单号', max_length=50)
     pldate = models.DateField(verbose_name='计划日期')
     workno = models.IntegerField(verbose_name='生产顺序')

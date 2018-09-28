@@ -16,7 +16,9 @@
 .table-condensed>thead>tr>th{
     padding: 0px;
 }
-
+.tips{
+    color: red;
+}
 .tr th{
     text-align: center;
 }
@@ -24,52 +26,31 @@
     padding: 5px;
     border: 1px solid #ccc;
     text-align: center;
-    width: 95px;
+    width: 50px;
 }
-table .scph{
-    width: 120px;
+table .b_title{
+    width: 50px;
 }
-table .jhrq{
-    padding: 4px;
+table .plno{
+    width: 150px;
+}
+table .datas{
+    width: 150px;
+}
+table .bzgl{
+    width: 150px;
+}
+table .topz{
+    width: 150px;
+}
+table .lowz{
+    width: 150px;
+}
+table .dw{
     width: 160px;
 }
-table .sczt{
-    width: 30px;
-}
-.tips{
-    color: red;
-}
-
-/* 继承xadmin改写的css*/
-select {
-    max-width: 400px;
-}
-.control-label {
-    padding: 7px 10px;
-    font-weight: bold;
-}
-
-/*原料基础表css*/
-/*
-#piedw{
-    text-align:right;
-    padding-right: 0px;
-}
-
-#zbq{
-    text-align:right;
-    padding-right: 0px;
-}
-#goodzbq{
-    text-align:right;
-    padding-right: 0px;
-}*/
-.state{
-    position: absolute;
-    left: 375px;
-    top: 18px;
-    font-size: 16px;
-    font-style:normal;
+table .jno{
+    width: 150px;
 }
 .control-label{
     font-size: 16px;
@@ -85,3 +66,11 @@ select {
     color: #f5f5f5;
     background-color: #999999;
 }
+select {
+    max-width: 400px;
+}
+.control-label {
+    padding: 7px 10px;
+    font-weight: bold;
+}
+

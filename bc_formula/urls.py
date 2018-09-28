@@ -3,6 +3,8 @@ from . import views
 
 
 urlpatterns = [
-    path('index1', views.index1),
+    path('save_formula', views.save_formula),
+    path('query_formula<int:num>', views.query_formula),
+    path('update_formula', views.update_formula),
 ]
 
