@@ -18,7 +18,7 @@
 
 {% block content %}
     <div class="container">
-        <form class="form-horizontal" method="post" action="/production/production_save" id="form_submit">
+        <form class="form-horizontal" method="post" action="/production/save_production" id="form_submit">
             {%csrf_token%}
             <div class="form-group has-feedback">
                 <label class="col-sm-2 control-label">计划单号<span class="" style="color: red">*</span></label>
@@ -35,51 +35,63 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">产品编号<span class="" style="color: red">*</span></label>
                 <div class="col-sm-4 form-box">
-                    <input list="data" class="form-control" id="datas" name="datas" autocomplete="off">
+                    <input list="data_production_cpid" class="form-control data_production_cpid" name="data_production_cpid" autocomplete="off" value="">
                     <span class="tips"></span>
-                    <datalist id="data">
+                    <datalist id="data_production_cpid">
                         <select class="form-control" name="cpid" id="cpid">
                         </select>
                     </datalist>
                 </div>
+                <label class="col-sm-2 control-label">产品名称<span class="" style="color: red">*</span></label>
+                <div class="col-sm-4 form-box">
+                    <input list="data_production_cpname" class="form-control data_production_cpname" name="data_production_cpname" autocomplete="off" value="">
+                    <span class="tips"></span>
+                    <datalist id="data_production_cpname">
+                        <select class="form-control" name="cpname" id="cpname">
+                        </select>
+                    </datalist>
+                </div>
+            </div>
+            <div class="form-group">
                 <label class="col-sm-2 control-label">生产数量<span class="" style="color: red">*</span></label>
                 <div class="col-sm-4 form-box">
-                    <input type="number" class="form-control" name="sl" id="sl" value="">
+                    <input type="text" class="form-control" name="sl" id="sl" value="">
+                    <span class="tips"></span>
+                </div>
+                <label class="col-sm-2 control-label">批次数<span class="" style="color: red">*</span></label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="cs" id="cs" value="1">
                     <span class="tips"></span>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-2 control-label">批次数<span class="" style="color: red">*</span></label>
-                <div class="col-sm-4 form-box">
-                    <input type="number" class="form-control" name="cs" id="cs" value="">
-                    <span class="tips"></span>
-                </div>
                 <label class="col-sm-2 control-label">单位</label>
                 <div class="col-sm-4 form-box">
                     <select class="form-control" name="dw" id="dw">
-                        <option value="kg">kg</option>
-                        <option value="g">g</option>
+                        <option value="1">kg</option>
+                        <option value="2">g</option>
                     </select>
+                </div>
+                <label class="col-sm-2 control-label">班次</label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="bc" id="bc">
+                    <span class="tips"></span>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-2 control-label">班次</label>
-                <div class="col-sm-4 form-box">
-                    <input type="number" class="form-control" name="bc" id="bc">
-                </div>
                 <label class="col-sm-2 control-label">备注</label>
                 <div class="col-sm-4 form-box">
                     <input type="text" class="form-control" name="bz" id="bz">
                 </div>
             </div>
-            <div class="form-group">
+             <div class="form-group">
                 <div class="col-sm-offset-1 col-sm-4">
                     <label class="control-label">
                         <input type="checkbox" name="zt" checked="checked" value="1" id="zt"> 启用
                     </label>
                 </div>
             </div>
-            <input type="hidden" name="xdr" value="{{ user.username }}">
+            <input type="hidden" name="xdr" value="{{ user.id }}">
             <div class="form-actions well-sm clearfix">
                 <div class="btn-group clearfix show-xs save-group col-xs-12">
                     <button type="submit" class="default btn btn-primary col-xs-10" name="_save" data-loading-text="保存中.."><i class="fa fa-save"></i> 保存</button>

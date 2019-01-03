@@ -1,6 +1,7 @@
 import xadmin
 from .models import *
 from xadmin.layout import Main, Tab, Fieldset, Row, TabHolder, AppendedText, Side, Field, Col
+from bc_rmaterial.models import *
 
 '''
 class QypqyXadmin(object):  # 样品取样
@@ -23,7 +24,7 @@ class Qjybgfs(object):  # 检验报告副表
     style = 'table'
     model = Qjybgf
     extra = 1
-'''
+
 
 
 class QjybgXadmin(object):  # 检验报告
@@ -45,7 +46,7 @@ class QjybgXadmin(object):  # 检验报告
     )
     # inlines = [Qjybgfs, ]
 
-'''
+
 class Qjybzfs(object):  # 检验标准副表
     style = 'table'  # 属性设置为表格，那么在嵌套关联中回忆表格的形式展现
     model = QjybzF
@@ -90,8 +91,9 @@ class QjcffXadmin(object):  # 检测方法
         ),
     )
 '''
+
 # xadmin.site.register(Qypqy, QypqyXadmin)
-xadmin.site.register(Qjybg, QjybgXadmin)
+# xadmin.site.register(Qjybg, QjybgXadmin)
 # xadmin.site.register(Qjybz, QjybzXadmin)
 # xadmin.site.register(Qjcxm, QjcxmXadmin)
 # xadmin.site.register(Qjcff, QjcffXadmin)

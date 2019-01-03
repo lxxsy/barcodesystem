@@ -2,11 +2,13 @@
  * Created by LILI on 2018/7/10.
  */
 $(function () {
-    var error_spl = true;
-    var error_scrq = true;
-    var error_cpid = true;
-    var error_sl = true;
-    var error_cs = true;
+    var error_spl = false;
+    var error_scrq = false;
+    var error_cpid = false;
+    var error_cpname = false;
+    var error_sl = false;
+    var error_cs = false;
+    var error_bc = false;
     var error_scph = true;
     var error_jhrq = true;
     var error_ScsxRwcs = true;
@@ -36,7 +38,7 @@ $(function () {
                     return date;
                 };
                 $('#form_submit').html(template('scjhb', {spl: data.spl, scrq: data.scrq, cpid: data.cpid, username: data.username,
-                    sl: data.sl, cs: data.cs, dw: data.dw, zt: data.zt, bz: data.bz, bc: data.bc,
+                    sl: data.sl, cs: data.cs, dw: data.dw, zt: data.zt, bz: data.bz, bc: data.bc, cpname: data.cpname,
                     todaywork_list: JSON.parse(data.todaywork_list)}));
             }
         });
@@ -45,14 +47,14 @@ $(function () {
         $('.scph').each(function () {
             arr.push($(this).val());
         });
-        console.log(arr);
     };
     /*
         页面加载完毕触发ajax请求，获取所有的产品id，渲染到产品编号表单控件中，接着运行函数使计划副表产品与配方信息渲染出来
      */
-    $.get('/production/select_product1', function (data) {
+    $.get('/production/query_production1', function (data) {
         $.each(JSON.parse(data.cpml_list) ,function (index, item) {
             $('#cpid').append('<option value='+item.pk+'>'+item.pk+'</option>');
+            $('#cpname').append('<option value='+item.fields.cpmc+'>'+item.fields.cpmc+'</option>');
         });
     });
      /*
@@ -69,13 +71,13 @@ $(function () {
                     '<td><input type="text" name="pfbh" class="pfbh" readonly></td>'+
                     '<td><input type="text" name="pfmc" class="pfmc" readonly></td>'+
                     '<td><input type="number" name="rwcs" class="rwcs" value="1"><span class="tips"></span></td>'+
-                    '<td><input type="number" name="scsl" class="scsl"><span class="tips"></span></td>'+
+                    '<td><input type="text" name="scsl" class="scsl"><span class="tips"></span></td>'+
                     '<td><input type="number" name="scxh" class="scxh"></td>'+
                     '<td><input type="text" name="scbz" class="scbz"></td>'+
                     '<td><input type="checkbox" name="sczt" checked="checked" class="sczt" value="1" disabled></td>'+
                     '<td><a href="javascript:;" class="glyphicon glyphicon-remove f_delete"></a></td>'+
                 '</tr>');
-        var judge = 1;
+        var judge = 1;  // 当新增计划明细时，该值等于1，说明
         select_product(judge);
     });
     /*
@@ -212,7 +214,7 @@ $(function () {
             $('#datas').next().text('产品编号不能为空!').show();
             error_cpid = false;
         }else {
-            $.get('/production/select_product5', {current_value: current_value}, function (data) {
+            $.get('/production/query_production5', {current_value: current_value}, function (data) {
                 if (data.cpml_bool === 0){
                     $('#datas').next().text('没有此产品编号!').show();
                     error_cpid = false;
@@ -228,7 +230,7 @@ $(function () {
      */
     function select_product(judge) {
         var cpid = $('#datas').val();
-        $.get('/production/select_product2', {cpid: cpid}, function (data) {
+        $.get('/production/query_production2', {cpid: cpid}, function (data) {
             if (data.product_null != ''){
                 $('.cpbh').val(data.cpbh);
                 $('.cpmc').val(data.cpmc);
@@ -255,7 +257,7 @@ $(function () {
                 $('#spl').next().text('计划单号含有不允许符号!').show();
                 error_spl = false;
             }else{
-                $.get('/production/select_product3', {Original: Original, spl: spl}, function (data) {
+                $.get('/production/query_production3', {Original: Original, spl: spl}, function (data) {
                     if (data.bool === 0){
                         $('#spl').next().text('计划单号已存在!').show();
                         error_spl = false;
@@ -295,19 +297,16 @@ $(function () {
      */
     function sl_judge() {
         var sl = $('#sl').val();
-        var re = /\.+/;
-        if(sl.length === 0){
-            $('#sl').next().text('请输入正确数字').show();
-            error_sl = false;
-        }else if(sl <= 0){
+        var re = /^\d+\.?\d*$/;
+        if (sl <= 0){
             $('#sl').next().text('不能小于或等于0').show();
             error_sl = false;
-        }else if(re.test(sl)){
-            $('#sl').next().text('不能为小数').show();
-            error_sl = false;
-        }else {
+        }else if (re.test(sl)){
             $('#sl').next().hide();
             error_sl = true;
+        }else{
+            $('#sl').next().text('请输入正确数字').show();
+            error_sl = false;
         };
     };
      /*
@@ -357,7 +356,7 @@ $(function () {
                 error_scph = false;
             }else {
                 $.ajax({
-                    url:'/production/select_product4',
+                    url:'/production/query_production4',
                     data:{"arr":arr, "scph": scph},
                     type:"get",
                     traditional:true,
@@ -430,30 +429,29 @@ $(function () {
         功能： 判断计划明细表生产数量的输入是否合理
      */
     function scsl_judge($this_scsl, scsl) {
+        $('.scsl').next().hide();
         var sl = $('#sl').val(); // 100
-        var re = /\./;
+        var re = /^\d+\.?\d*$/;
         var num = 0;
         $.each($('.scsl'), function (index, item) {
-            num += parseInt(item.value);
+            num += parseFloat(item.value);
         });
+        console.log(num);
         if (num > sl){
             console.log('a');
             $($this_scsl).next().text('数量已超出').show();
             error_scsl = false;
             return false;
         };
-        if(scsl.length === 0){
-            $($this_scsl).next().text('请输入正确数字').show();
-            error_scsl = false;
-        }else if(scsl <= 0){
+        if (scsl <= 0){
             $($this_scsl).next().text('不能小于或等于0').show();
             error_scsl = false;
-        }else if(re.test(scsl)){
-            $($this_scsl).next().text('不能为小数').show();
-            error_scsl = false;
-        }else {
+        }else if (re.test(scsl)){
             $($this_scsl).next().hide();
             error_scsl = true;
+        }else{
+            $($this_scsl).next().text('请输入正确数字').show();
+            error_scsl = false;
         };
     };
 });

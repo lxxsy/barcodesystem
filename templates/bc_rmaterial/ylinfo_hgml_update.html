@@ -1,0 +1,111 @@
+{% extends base_template %}
+{% load i18n %}
+
+{% load xadmin_tags %}
+{% load crispy_forms_tags %}
+{% block extrastyle %}
+    <link rel="stylesheet" href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <script src="/static/js/jquery-1.12.4.min.js"></script>
+    <script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="/static/js/template-web.js"></script>
+    <script src="/static/js/barcodesystem/bc_rmaterial/ylinfo_hgml_update.js"></script>
+    <link rel="stylesheet" href="/static/css/production.css">
+{% endblock %}
+
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+
+{% block nav_title %}{% if model_icon %}<i class="{{model_icon}}"><sub class="fa fa-{% if add%}plus{%else%}pencil{%endif%}"></sub></i> {% endif %}
+{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <input type="hidden" id="ylinfo_hgml_id" value="{{ object_id }}">
+    <form class="form-horizontal" method="post" action="/rmaterial/save_ylinfo_hgml" id="form_submit">
+    </form>
+    <script type="text/template" id="ylinfo_hgml">
+        {%csrf_token%}
+        <div class="form-group has-feedback">
+            <label class="col-sm-2 control-label">原料代码<span class="" style="color: red">*</span></label>
+            <div class="col-sm-4 form-box">
+                <input list="data_ylinfo_hgml_ylid" class="form-control data_ylinfo_hgml_ylid" name="data_ylinfo_hgml_ylid" autocomplete="off" value="<%- ylid %>" readonly>
+                <span class="tips"></span>
+                <datalist id="data_ylinfo_hgml_ylid">
+                    <select class="form-control" name="ylid" id="ylid">
+                    </select>
+                </datalist>
+            </div>
+            <label class="col-sm-2 control-label">原料名称<span class="asteriskField" style="color: red">*</span></label>
+            <div class="col-sm-4 form-box">
+                <input list="data_ylinfo_hgml_ylname" class="form-control data_ylinfo_hgml_ylname" name="data_ylinfo_hgml_ylname" autocomplete="off" value="<%- ylname %>" readonly>
+                <span class="tips"></span>
+                <datalist id="data_ylinfo_hgml_ylname">
+                    <select class="form-control" name="ylname" id="ylname">
+                    </select>
+                </datalist>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">供应商代码</label>
+            <div class="col-sm-4 form-box">
+                <input list="data_ylinfo_hgml_gyscode" class="form-control data_ylinfo_hgml_gyscode" name="data_ylinfo_hgml_gyscode" autocomplete="off" value="<%- gyscode %>" readonly>
+                <span class="tips"></span>
+                <datalist id="data_ylinfo_hgml_gyscode">
+                    <select class="form-control" name="gyscode" id="gyscode">
+                    </select>
+                </datalist>
+            </div>
+            <label class="col-sm-2 control-label">供应商名称</label>
+            <div class="col-sm-4 form-box">
+                <input list="data_ylinfo_hgml_gysname" class="form-control data_ylinfo_hgml_gysname" name="data_ylinfo_hgml_gysname" autocomplete="off" value="<%- gysname %>" readonly>
+                <span class="tips"></span>
+                <datalist id="data_ylinfo_hgml_gysname">
+                    <select class="form-control" name="gysname" id="gysname">
+                    </select>
+                </datalist>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">生产许可证号</label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="scxkzh" id="scxkzh" value="<%- scxkzh %>">
+            </div>
+            <label class="col-sm-2 control-label">产品批准文号</label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="cppzwh" id="cppzwh" value="<%- cppzwh %>">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">产品标准编号</label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="cpbzbh" id="cpbzbh" value="<%- cpbzbh %>">
+            </div>
+            <label class="col-sm-2 control-label">进口产品登记证号</label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="jkcpdjz" id="jkcpdjz" value="<%- jkcpdjz %>">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">备注</label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="bz" id="bz" value="<%- bz %>">
+            </div>
+        </div>
+        <input type="hidden" name="proof_ylid" value="<%- ylid %>">
+        <input type="hidden" name="proof_gyscode" value="<%- gyscode %>">
+        <div class="form-actions well-sm clearfix">
+            <a href="/admin/bc_rmaterial/ylinfo_hgml/{{ object_id }}/delete/" class="btn btn-danger deletelink col-xs-2 show-xs"><i class="fa fa-trash-o"></i></a>
+            <div class="btn-group clearfix show-xs save-group col-xs-10">
+                <button type="submit" class="default btn btn-primary col-xs-10" name="_save" data-loading-text="保存中.."><i class="fa fa-save"></i> 保存</button>
+                <button type="button" class="more btn btn-primary col-xs-2" data-toggle="collapse" data-target=".nav-collapse.more-btns"><i class="fa fa-ellipsis-vertical"></i></button>
+            </div>
+            <button type="submit" class="default btn btn-primary hide-xs" name="_save"><i class="fa fa-save"></i> 保存</button>
+            <div class="nav-collapse collapse more-btns">
+                <input type="submit" class="btn btn-default" value="保存并增加另一个" name="_addanother"  />
+                <input type="submit" class="btn btn-default" value="保存并继续编辑" name="_continue" />
+            </div>
+            <a href="/admin/bc_rmaterial/ylinfo_hgml/{{ object_id }}/delete/" class="btn btn-danger deletelink pull-right hide-xs"><i class="fa fa-trash-o"></i> 删除</a>
+        </div>
+    </script>
+</div>
+{% endblock %}
+

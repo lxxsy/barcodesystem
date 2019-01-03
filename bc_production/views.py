@@ -2,17 +2,19 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 from .models import *
 from bc_product.models import *
+from bc_rmaterial.models import *
 from django.core import serializers, paginator
 from django.db import transaction
 from django.contrib.auth.models import User
-from django.db.models import Max
+from django.db.models import Max, Sum, Avg, Min, Count
+from django.db import connection
+from django.template.response import TemplateResponse
 import re
 import psycopg2
 import datetime
-from django.template.response import TemplateResponse
 
 
-def select_product(request, num):
+def query_production(request, num):
     '''
         接收ajax请求，查询数据并提交,num变化查询的数据会变化
     '''
@@ -56,12 +58,23 @@ def select_product(request, num):
             scph_bool = 0
         return JsonResponse({'scph_bool': scph_bool})
     elif num == 5:
-        current_value = request.GET.get('current_value')
-        cpml = Cpml.objects.filter(cpid=current_value)
-        cpml_bool = 0
+        cpid = request.GET.get('cpid')
+        cpml = Cpml.objects.filter(cpid=cpid)
+        cpid_bool = 0
+        cpmc = ''
         if cpml:
-            cpml_bool = 1
-        return JsonResponse({'cpml_bool': cpml_bool})
+            cpid_bool = 1
+            cpmc = cpml[0].cpmc
+        return JsonResponse({'cpid_bool': cpid_bool, 'cpmc': cpmc})
+    elif num == 6:
+        cpname = request.GET.get('cpname')
+        cpml = Cpml.objects.filter(cpmc=cpname)
+        cpname_bool = 0
+        cpid = ''
+        if cpml:
+            cpname_bool = 1
+            cpid = cpml[0].cpid
+        return JsonResponse({'cpname_bool': cpname_bool, 'cpid': cpid})
 
 
 def update_production(request):
@@ -75,6 +88,7 @@ def update_production(request):
     spl = scjhb.spl
     scrq = scjhb.scrq
     cpid = scjhb.cpid.cpid
+    cpname = scjhb.cpid.cpmc
     username = scjhb.xdr.username
     sl = scjhb.sl
     cs = scjhb.cs
@@ -83,8 +97,8 @@ def update_production(request):
     bz = scjhb.bz
     bc = scjhb.bc
     todaywork_list = serializers.serialize('json', scjhb.todaywork_set.all().order_by('pk'))
-    return JsonResponse({'spl': spl, 'scrq': scrq, 'cpid': cpid, 'username': username, 'sl': sl, 'cs': cs, 'dw': dw,
-                         'zt': zt, 'bz': bz, 'bc': bc, 'todaywork_list': todaywork_list})
+    return JsonResponse({'spl': spl, 'scrq': scrq, 'cpid': cpid, 'cpname': cpname, 'username': username, 'sl': sl,
+                         'cs': cs, 'dw': dw, 'zt': zt, 'bz': bz, 'bc': bc, 'todaywork_list': todaywork_list})
 
 
 def add_production(request):
@@ -99,14 +113,15 @@ def add_production(request):
     # return render(request, 'bc_products/cpsm/2018/09/07/4号.html')
 
 
-def production_save(request):
+def save_production(request):
     '''
         保存生产计划时，由此视图处理
     '''
     proof = request.POST.get('proof')
     spl = request.POST.get('spl')
     scrq = request.POST.get('scrq')
-    cpid = request.POST.get('datas')
+    cpid = request.POST.get('data_production_cpid')
+    cpname = request.POST.get('data_production_cpname')
     sl = request.POST.get('sl')
     cs = request.POST.get('cs')
     dw = request.POST.get('dw')
@@ -128,21 +143,38 @@ def production_save(request):
     scxh = request.POST.getlist('scxh')
     scbz = request.POST.getlist('scbz')
     zt = True if zt == '1' else False
-    user = User.objects.get(username=xdr)
-    pattern = re.compile(r'\.+')
-    if (spl == '' or scrq == '' or cpid == '' or sl == '' or pattern.search(sl) or cs == '' or
-            pattern.search(cs) or xdr == ''):
+    # user = User.objects.get(username=xdr)
+    pattern_one = re.compile(r'^[1-9][0-9]?$')
+    pattern_two = re.compile(r'^[0-9]+\.?[0-9]*$')
+    pattern_three = re.compile(r'^0+\.?0*$')
+    if (spl == '' or scrq == '' or cpid == '' or cpname == '' or sl == '' or cs == '' or xdr == '' or
+            scph.count('') or jhrq.count('') or scsx.count('') or rwcs.count('') or scsl.count('')):
+        return redirect('/admin/bc_production/scjhb/add/')
+    if pattern_two.match(sl):
+        if pattern_three.match(sl):
+            return redirect('/admin/bc_production/scjhb/add/')
+    else:
+        return redirect('/admin/bc_production/scjhb/add/')
+    if not pattern_one.match(cs):
         return redirect('/admin/bc_production/scjhb/add/')
     if not bc.isdigit():
         bc = None
-    connection = psycopg2.connect(database='barcodesystem', user='postgres', password='941128', port=5432,
-                                  host='localhost')
     cursor = connection.cursor()
     if not proof:
+        if Scjhb.objects.filter(spl=spl):
+            return redirect('/admin/bc_production/scjhb/add/')
+        # 获取当天的日期
         c_date = datetime.date.today()
-        todyawork = Todaywork.objects.all().aggregate(Max('pk'))  # 取计划附表id的最大值
-        todaywork_ph = todyawork.get('pk__max')
-        if todaywork_ph is None:
+        if SystemParameter.objects.all().exists():
+            pass
+        else:
+            SystemParameter.objects.create(id='wybs', lldh=1, scph=1)
+        # 取计划附表id的最大值,aggregate()为聚合函数，获取的结果值是一个字典{'pk__max': (pk值)或(None)}
+        todaywork = Todaywork.objects.aggregate(Max('pk'))
+        # 取键'pk__max'对应的值
+        todaywork_ph = todaywork.get('pk__max')
+        if todaywork_ph is None:  # 说明是新表，ph计数从0开始
+            # 修改系统表的批号字段为数值1
             num_ber = 0
         else:
             ph = Todaywork.objects.filter(pk=todaywork_ph)[0].ph
@@ -154,7 +186,7 @@ def production_save(request):
             else:
                 num_ber = 0
         try:
-            cursor.callproc('scjhb_I', (spl, scrq, sl, cs, dw, bc, zt, bz, cpid, user.id, num_ber))
+            cursor.callproc('scjhb_I', (spl, scrq, cpname, sl, cs, dw, bc, zt, bz, cpid, xdr, num_ber))
             connection.commit()
             cursor.close()
             connection.close()
@@ -182,7 +214,7 @@ def production_save(request):
         for rwcs_single in rwcs:
             new_rwcs.append(int(rwcs_single))
         for scsl_single in scsl:
-            new_scsl.append(int(scsl_single))
+            new_scsl.append(float(scsl_single))
         for scxh_single in scxh:
             if scxh_single == '':
                 scxh_single = None

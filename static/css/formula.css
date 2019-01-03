@@ -32,25 +32,28 @@ table .b_title{
     width: 50px;
 }
 table .plno{
-    width: 150px;
+    width: 50px;
 }
 table .datas{
-    width: 150px;
+    width: 200px;
+}
+table .data_name{
+    width: 200px;
 }
 table .bzgl{
-    width: 150px;
+    width: 130px;
 }
 table .topz{
-    width: 150px;
+    width: 130px;
 }
 table .lowz{
-    width: 150px;
+    width: 130px;
 }
 table .dw{
-    width: 160px;
+    width: 65px;
 }
 table .jno{
-    width: 150px;
+    width: 70px;
 }
 .control-label{
     font-size: 16px;

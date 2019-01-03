@@ -4,7 +4,7 @@
 {% load xadmin_tags %}
 {% load crispy_forms_tags %}
 {% block extrastyle %}
-    <link rel="stylesheet" href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/bootstrap-3.3.7-dist/css/bootstrap.css">
     <script src="/static/js/jquery-1.12.4.min.js"></script>
     <script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
     <script src="/static/js/template-web.js"></script>
@@ -72,14 +72,15 @@
             <a href="javascript:;" class="add-detailed glyphicon glyphicon-plus navbar-right"></a>
         </div>
         <table class="table table-condensed">
-            <thead>
+            <thead class="thead">
                 <tr class="tr">
                     <th class="b_title">序号<span class="" style="color: red">*</span></th>
                     <th class="b_title">原料代码<span class="" style="color: red">*</span></th>
+                    <th class="b_title">原料名称<span class="" style="color: red">*</span></th>
                     <th class="b_title">标准值<span class="" style="color: red">*</span></th>
                     <th class="b_title">上限<span class="" style="color: red">*</span></th>
                     <th class="b_title">下限<span class="" style="color: red">*</span></th>
-                    <th>单位</th>
+                    <th class="b_title">单位</th>
                     <th class="b_title">投料顺序<span class="" style="color: red">*</span></th>
                     <th class="b_title">称零头</th>
                     <th class="b_title">追溯</th>
@@ -87,12 +88,20 @@
             </thead>
             <tbody class="tbody">
                 <tr class="bodytr">
-                    <td><input type="number" name="plno" class="plno" value=""><span class="tips"></span></td>
+                    <td><input type="text" name="plno" class="plno" value="1" readonly><span class="tips"></span></td>
                     <td>
-                        <input list="data" class="form-control datas" name="datas" autocomplete="off">
+                        <input list="data" class="form-control datas" name="datas" autocomplete="off" value="">
                         <span class="tips"></span>
                         <datalist id="data">
                             <select class="form-control" name="ylid" id="ylid">
+                            </select>
+                        </datalist>
+                    </td>
+                    <td>
+                        <input list="data_name" class="form-control data_name" name="data_name" autocomplete="off" value="">
+                        <span class="tips"></span>
+                        <datalist id="data_name">
+                            <select class="form-control" name="ylname" id="ylname">
                             </select>
                         </datalist>
                     </td>
@@ -101,8 +110,8 @@
                     <td><input type="text" name="lowz" class="lowz" value=""><span class="tips"></span></td>
                     <td>
                         <select class="form-control dw" name="dw">
-                            <option value="kg">kg</option>
-                            <option value="g">g</option>
+                            <option value="1">kg</option>
+                            <option value="2">g</option>
                         </select>
                     </td>
                     <td><input type="number" name="jno" class="jno" value=""><span class="tips"></span></td>

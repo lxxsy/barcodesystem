@@ -28,22 +28,6 @@ class Cpml(models.Model):
         verbose_name_plural = '产品目录基础表'
 
 
-class Cprk(models.Model):
-    cpph = models.CharField(verbose_name='成品批号', max_length=50)
-    cpid = models.CharField(verbose_name='成品编号', max_length=20)
-    cpmc = models.CharField(verbose_name='成品名称', max_length=20)
-    rkdate = models.DateTimeField(auto_now_add=True, verbose_name='入库日期')
-    rksl = models.IntegerField(verbose_name='入库数量')
-    bz = models.CharField(verbose_name='备注', max_length=50, blank=True, null=True)
-    rkczy = models.CharField(verbose_name='入库操作员', max_length=50, blank=True, null=True)
-    rklxid = models.IntegerField(verbose_name='入库类型ID', blank=True, null=True)
-
-    class Meta:
-        db_table = 'cprk'
-        verbose_name = '成品'
-        verbose_name_plural = '成品入库表'
-
-
 
 
 

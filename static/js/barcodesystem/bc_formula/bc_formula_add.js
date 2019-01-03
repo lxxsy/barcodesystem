@@ -1,21 +1,23 @@
 
 $(function () {
-    var error_pbbh = true;
-    var error_pbname = true;
-    var error_scsx = true;
-    var error_scxh = true;
-    var error_plno = true;
-    var error_ylid = true;
-    var error_bzgl = true;
-    var error_topz = true;
-    var error_lowz = true;
-    var error_jno = true;
+    var error_pbbh = false;
+    var error_pbname = false;
+    var error_scsx = false;
+    var error_scxh = false;
+    var error_ylid = false;
+    var error_ylname = false;
+    var error_bzgl = false;
+    var error_topz = false;
+    var error_lowz = false;
+    var error_jno = false;
+    var plno_num = 1;  // 此值为配方明细序号字段的值，默认为1，每当增加一行配方明细时，此变量加1，每当删除一行此变量减一
     /*
-        页面加载完毕触发ajax请求，获取所有的产品id，渲染到产品编号表单控件中，接着运行函数使计划副表产品与配方信息渲染出来
+        页面加载完毕触发ajax请求，获取所有的原料信息，渲染到原料代码与原料名称表单控件中
      */
     $.get('/formula/query_formula1', function (data) {
         $.each(JSON.parse(data.ylinfo) ,function (index, item) {
             $('#ylid').append('<option value='+item.pk+'>'+item.pk+'</option>');
+            $('#ylname').append('<option value='+item.fields.ylname+'>'+item.fields.ylname+'</option>');
         });
     });
     /*
@@ -43,20 +45,20 @@ $(function () {
         scxh_judge();
     });
     /*
-        判断配方副表的序号是否合理
-     */
-    $('.tbody').on('blur', '.plno', function () {
-        var $this_plno = $(this);
-        var plno = $(this).val();
-        plno_judge($this_plno, plno);
-    });
-    /*
         判断配方副表的原料代码是否合理
      */
-    $('.tbody').on('blur', '.datas', function () {
+    $('.tbody').on('change', '.datas', function () {
         var $this_ylid = $(this);
         var ylid = $(this).val();
         ylid_judge($this_ylid, ylid);
+    });
+     /*
+        判断配方副表的原料名称是否合理
+     */
+    $('.tbody').on('change', '.data_name', function () {
+        var $this_ylname = $(this);
+        var ylname = $(this).val();
+        ylname_judge($this_ylname, ylname);
     });
     /*
         判断配方副表的标准值是否合理
@@ -85,7 +87,7 @@ $(function () {
     /*
         判断配方副表的投料顺序是否合理
      */
-    $('.tbody').on('blur', '.jno', function () {
+    $('.tbody').on('change', '.jno', function () {
         var $this_jno = $(this);
         var jno = $(this).val();
         jno_judge($this_jno, jno);
@@ -101,6 +103,10 @@ $(function () {
      */
     $('.tbody').on('click', '.f_delete', function () {
         $(this).parents('tr').remove();
+        plno_num -= 1;
+        $('.bodytr').each(function () {
+            $(this).find('.plno').val($(this).index()+1);
+        });
     });
      /*
         点击副表称零头或追溯时触发，判断是否选中此框
@@ -119,26 +125,26 @@ $(function () {
         pbbh_judge();
         pbname_judge();
         scsx_judge();
-        scsx_judge();
+        scxh_judge();
         $('.tbody tr').each(function () {
-            var $this_plno = $(this).find('.plno');
             var $this_ylid = $(this).find('.datas');
+            var $this_ylname = $(this).find('.data_name');
             var $this_bzgl = $(this).find('.bzgl');
             var $this_topz = $(this).find('.topz');
             var $this_lowz = $(this).find('.lowz');
             var $this_jno = $(this).find('.jno');
-            var plno = $(this).find('.plno').val();
             var ylid = $(this).find('.datas').val();
+            var ylname = $(this).find('.data_name').val();
             var bzgl = $(this).find('.bzgl').val();
             var topz = $(this).find('.topz').val();
             var lowz = $(this).find('.lowz').val();
             var jno = $(this).find('.jno').val();
-            plno_judge($this_plno, plno);
-            if (error_plno === false){
-                return false;
-            };
             ylid_judge($this_ylid, ylid);
             if (error_ylid === false){
+                return false;
+            };
+            ylname_judge($this_ylname, ylname);
+            if (error_ylname === false){
                 return false;
             };
             bzgl_judge($this_bzgl, bzgl);
@@ -159,8 +165,8 @@ $(function () {
             };
         });
         if(error_pbbh === true && error_pbname === true && error_scsx === true && error_scxh === true &&
-            error_plno === true && error_ylid === true && error_bzgl === true && error_topz === true &&
-            error_lowz === true && error_jno === true){
+            error_ylid === true && error_ylname === true && error_bzgl === true &&
+            error_topz === true && error_lowz === true && error_jno === true){
             return true;
         }else {
             return false;
@@ -180,14 +186,20 @@ $(function () {
                 $('#pbbh').next().text('配方编号含有不允许符号!').show();
                 error_pbbh = false;
             }else{
-                $.get('/formula/query_formula2', {pbbh: pbbh}, function (data) {
-                    if (data.bool === 0){
-                        $('#pbbh').next().text('配方编号已存在!').show();
-                        error_pbbh = false;
-                    }else {
-                        $('#pbbh').next().hide();
-                        error_pbbh = true;
-                    };
+                $.ajax({
+                    url:'/formula/query_formula2',
+                    data:{pbbh: pbbh},
+                    type:"get",
+                    async:false,
+                    success:function(data){
+                        if (data.bool === 0){
+                            $('#pbbh').next().text('配方编号已存在!').show();
+                            error_pbbh = false;
+                        }else {
+                            $('#pbbh').next().hide();
+                            error_pbbh = true;
+                        };
+                    }
                 });
             };
         };
@@ -250,89 +262,88 @@ $(function () {
         };
     };
     /*
-        功能： 判断配方副表序号的输入是否合理
-     */
-    function plno_judge($this_plno, plno) {
-        $('.plno').next().hide();
-        var re = /\.+/;
-        var judge = 0;
-        $.each($('.plno').not($($this_plno)) ,function (index, item) {
-            if (plno === item.value){
-                $($this_plno).next().text('序号已存在').show();
-                error_plno = false;
-                judge = 1;
-                return false;
-            };
-        });
-        if (judge === 1){
-            return false;
-        };
-        if (plno.length === 0){
-            $($this_plno).next().text('请输入正确数字').show();
-            error_plno = false;
-        }else if(plno <= 0) {
-            $($this_plno).next().text('不能小于或等于0').show();
-            error_plno = false;
-        }else {
-            if (re.test(plno)){
-                $($this_plno).next().text('不能为小数').show();
-                error_plno = false;
-            }else {
-                $.ajax({
-                    url:'/formula/query_formula3',
-                    data:{"plno": plno},
-                    type:"get",
-                    traditional:true,
-                    success:function(data){
-                        if (data.plno_bool === 0){
-                            $($this_plno).next().text('序号已存在').show();
-                            error_plno = false;
-                        }else {
-                            $($this_plno).next().hide();
-                            error_plno = true;
-                        };
-                    }
-                });
-            };
-        };
-    };
-    /*
         功能： 判断配方副表原料代码的输入是否合理
      */
     function ylid_judge($this_ylid, ylid) {
         $('.datas').next().hide();
-        var judge = 0;
-        $.each($('.datas').not($($this_ylid)) ,function (index, item) {
-            if (ylid === item.value){
-                $($this_ylid).next().text('原料代码已存在').show();
-                error_ylid = false;
-                judge = 1;
-                return false;
-            };
-        });
-        if (judge === 1){
-            return false;
-        };
-        if (ylid === ''){
-            $($this_ylid).next().text('原料代码不能为空!').show();
-            error_ylid = false;
-        }else {
-            $.get('/formula/query_formula4', {current_value: ylid}, function (data) {
+        $('.data_name').next().hide();
+        $.ajax({
+            url:'/formula/query_formula4',
+            data:{current_value: ylid},
+            type:"get",
+            async:false,
+            success:function(data){
+                $($this_ylid).parent().next().find('input').val(data.ylname);
                 if (data.ylid_bool === 0){
-                    $($this_ylid).next().text('没有此原料代码!').show();
+                    $($this_ylid).next().text('没有此原料!').show();
                     error_ylid = false;
                 }else {
-                    $($this_ylid).next().hide();
-                    error_ylid = true;
+                    $.each($('.datas').not($($this_ylid)) ,function (index, item) {
+                        if (ylid === item.value){
+                            $($this_ylid).next().text('原料已存在').show();
+                            error_ylid = false;
+                            return false;
+                        }else{
+                            error_ylid = true;
+                        };
+                    });
                 };
-            });
-        };
+            }
+        });
     };
-      /*
+     /*
+        功能： 判断配方副表原料名称的输入是否合理
+     */
+    function ylname_judge($this_ylname, ylname) {
+        $('.datas').next().hide();
+        $('.data_name').next().hide();
+        $.ajax({
+            url:'/formula/query_formula5',
+            data:{current_value: ylname},
+            type:"get",
+            async:false,
+            success:function(data){
+                $($this_ylname).parent().prev().find('input').val(data.ylid);
+                if (data.ylname_bool === 0){
+                    $($this_ylname).next().text('没有此原料!').show();
+                    error_ylname = false;
+                }else {
+                    $.each($('.data_name').not($($this_ylname)) ,function (index, item) {
+                        if (ylname === item.value){
+                            $($this_ylname).next().text('原料已存在').show();
+                            error_ylname = false;
+                            return false;
+                        }else{
+                            error_ylname = true;
+                        };
+                    });
+                };
+            }
+        });
+    };
+    /*
         功能： 判断配方副表的标准值输入是否合理
      */
     function bzgl_judge($this_bzgl, bzgl) {
-        var re = /^\d+\.?\d+$/;
+        $($this_bzgl).parent('td').siblings().eq(3).find('span').hide();
+        $($this_bzgl).parent('td').siblings().eq(4).find('span').hide();
+        var re = /^\d+\.?\d*$/;
+        var topz = $($this_bzgl).parent('td').siblings().eq(3).find('input').val();
+        var lowz = $($this_bzgl).parent('td').siblings().eq(4).find('input').val();
+        if (topz != ''){
+            if (bzgl > topz){
+                $($this_bzgl).next().text('不能大于上限').show();
+                error_bzgl = false;
+                return false;
+            };
+        };
+        if (lowz != ''){
+            if (bzgl < lowz){
+                $($this_bzgl).next().text('不能小于下限').show();
+                error_bzgl = false;
+                return false;
+            };
+        };
         if (re.test(bzgl)){
             $($this_bzgl).next().hide();
             error_bzgl = true;
@@ -345,7 +356,16 @@ $(function () {
         功能： 判断配方副表的上限输入是否合理
      */
     function topz_judge($this_topz, topz) {
-        var re = /^\d+\.?\d+$/;
+        $($this_topz).parent('td').siblings().eq(3).find('span').hide();
+        var re = /^\d+\.?\d*$/;
+        var bzgl = $($this_topz).parent('td').siblings().eq(3).find('input').val();
+        if (bzgl != ''){
+            if (topz < bzgl){
+                $($this_topz).next().text('不能小于标准值').show();
+                error_topz = false;
+                return false;
+            };
+        };
         if (re.test(topz)){
             $($this_topz).next().hide();
             error_topz = true;
@@ -358,7 +378,16 @@ $(function () {
         功能： 判断配方副表的下限输入是否合理
      */
     function lowz_judge($this_lowz, lowz) {
-        var re = /^\d+\.?\d+$/;
+        $($this_lowz).parent('td').siblings().eq(3).find('span').hide();
+        var re = /^\d+\.?\d*$/;
+        var bzgl = $($this_lowz).parent('td').siblings().eq(3).find('input').val();
+        if (bzgl != ''){
+            if (lowz > bzgl){
+                $($this_lowz).next().text('不能大于标准值').show();
+                error_lowz = false;
+                return false;
+            };
+        };
         if (re.test(lowz)){
             $($this_lowz).next().hide();
             error_lowz = true;
@@ -403,14 +432,17 @@ $(function () {
         增加配方明细
      */
     function tbody_append(){
-        $('.tbody').append('<tr>'+
-                    '<td><input type="number" name="plno" class="plno"><span class="tips"></span></td>'+
-                    '<td><input list="data" name="datas" class="form-control datas" autocomplete="off">' +
+        plno_num += 1;
+        $('.tbody').append('<tr class="bodytr">'+
+                    '<td><input type="text" name="plno" class="plno" value='+plno_num+' readonly><span class="tips"></span></td>'+
+                    '<td><input list="data" name="datas" class="form-control datas" autocomplete="off" value="">' +
                         '<span class="tips"></span><datalist id="data"><select name="ylid" id="ylid"></select></datalist></td>'+
+                    '<td><input list="data_name" name="data_name" class="form-control data_name" autocomplete="off" value="">' +
+                        '<span class="tips"></span><datalist id="data_name"><select name="ylname" id="ylname"></select></datalist></td>'+
                     '<td><input type="text" name="bzgl" class="bzgl"><span class="tips"></span></td>'+
                     '<td><input type="text" name="topz" class="topz"><span class="tips"></span></td>'+
                     '<td><input type="text" name="lowz" class="lowz"><span class="tips"></span></td>'+
-                    '<td><select class="form-control dw" name="dw"><option value="kg">kg</option><option value="g">g</option></select></td>'+
+                    '<td><select class="form-control dw" name="dw"><option value="1">kg</option><option value="2">g</option></select></td>'+
                     '<td><input type="number" name="jno" class="jno"><span class="tips"></span></td>'+
                     '<td><input type="checkbox" name="lt" checked="checked" class="lt" value="1"><input type="hidden" name="hlt" value="1" class="hlt"></td>'+
                     '<td><input type="checkbox" name="zs" checked="checked" class="zs" value="1"><input type="hidden" name="hzs" value="1" class="hzs"></td>'+
@@ -418,3 +450,45 @@ $(function () {
                 '</tr>');
     };
 });
+/*
+   var error_plno = true;
+   判断配方副表的序号是否合理
+    $('.tbody').on('blur', '.plno', function () {
+        var $this_plno = $(this);
+        var plno = $(this).val();
+        plno_judge($this_plno, plno);
+    });
+
+    功能： 判断配方副表序号的输入是否合理
+    function plno_judge($this_plno, plno) {
+        $('.plno').next().hide();
+        var re = /\.+/;
+        var judge = 0;
+        $.each($('.plno').not($($this_plno)) ,function (index, item) {
+            if (plno === item.value){
+                $($this_plno).next().text('序号已存在').show();
+                error_plno = false;
+                judge = 1;
+                return false;
+            };
+        });
+        if (judge === 1){
+            return false;
+        };
+        if (plno.length === 0){
+            $($this_plno).next().text('请输入正确数字').show();
+            error_plno = false;
+        }else if(plno <= 0) {
+            $($this_plno).next().text('不能小于或等于0').show();
+            error_plno = false;
+        }else {
+            if (re.test(plno)){
+                $($this_plno).next().text('不能为小数').show();
+                error_plno = false;
+            }else {
+                $($this_plno).next().hide();
+                error_plno = true;
+            };
+        };
+    };
+ */

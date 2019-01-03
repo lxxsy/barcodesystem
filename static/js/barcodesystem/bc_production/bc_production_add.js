@@ -2,11 +2,13 @@
  * Created by LILI on 2018/7/10.
  */
 $(function () {
-    var error_spl = true;
-    var error_scrq = true;
-    var error_cpid = true;
-    var error_sl = true;
-    var error_cs = true;
+    var error_spl = false;
+    var error_scrq = false;
+    var error_cpid = false;
+    var error_cpname = false;
+    var error_sl = false;
+    var error_cs = false;
+    var error_bc = false;
     var date = new Date();
     var year = date.getFullYear();
     var month = date.getMonth()+1;
@@ -20,13 +22,13 @@ $(function () {
     /*
         页面加载完毕触发ajax请求，获取所有的产品id，渲染到产品编号表单控件中，接着运行函数使计划副表产品与配方信息渲染出来
      */
-    $.get('/production/select_product1', function (data) {
+    $.get('/production/query_production1', function (data) {
         $.each(JSON.parse(data.cpml_list) ,function (index, item) {
             $('#cpid').append('<option value='+item.pk+'>'+item.pk+'</option>');
+            $('#cpname').append('<option value='+item.fields.cpmc+'>'+item.fields.cpmc+'</option>');
         });
     });
     $('#scrq').val(year+'-'+month+'-'+day); // 获取当前日期并渲染到计划日期输入框中
-
     /*
         计划单号失去焦点触发，判断输入的值是否合理
      */
@@ -42,11 +44,17 @@ $(function () {
     /*
         产品编号失去焦点后触发
      */
-    $('#datas').blur(function () {
-        datas_judge();
+    $('.data_production_cpid').change(function () {
+        data_production_cpid_judge();
+    });
+     /*
+        产品名称失去焦点后触发
+     */
+    $('.data_production_cpname').change(function () {
+        data_production_cpname_judge();
     });
     /*
-        数量失去焦点触发，判断输入的值是否合理
+        生产数量失去焦点触发，判断输入的值是否合理
      */
     $('#sl').blur(function () {
         sl_judge();
@@ -77,16 +85,23 @@ $(function () {
         };*/
     });
     /*
+        班次失去焦点触发，判断输入的值是否合理
+     */
+    $('#bc').blur(function () {
+        bc_judge();
+    });
+    /*
         提交表单触发，判断表单内容是否合理，合理提交到后台
      */
     $('#form_submit').submit(function () {
         spl_judge();
         scrq_judge();
-        datas_judge();
+        submit_cpid_judge();
         sl_judge();
         cs_judge();
-        if(error_cpid === true && error_spl === true && error_scrq === true && error_sl === true &&
-            error_cs === true){
+        bc_judge();
+        if(error_cpid === true && error_cpname === true && error_spl === true && error_scrq === true && error_sl === true &&
+            error_cs === true && error_bc === true){
             return true;
         }else {
             return false;
@@ -106,7 +121,7 @@ $(function () {
                 $('#spl').next().text('计划单号含有不允许符号!').show();
                 error_spl = false;
             }else{
-                $.get('/production/select_product3', {spl: spl}, function (data) {
+                $.get('/production/query_production3', {spl: spl}, function (data) {
                     if (data.bool === 0){
                         $('#spl').next().text('计划单号已存在!').show();
                         error_spl = false;
@@ -128,57 +143,108 @@ $(function () {
             $('#scrq').next().text('请输入准确的日期格式').show();
             error_scrq = false;
         }else if(arry[0] < year || arry[0].length != 4){
-            $('#scrq').next().text('请填写正确年份').show();
+            $('#scrq').next().text('请正确填写年份').show();
             error_scrq = false;
         }else if(arry[1] < month){
-            $('#scrq').next().text('请填写正确月份').show();
+            $('#scrq').next().text('请正确填写月份').show();
             error_scrq = false;
         }else if(arry[2] < day){
-            $('#scrq').next().text('填写的日期小于当前日期').show();
+            $('#scrq').next().text('请正确填写日期').show();
             error_scrq = false;
         }else {
             $('#scrq').next().hide();
             error_scrq = true;
         };
     };
-     /*
-        功能：判断产品编号的输入是否合理
+    /*
+        功能：当提交表单时触发此函数判断原料代码，和输入框判断不同
      */
-    function datas_judge() {
-        var current_value = $('#datas').val();
-        if (current_value === ''){
-            $('#datas').next().text('产品编号不能为空!').show();
-            error_cpid = false;
-        }else {
-            $.get('/production/select_product5', {current_value: current_value}, function (data) {
-                if (data.cpml_bool === 0){
-                    $('#datas').next().text('没有此产品编号!').show();
+    function submit_cpid_judge() {
+        var cpid = $('.data_production_cpid').val();
+        $.ajax({
+            url:'/production/query_production5',
+            data:{cpid: cpid},
+            type:"get",
+            async:false,
+            success:function(data){
+                if (data.cpid_bool === 0){
+                    $('.data_production_cpid').next().text('产品编号不能为空').show();
                     error_cpid = false;
+                    error_cpname = false;
                 }else {
-                    $('#datas').next().hide();
+                    $('.data_production_cpid').next().hide();
                     error_cpid = true;
+                    error_cpname = true;
                 };
-            });
-        };
+            }
+        });
     };
     /*
-        功能： 判断数量的输入是否合理
+        功能：判断产品编号的输入是否合理
+     */
+    function data_production_cpid_judge() {
+        $('.data_production_cpid').next().hide();
+        $('.data_production_cpname').next().hide();
+        var cpid = $('.data_production_cpid').val();
+        $.ajax({
+            url:'/production/query_production5',
+            data:{cpid: cpid},
+            type:"get",
+            async:false,
+            success:function(data){
+                $('.data_production_cpname').val(data.cpmc);
+                if (data.cpid_bool === 0){
+                    $('.data_production_cpid').next().text('产品不存在').show();
+                    error_cpid = false;
+                }else{
+                    $('.data_production_cpid').next().hide();
+                    error_cpid = true;
+                };
+            }
+        });
+    };
+    /*
+        功能：判断产品名称的输入是否合理
+     */
+    function data_production_cpname_judge() {
+        $('.data_production_cpid').next().hide();
+        $('.data_production_cpname').next().hide();
+        var cpname = $('.data_production_cpname').val();
+        $.ajax({
+            url:'/production/query_production6',
+            data:{cpname: cpname},
+            type:"get",
+            async:false,
+            success:function(data){
+                $('.data_production_cpid').val(data.cpid);
+                if (data.cpname_bool === 0){
+                    $('.data_production_cpname').next().text('产品不存在').show();
+                    error_cpname = false;
+                }else{
+                    $('.data_production_cpname').next().hide();
+                    error_cpname = true;
+                };
+            }
+        });
+    };
+    /*
+        功能： 判断生产数量的输入是否合理
      */
     function sl_judge() {
         var sl = $('#sl').val();
-        var re = /\.+/;
-        if(sl.length === 0){
-            $('#sl').next().text('请输入正确数字').show();
-            error_sl = false;
-        }else if(sl <= 0){
-            $('#sl').next().text('不能小于或等于0').show();
-            error_sl = false;
-        }else if(re.test(sl)){
-            $('#sl').next().text('不能为小数').show();
-            error_sl = false;
+        var re = /^[0-9]+\.?[0-9]*$/;
+        var two_re = /^0+\.?0*$/;
+        if (re.test(sl)){
+            if (two_re.test(sl)){
+                $('#sl').next().text('格式不正确或没有正确输入数字!').show();
+                error_sl = false;
+            }else {
+                $('#sl').next().hide();
+                error_sl = true;
+            };
         }else {
-            $('#sl').next().hide();
-            error_sl = true;
+            $('#sl').next().text('格式不正确或没有正确输入数字！').show();
+            error_sl = false;
         };
     };
     /*
@@ -186,19 +252,27 @@ $(function () {
      */
     function cs_judge() {
         var cs = $('#cs').val();
-        var re = /\.+/;
-        if(cs.length === 0){
-            $('#cs').next().text('请输入正确数字').show();
-            error_cs = false;
-        }else if(cs <= 0){
-            $('#cs').next().text('不能小于或等于0').show();
-            error_cs = false;
-        }else if(re.test(cs)){
-            $('#cs').next().text('不能为小数').show();
-            error_cs = false;
-        }else {
+        var re = /^[1-9][0-9]?$/;
+        if (re.test(cs)){
             $('#cs').next().hide();
             error_cs = true;
+        }else {
+            $('#cs').next().text('至多为2位数字或没有正确输入整数！').show();
+            error_cs = false;
+        };
+    };
+    /*
+        功能： 判断班次的输入是否合理
+     */
+    function bc_judge() {
+        var bc = $('#bc').val();
+        var re = /\D/;
+        if (re.test(bc)){
+            $('#bc').next().text('格式不正确或没有正确输入整数!').show();
+            error_bc = false;
+        }else {
+            $('#bc').next().hide();
+            error_bc = true;
         };
     };
 });

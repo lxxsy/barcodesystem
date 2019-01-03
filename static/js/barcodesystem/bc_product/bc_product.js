@@ -27,6 +27,7 @@ $(function () {
     $('#gg').blur(function () {
         gg_judge();
     });
+
     $('#cpsm').change(function () {
         cpsm_judge();
     });

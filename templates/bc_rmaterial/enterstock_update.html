@@ -1,0 +1,150 @@
+{% extends base_template %}
+{% load i18n %}
+
+{% load xadmin_tags %}
+{% load crispy_forms_tags %}
+{% block extrastyle %}
+    <link rel="stylesheet" href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <script src="/static/js/jquery-1.12.4.min.js"></script>
+    <script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="/static/js/template-web.js"></script>
+    <script src="/static/js/barcodesystem/bc_rmaterial/enterstock_update.js"></script>
+    <link rel="stylesheet" href="/static/css/production.css">
+{% endblock %}
+
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+
+{% block nav_title %}{% if model_icon %}<i class="{{model_icon}}"><sub class="fa fa-{% if add%}plus{%else%}pencil{%endif%}"></sub></i> {% endif %}
+{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <input type="hidden" id="enterstock_id" value="{{ object_id }}">
+    <form class="form-horizontal" method="post" action="/rmaterial/save_enterstock" id="form_submit">
+    </form>
+    <script type="text/template" id="enterstock">
+        {%csrf_token%}
+        <div class="form-group has-feedback">
+            <label class="col-sm-2 control-label">原料代码<span class="" style="color: red">*</span></label>
+            <div class="col-sm-4 form-box">
+                <input list="data_enterstock_ylid" class="form-control data_enterstock_ylid" name="data_enterstock_ylid" autocomplete="off" value="<%- ylid %>" readonly>
+                <span class="tips"></span>
+                <datalist id="data_enterstock_ylid">
+                    <select class="form-control" name="ylid" id="ylid">
+                    </select>
+                </datalist>
+            </div>
+            <label class="col-sm-2 control-label">原料名称<span class="asteriskField" style="color: red">*</span></label>
+            <div class="col-sm-4 form-box">
+                <input list="data_enterstock_ylname" class="form-control data_enterstock_ylname" name="data_enterstock_ylname" autocomplete="off" value="<%- ylname %>" readonly>
+                <span class="tips"></span>
+                <datalist id="data_enterstock_ylname">
+                    <select class="form-control" name="ylname" id="ylname">
+                    </select>
+                </datalist>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">供应商代码<span class="" style="color: red">*</span></label>
+            <div class="col-sm-4 form-box">
+                <select class="form-control" name="gyscode" id="gyscode">
+                    <option value="<%- gyscode %>"><%- gyscode %></option>
+                </select>
+                <span class="tips"></span>
+            </div>
+            <label class="col-sm-2 control-label">供应商名称<span class="" style="color: red">*</span></label>
+            <div class="col-sm-4 form-box">
+                <select class="form-control" name="gysname" id="gysname">
+                    <option value="<%- gysname %>"><%- gysname %></option>
+                </select>
+                <span class="tips"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">入库重量(kg)<span class="" style="color: red">*</span></label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="zl" id="zl" value="<%- zl %>">
+                <span class="tips"></span>
+            </div>
+            <label class="col-sm-2 control-label">入库日期</label>
+            <div class="col-sm-4 form-box">
+                <input type="date" class="form-control" name="rdate" id="rdate" value="<%- rdate %>" readonly>
+                <span class="tips"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">入库仓库<span class="" style="color: red">*</span></label>
+            <div class="col-sm-4 form-box">
+                <input list="data_enterstock_stockinfo" class="form-control data_enterstock_stockinfo" name="data_enterstock_stockinfo" autocomplete="off" value="<%- rkck %>" readonly>
+                <span class="tips"></span>
+                <datalist id="data_enterstock_stockinfo">
+                    <select class="form-control" name="rkck" id="rkck">
+                    </select>
+                </datalist>
+            </div>
+            <label class="col-sm-2 control-label">生产日期</label>
+            <div class="col-sm-4 form-box">
+                <input type="date" class="form-control" name="scrq" id="scrq" value="<%- scrq %>">
+                <span class="tips"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">原料批号</label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="clph" id="clph" value="<%- clph %>">
+            </div>
+            <label class="col-sm-2 control-label">单包重(kg)</label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="dbz" id="dbz" value="<%- dbz %>" readonly>
+                <span class="tips"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">外部条码</label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="lotbar" id="lotbar" value="<%- lotbar %>">
+                <span class="tips"></span>
+            </div>
+            <label class="col-sm-2 control-label">备注</label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="bz" id="bz" value="<%- bz %>">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">检验报告编号<span class="" style="color: red">*</span></label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="check1no" id="check1no" value="<%- check1no %>">
+                <span class="tips"></span>
+            </div>
+            <label class="col-sm-2 control-label">检验人</label>
+            <div class="col-sm-4 form-box">
+                <select class="form-control" name="qcmen" id="qcmen">
+                    <option value="<%- user_id %>"><%- qcmen %></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">原料条形码</label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="barcode" id="barcode" value="<%- barcode %>" readonly>
+            </div>
+        </div>
+        <input type="hidden" name="proof_id" id="proof_id" value="{{ object_id }}">
+        <input type="hidden" name="proof_zl" id="proof_zl" value="<%- zl %>">
+        <div class="form-actions well-sm clearfix">
+            <a href="/admin/bc_rmaterial/enterstock/{{ object_id }}/delete/" class="btn btn-danger deletelink col-xs-2 show-xs"><i class="fa fa-trash-o"></i></a>
+            <div class="btn-group clearfix show-xs save-group col-xs-10">
+                <button type="submit" class="default btn btn-primary col-xs-10" name="_save" data-loading-text="保存中.."><i class="fa fa-save"></i> 保存</button>
+                <button type="button" class="more btn btn-primary col-xs-2" data-toggle="collapse" data-target=".nav-collapse.more-btns"><i class="fa fa-ellipsis-vertical"></i></button>
+            </div>
+            <button type="submit" class="default btn btn-primary hide-xs" name="_save"><i class="fa fa-save"></i> 保存</button>
+            <div class="nav-collapse collapse more-btns">
+                <input type="submit" class="btn btn-default" value="保存并增加另一个" name="_addanother"  />
+                <input type="submit" class="btn btn-default" value="保存并继续编辑" name="_continue" />
+            </div>
+            <a href="javascript:;" class="btn btn-danger deletelink pull-right hide-xs enterstock_delete"><i class="fa fa-trash-o"></i> 删除</a>
+        </div>
+    </script>
+</div>
+{% endblock %}
+

@@ -42,6 +42,7 @@ def save_formula(request):
     add_edit = request.POST.get('_continue')
     plno = request.POST.getlist('plno')
     ylid = request.POST.getlist('datas')
+    ylname = request.POST.getlist('data_name')
     bzgl = request.POST.getlist('bzgl')
     topz = request.POST.getlist('topz')
     lowz = request.POST.getlist('lowz')
@@ -55,7 +56,7 @@ def save_formula(request):
     yx = True if yx == '1' else False
     pattern = re.compile(r'\.+')
     if (pbbh == '' or pbname == '' or scsx == '' or scxh == '' or pattern.search(scsx) or pattern.search(scxh) or
-            plno.count('') or ylid.count('') or bzgl.count('') or topz.count('') or lowz.count('') or jno.count('')):
+            plno.count('') or ylid.count('') or ylname.count('') or bzgl.count('') or topz.count('') or lowz.count('') or jno.count('')):
         return redirect('/admin/bc_production/scjhb/add/')
     connection = psycopg2.connect(database='barcodesystem', user='postgres', password='941128', port=5432,
                                   host='localhost')
@@ -64,6 +65,7 @@ def save_formula(request):
     new_bzgl = []
     new_topz = []
     new_lowz = []
+    new_dw = []
     new_jno = []
     new_hlt = []
     new_hzs = []
@@ -75,6 +77,8 @@ def save_formula(request):
         new_topz.append(float(topz_single))
     for lowz_single in lowz:
         new_lowz.append(float(lowz_single))
+    for dw_single in dw:
+        new_dw.append(int(dw_single))
     for jno_single in jno:
         new_jno.append(int(jno_single))
     for hlt_single in hlt:
@@ -89,8 +93,8 @@ def save_formula(request):
             new_hzs.append(False)
     if not proof:
         try:
-            cursor.callproc('pb_I', (pbbh, pbname, pftype, scsx, scxh, yx, bz, new_plno, new_bzgl, new_topz, new_lowz,
-                                     dw, new_jno, new_hlt, new_hzs, ylid))
+            cursor.callproc('pb_I', (pbbh, pbname, pftype, scsx, scxh, yx, bz, new_plno, ylname, new_bzgl, new_topz,
+                                     new_lowz, new_dw, new_jno, new_hlt, new_hzs, ylid))
             connection.commit()
             cursor.close()
             connection.close()
@@ -107,8 +111,8 @@ def save_formula(request):
             return redirect('/admin/bc_formula/pb/')  # 后续会返回一个错误页面
     else:
         try:
-            cursor.callproc('pb_U', (pbbh, pbname, pftype, scsx, scxh, yx, bz, new_plno, new_bzgl, new_topz, new_lowz,
-                                     dw, new_jno, new_hlt, new_hzs, ylid, proof))
+            cursor.callproc('pb_U', (pbbh, pbname, pftype, scsx, scxh, yx, bz, new_plno, ylname, new_bzgl, new_topz,
+                                     new_lowz, new_dw, new_jno, new_hlt, new_hzs, ylid, proof))
             connection.commit()
             cursor.close()
             connection.close()
@@ -130,9 +134,12 @@ def query_formula(request, num):
         ylinfo = serializers.serialize('json', Ylinfo.objects.all())
         return JsonResponse({'ylinfo': ylinfo})
     elif num == 2:
+        original = request.GET.get('Original')
         pbbh = request.GET.get('pbbh')
-        pb_list = Pb.objects.filter(pbbh=pbbh)
         bool = 1
+        if pbbh == original:
+            return JsonResponse({'bool': bool})
+        pb_list = Pb.objects.filter(pbbh=pbbh)
         if pb_list:
             bool = 0
         return JsonResponse({'bool': bool})
@@ -150,6 +157,17 @@ def query_formula(request, num):
         current_value = request.GET.get('current_value')
         ylid = Ylinfo.objects.filter(ylid=current_value)
         ylid_bool = 0
+        ylname = ''
         if ylid:
             ylid_bool = 1
-        return JsonResponse({'ylid_bool': ylid_bool})
+            ylname = ylid[0].ylname
+        return JsonResponse({'ylid_bool': ylid_bool, 'ylname': ylname})
+    elif num == 5:
+        current_value = request.GET.get('current_value')
+        ylname = Ylinfo.objects.filter(ylname=current_value)
+        ylname_bool = 0
+        ylid = ''
+        if ylname:
+            ylname_bool = 1
+            ylid = ylname[0].ylid
+        return JsonResponse({'ylname_bool': ylname_bool, 'ylid': ylid})

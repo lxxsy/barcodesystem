@@ -1,6 +1,6 @@
 from django.db import models
 
-
+'''
 class KhFk(models.Model):
     kh_name = models.CharField(max_length=20, verbose_name='姓名')
     kh_phone = models.IntegerField(verbose_name='联系方式')
@@ -28,3 +28,4 @@ class DataGl(models.Model):
         db_table = 'datagl'
         verbose_name = '后台数据管理'
         verbose_name_plural = '后台数据管理'
+'''

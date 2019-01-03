@@ -19,7 +19,7 @@ class CpmlXadmin(object):
                  css_class='unsort no_title'
                  ),
     )
-    add_form_template = 'bc_product/product.html'
+    # add_form_template = 'bc_product/product.html'
     # add_form_template = 'bc_product/aaa.html'
     # change_form_template = 'bc_product/product_bridge.html'
 
@@ -38,4 +38,4 @@ class CprkXadmin(object):
 
 
 xadmin.site.register(Cpml, CpmlXadmin)
-xadmin.site.register(Cprk, CprkXadmin)
+# xadmin.site.register(Cprk, CprkXadmin)
