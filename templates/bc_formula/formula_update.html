@@ -101,7 +101,7 @@
             <tbody class="tbody">
                 <% for(var i = 0; i < pbf_list.length; i++){ %>
                 <tr class="bodytr">
-                    <td><input type="number" name="plno" class="plno" value="<%= pbf_list[i].fields.plno %>"><span class="tips"></span></td>
+                    <td><input type="text" name="plno" class="plno" value="<%= pbf_list[i].fields.plno %>" readonly><span class="tips"></span></td>
                     <td>
                         <input list="data" class="form-control datas" name="datas" value="<%= pbf_list[i].fields.ylid %>" autocomplete="off">
                         <span class="tips"></span>

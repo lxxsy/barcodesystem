@@ -64,31 +64,26 @@ $(function () {
      */
     function ylid_judge() {
         var ylid = $('#ylid').val();
-        var re = /\W+/;
+        // var re = /\W+/;
         if (ylid.length===0){
             $('#ylid').next().text('原料代码不能为空！').show();
             error_ylid = false;
         }else{
-            if (re.test(ylid)){
-                $('#ylid').next().text('原料代码含有不允许符号!').show();
-                error_ylid = false;
-            }else{
-                $.ajax({
-                    url:'/rmaterial/query_rmaterial2',
-                    data:{ylid: ylid},
-                    type:"get",
-                    async:false,
-                    success:function(data){
-                        if (data.bool === 0){
-                            $('#ylid').next().text('原料代码已存在!').show();
-                            error_ylid = false;
-                        }else {
-                            $('#ylid').next().hide();
-                            error_ylid = true;
-                        };
-                    }
-                });
-            };
+            $.ajax({
+                url:'/rmaterial/query_rmaterial2',
+                data:{ylid: ylid},
+                type:"get",
+                async:false,
+                success:function(data){
+                    if (data.bool === 0){
+                        $('#ylid').next().text('原料代码已存在!').show();
+                        error_ylid = false;
+                    }else {
+                        $('#ylid').next().hide();
+                        error_ylid = true;
+                    };
+                }
+            });
         };
     };
     /*
@@ -96,31 +91,26 @@ $(function () {
      */
     function ylname_judge() {
         var ylname = $('#ylname').val();
-        var re = /\s+|-+|\++|\?+/;
+        //var re = /\s+|-+|\++|\?+/;
         if (ylname.length === 0){
             $('#ylname').next().text('原料名称不能为空!').show();
             error_ylname = false;
         }else {
-            if(re.test(ylname)){
-                $('#ylname').next().text('原料名称含有不允许符号!').show();
-                error_ylname = false;
-            }else {
-                $.ajax({
-                    url:'/rmaterial/query_rmaterial3',
-                    data:{ylname: ylname},
-                    type:"get",
-                    async:false,
-                    success:function(data){
-                        if (data.bool === 0){
-                            $('#ylname').next().text('原料名称已存在!').show();
-                            error_ylname = false;
-                        }else {
-                            $('#ylname').next().hide();
-                            error_ylname = true;
-                        };
-                    }
-                });
-            };
+            $.ajax({
+                url:'/rmaterial/query_rmaterial3',
+                data:{ylname: ylname},
+                type:"get",
+                async:false,
+                success:function(data){
+                    if (data.bool === 0){
+                        $('#ylname').next().text('原料名称已存在!').show();
+                        error_ylname = false;
+                    }else {
+                        $('#ylname').next().hide();
+                        error_ylname = true;
+                    };
+                }
+            });
         };
     };
     /*

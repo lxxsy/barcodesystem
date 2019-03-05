@@ -16,7 +16,9 @@
 .table-condensed>thead>tr>th{
     padding: 0px;
 }
-
+/*
+    生产计划页面
+ */
 .tr th{
     text-align: center;
 }
@@ -30,8 +32,23 @@ table .scph{
     width: 120px;
 }
 table .jhrq{
-    padding: 4px;
-    width: 160px;
+    padding: 5px;
+    width: 120px;
+}
+table .scsx{
+    width: 70px;
+}
+table .cpbh{
+    width: 150px;
+}
+table .cpmc{
+    width: 150px;
+}
+table .rwcs{
+    width: 70px;
+}
+table .scxh{
+    width: 65px;
 }
 table .sczt{
     width: 30px;

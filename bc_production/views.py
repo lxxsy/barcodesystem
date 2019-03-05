@@ -65,7 +65,11 @@ def query_production(request, num):
         if cpml:
             cpid_bool = 1
             cpmc = cpml[0].cpmc
-        return JsonResponse({'cpid_bool': cpid_bool, 'cpmc': cpmc})
+            cpbh = cpml[0].cpid
+            pfbh = cpml[0].pbbh_id
+            pfmc = cpml[0].pbbh.pbname
+            pfsc = cpml[0].pbbh.scxh
+        return JsonResponse({'cpid_bool': cpid_bool, 'cpmc': cpmc, 'cpbh': cpbh, 'pfbh': pfbh, 'pfmc': pfmc, 'pfsc': pfsc})
     elif num == 6:
         cpname = request.GET.get('cpname')
         cpml = Cpml.objects.filter(cpmc=cpname)
@@ -74,7 +78,21 @@ def query_production(request, num):
         if cpml:
             cpname_bool = 1
             cpid = cpml[0].cpid
-        return JsonResponse({'cpname_bool': cpname_bool, 'cpid': cpid})
+            cpmc = cpml[0].cpmc
+            pfbh = cpml[0].pbbh_id
+            pfmc = cpml[0].pbbh.pbname
+            pfsc = cpml[0].pbbh.scxh
+        return JsonResponse({'cpname_bool': cpname_bool, 'cpid': cpid, 'cpmc': cpmc, 'pfbh': pfbh, 'pfmc': pfmc, 'pfsc': pfsc})
+    elif num == 7:
+        scjhb_spl = request.GET.get('scjhb_spl')
+        try:
+            Todaywork.objects.filter(spl=scjhb_spl).delete()
+            Llyl.objects.filter(spl=scjhb_spl).delete()
+            Scjhb.objects.filter(spl=scjhb_spl).delete()
+            bool = 1
+        except Exception:
+            bool = 0
+        return JsonResponse({'bool': bool})
 
 
 def update_production(request):
@@ -87,17 +105,19 @@ def update_production(request):
     scjhb = Scjhb.objects.get(spl=scjhb_bh)
     spl = scjhb.spl
     scrq = scjhb.scrq
-    cpid = scjhb.cpid.cpid
-    cpname = scjhb.cpid.cpmc
-    username = scjhb.xdr.username
+    cpid = scjhb.cpid_id
+    cpname = scjhb.cpname
+    user_id = scjhb.xdr_id
     sl = scjhb.sl
     cs = scjhb.cs
     dw = scjhb.dw
     zt = scjhb.zt
     bz = scjhb.bz
     bc = scjhb.bc
+    if bc is None:
+        bc = ''
     todaywork_list = serializers.serialize('json', scjhb.todaywork_set.all().order_by('pk'))
-    return JsonResponse({'spl': spl, 'scrq': scrq, 'cpid': cpid, 'cpname': cpname, 'username': username, 'sl': sl,
+    return JsonResponse({'spl': spl, 'scrq': scrq, 'cpid': cpid, 'cpname': cpname, 'user_id': user_id, 'sl': sl,
                          'cs': cs, 'dw': dw, 'zt': zt, 'bz': bz, 'bc': bc, 'todaywork_list': todaywork_list})
 
 
@@ -164,10 +184,8 @@ def save_production(request):
         if Scjhb.objects.filter(spl=spl):
             return redirect('/admin/bc_production/scjhb/add/')
         # 获取当天的日期
-        c_date = datetime.date.today()
-        if SystemParameter.objects.all().exists():
-            pass
-        else:
+        # c_date = datetime.date.today()
+        if not SystemParameter.objects.all().exists():
             SystemParameter.objects.create(id='wybs', lldh=1, scph=1)
         # 取计划附表id的最大值,aggregate()为聚合函数，获取的结果值是一个字典{'pk__max': (pk值)或(None)}
         todaywork = Todaywork.objects.aggregate(Max('pk'))
@@ -175,18 +193,11 @@ def save_production(request):
         todaywork_ph = todaywork.get('pk__max')
         if todaywork_ph is None:  # 说明是新表，ph计数从0开始
             # 修改系统表的批号字段为数值1
-            num_ber = 0
+            ph = '0'
         else:
-            ph = Todaywork.objects.filter(pk=todaywork_ph)[0].ph
-            print('---------------')
-            print(ph)
-            str_date = ph[:8]
-            if c_date.strftime('%Y%m%d') == str_date:
-                num_ber = int(ph[8:])
-            else:
-                num_ber = 0
+            ph = Todaywork.objects.filter(pk=todaywork_ph)[0].ph  # 20180104001
         try:
-            cursor.callproc('scjhb_I', (spl, scrq, cpname, sl, cs, dw, bc, zt, bz, cpid, xdr, num_ber))
+            cursor.callproc('scjhb_I', (spl, scrq, cpname, sl, cs, dw, bc, zt, bz, cpid, xdr, ph))
             connection.commit()
             cursor.close()
             connection.close()
@@ -202,11 +213,11 @@ def save_production(request):
             connection.close()
             return redirect('/admin/bc_production/scjhb/')  # 后续会返回一个错误页面
     else:
-        new_jhrq = []
-        new_scsx = []
-        new_rwcs = []
-        new_scsl = []
-        new_scxh = []
+        new_jhrq = []   # 日期
+        new_scsx = []   # 生产顺序
+        new_rwcs = []   # 任务次数
+        new_scsl = []   # 数量
+        new_scxh = []   # 生产线号
         for jhrq_single in jhrq:
             new_jhrq.append(datetime.datetime.strptime(jhrq_single, '%Y-%m-%d').date())
         for scsx_single in scsx:
@@ -222,8 +233,8 @@ def save_production(request):
             else:
                 new_scxh.append(int(scxh_single))
         try:
-            cursor.callproc('scjhb_U', (proof, spl, scrq, sl, cs, dw, bc, zt, bz, cpid, user.id, scph, new_jhrq,
-                                        new_scsx, cpbh, cpmc, pfbh, pfmc, new_rwcs, new_scsl, new_scxh, scbz))
+            cursor.callproc('scjhb_U', (spl, scrq, cpname, sl, cs, dw, bc, zt, bz, cpid, xdr, scph, new_jhrq,
+                                        new_scsx, cpbh, cpmc, pfbh, pfmc, new_rwcs, new_scsl, new_scxh, scbz, proof))
             connection.commit()
             cursor.close()
             connection.close()

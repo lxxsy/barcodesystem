@@ -21,6 +21,10 @@ $(function () {
         });
     });
     /*
+        页面加载完毕后，首先将计划明细副表的删除按钮隐藏掉，因为最少需要一行
+     */
+    $('.f_delete').hide();
+    /*
         配方编号失去焦点触发，判断输入的值是否合理
      */
     $('#pbbh').blur(function () {
@@ -97,6 +101,7 @@ $(function () {
      */
     $('.add-detailed').click(function () {
         tbody_append();
+        $('.f_delete').show();
     });
     /*
         点击副表删除按钮触发，搜寻此按钮的tr父级，然后删除
@@ -107,6 +112,9 @@ $(function () {
         $('.bodytr').each(function () {
             $(this).find('.plno').val($(this).index()+1);
         });
+        if ($('.f_delete').length === 1){
+            $('.f_delete').hide();
+        };
     });
      /*
         点击副表称零头或追溯时触发，判断是否选中此框
@@ -140,6 +148,7 @@ $(function () {
             var lowz = $(this).find('.lowz').val();
             var jno = $(this).find('.jno').val();
             ylid_judge($this_ylid, ylid);
+            console.log(error_ylid);
             if (error_ylid === false){
                 return false;
             };
@@ -164,7 +173,17 @@ $(function () {
                 return false;
             };
         });
-        if(error_pbbh === true && error_pbname === true && error_scsx === true && error_scxh === true &&
+        if (parseInt($('#pftype').val()) === 2){
+            var num = 0;
+            $.each($('.bzgl'), function (index, item) {
+                num += parseFloat(item.value);
+            });
+            if (num != parseFloat(100)){
+                alert('配方明细比例不满足100%');
+                return false;
+            };
+        };
+        if (error_pbbh === true && error_pbname === true && error_scsx === true && error_scxh === true &&
             error_ylid === true && error_ylname === true && error_bzgl === true &&
             error_topz === true && error_lowz === true && error_jno === true){
             return true;
@@ -177,31 +196,26 @@ $(function () {
      */
     function pbbh_judge() {
         var pbbh = $('#pbbh').val();
-        var re = /\W+/;
+        // var re = /\W+/;
         if (pbbh.length===0){
             $('#pbbh').next().text('配方编号不能为空！').show();
             error_pbbh = false;
         }else{
-            if (re.test(pbbh)){
-                $('#pbbh').next().text('配方编号含有不允许符号!').show();
-                error_pbbh = false;
-            }else{
-                $.ajax({
-                    url:'/formula/query_formula2',
-                    data:{pbbh: pbbh},
-                    type:"get",
-                    async:false,
-                    success:function(data){
-                        if (data.bool === 0){
-                            $('#pbbh').next().text('配方编号已存在!').show();
-                            error_pbbh = false;
-                        }else {
-                            $('#pbbh').next().hide();
-                            error_pbbh = true;
-                        };
-                    }
-                });
-            };
+            $.ajax({
+                url:'/formula/query_formula2',
+                data:{pbbh: pbbh},
+                type:"get",
+                async:false,
+                success:function(data){
+                    if (data.bool === 0){
+                        $('#pbbh').next().text('配方编号已存在!').show();
+                        error_pbbh = false;
+                    }else {
+                        $('#pbbh').next().hide();
+                        error_pbbh = true;
+                    };
+                }
+            });
         };
     };
      /*
@@ -209,12 +223,9 @@ $(function () {
      */
     function pbname_judge() {
         var pbname = $('#pbname').val();
-        var re = /\s+|-+|\++|\?+/;
+        //var re = /\s+|-+|\++|\?+/;
         if (pbname.length === 0){
             $('#pbname').next().text('配方名称不能为空!').show();
-            error_pbname = false;
-        }else if(re.test(pbname)){
-            $('#pbname').next().text('配方名称含有不允许符号!').show();
             error_pbname = false;
         }else {
             $('#pbname').next().hide();
@@ -226,19 +237,13 @@ $(function () {
      */
     function scsx_judge() {
         var scsx = $('#scsx').val();
-        var re = /\.+/;
-        if(scsx.length === 0){
-            $('#scsx').next().text('请输入正确数字').show();
-            error_scsx = false;
-        }else if(scsx <= 0){
-            $('#scsx').next().text('不能小于或等于0').show();
-            error_scsx = false;
-        }else if(re.test(scsx)){
-            $('#scsx').next().text('不能为小数').show();
-            error_scsx = false;
-        }else {
+        var re = /^[1-9][0-9]?$/;
+        if (re.test(scsx)){
             $('#scsx').next().hide();
             error_scsx = true;
+        }else {
+            $('#scsx').next().text('格式不正确或没有正确输入整数!').show();
+            error_scsx = false;
         };
     };
     /*
@@ -246,19 +251,13 @@ $(function () {
      */
     function scxh_judge() {
         var scxh = $('#scxh').val();
-        var re = /\.+/;
-        if (scxh.length === 0){
-            $('#scxh').next().text('请输入正确数字').show();
-            error_scxh = false;
-        }else if(scxh <= 0){
-            $('#scxh').next().text('不能小于或等于0').show();
-            error_scxh = false;
-        }else if(re.test(scxh)){
-            $('#scxh').next().text('不能为小数').show();
-            error_scxh = false;
-        }else {
+        var re = /^[1-9][0-9]?$/;
+        if (re.test(scxh)){
             $('#scxh').next().hide();
             error_scxh = true;
+        }else {
+            $('#scxh').next().text('格式不正确或没有正确输入整数!').show();
+            error_scxh = false;
         };
     };
     /*
@@ -401,7 +400,7 @@ $(function () {
      */
     function jno_judge($this_jno, jno) {
         $('.jno').next().hide();
-        var re = /\.+/;
+        var re = /^[1-9][0-9]{0,2}$/;
         var judge = 0;
         $.each($('.jno').not($($this_jno)) ,function (index, item) {
             if (jno === item.value){
@@ -414,18 +413,12 @@ $(function () {
         if (judge === 1){
             return false;
         };
-        if(jno.length === 0){
-            $($this_jno).next().text('请输入正确数字').show();
-            error_jno = false;
-        }else if(jno <= 0){
-            $($this_jno).next().text('不能小于或等于0').show();
-            error_jno = false;
-        }else if(re.test(jno)){
-            $($this_jno).next().text('不能为小数').show();
-            error_jno = false;
-        }else {
+        if (re.test(jno)){
             $($this_jno).next().hide();
             error_jno = true;
+        }else {
+            $($this_jno).next().text('格式不正确').show();
+            error_jno = false;
         };
     };
     /*

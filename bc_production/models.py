@@ -6,7 +6,7 @@ class Scjhb(models.Model):
     scrq = models.DateField(verbose_name='日期')  # 生产计划日期
     cpid = models.ForeignKey('bc_product.Cpml', on_delete=models.CASCADE, verbose_name='产品编号')
     cpname = models.CharField(max_length=50, verbose_name='产品名称')
-    sl = models.FloatField(verbose_name='生产数量')
+    sl = models.DecimalField(max_digits=15, decimal_places=2, verbose_name='生产数量')
     cs = models.IntegerField(verbose_name='批次数')  # 生产批次(盘数/锅数/车) 默认1
     dw = models.IntegerField(verbose_name='单位')  # 1:kg，2:g 默认kg
     bc = models.IntegerField(verbose_name='班次', blank=True, null=True)
@@ -33,7 +33,7 @@ class Todaywork(models.Model):  # 生产计划下达后计划明细最少需要�
     pbbh = models.CharField(verbose_name='配方编号', max_length=50)  # 关联产品目录表配方编号
     pbname = models.CharField(verbose_name='配方名称', max_length=50)
     worksl = models.IntegerField(verbose_name='任务次数')  # 默认值1
-    plsl = models.DecimalField(max_digits=28, decimal_places=10, verbose_name='数量')  # kg,配料数量（重量）针对比例配方是每锅生产量；比例配方为配方总合
+    plsl = models.DecimalField(max_digits=15, decimal_places=2, verbose_name='数量')  # kg,配料数量（重量）针对比例配方是每锅生产量；比例配方为配方总合
     scxh = models.IntegerField(verbose_name='生产线号', blank=True, null=True)
     bz = models.CharField(verbose_name='备注', max_length=200, blank=True, null=True)
     zt = models.BooleanField(verbose_name='启用')  # 默认为启用

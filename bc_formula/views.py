@@ -50,9 +50,6 @@ def save_formula(request):
     jno = request.POST.getlist('jno')
     hlt = request.POST.getlist('hlt')
     hzs = request.POST.getlist('hzs')
-    print('-------------------')
-    print(hlt)
-    print('---------------------')
     yx = True if yx == '1' else False
     pattern = re.compile(r'\.+')
     if (pbbh == '' or pbname == '' or scsx == '' or scxh == '' or pattern.search(scsx) or pattern.search(scxh) or

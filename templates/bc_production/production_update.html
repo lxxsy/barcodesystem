@@ -27,7 +27,7 @@
         <div class="form-group has-feedback">
             <label class="col-sm-2 control-label">计划单号<span class="" style="color: red">*</span></label>
             <div class="col-sm-4 form-box">
-                <input type="text" class="form-control" name="spl" id="spl" value="<%- spl %>" aria-describedby="inputSuccess2Status">
+                <input type="text" class="form-control" name="spl" id="spl" value="<%- spl %>" readonly aria-describedby="inputSuccess2Status">
                 <span class="tips"></span>
             </div>
             <label class="col-sm-1 control-label">日期<span class="" style="color: red">*</span></label>
@@ -64,7 +64,7 @@
             </div>
             <label class="col-sm-2 control-label">批次数<span class="" style="color: red">*</span></label>
             <div class="col-sm-4 form-box">
-                <input type="number" class="form-control" name="cs" id="cs" value="<%- cs %>" readonly>
+                <input type="text" class="form-control" name="cs" id="cs" value="<%- cs %>" readonly>
                 <span class="tips"></span>
             </div>
         </div>
@@ -72,7 +72,7 @@
             <label class="col-sm-1 control-label">单位</label>
             <div class="col-sm-4 form-box">
                 <select class="form-control" name="dw" id="dw">
-                    <% if (dw == 'kg')
+                    <% if (dw == 1)
                         { %> <option value="1">kg</option>
                              <option value="2">g</option> <% }
                     else
@@ -108,7 +108,9 @@
             <div class="navbar-header">
                 <span class="navbar-brand">修改生产计划明细</span>
             </div>
-            <a href="javascript:;" class="add-detailed glyphicon glyphicon-plus navbar-right"></a>
+            <!--
+                <a href="javascript:;" class="add-detailed glyphicon glyphicon-plus navbar-right"></a>
+               -->
         </div>
         <table class="table table-condensed">
             <thead>
@@ -130,14 +132,14 @@
             <tbody class="tbody">
               <% for(var i = 0; i < todaywork_list.length; i++){ %>
                 <tr class="bodytr">
-                    <td><input type="text" name="scph" class="scph" value="<%= todaywork_list[i].fields.ph %>"><span class="tips"></span></td>
-                    <td><input type="date" name="jhrq" class="jhrq" value="<%= $imports.dateFormat(todaywork_list[i].fields.pldate, 'yyyy-MM-dd') %>"><span class="tips"></span></td>
+                    <td><input type="text" name="scph" class="scph" value="<%= todaywork_list[i].fields.ph %>" readonly><span class="tips"></span></td>
+                    <td><input type="text" name="jhrq" class="jhrq" value="<%= $imports.dateFormat(todaywork_list[i].fields.pldate, 'yyyy-MM-dd') %>" readonly><span class="tips"></span></td>
                     <td><input type="number" name="scsx" class="scsx" value="<%= todaywork_list[i].fields.workno %>"><span class="tips"></span></td>
                     <td><input type="text" name="cpbh" class="cpbh" value="<%= todaywork_list[i].fields.cpid %>" readonly></td>
                     <td><input type="text" name="cpmc" class="cpmc" value="<%= todaywork_list[i].fields.cpname %>" readonly></td>
                     <td><input type="text" name="pfbh" class="pfbh" value="<%= todaywork_list[i].fields.pbbh %>" readonly></td>
                     <td><input type="text" name="pfmc" class="pfmc" value="<%= todaywork_list[i].fields.pbname %>" readonly></td>
-                    <td><input type="number" name="rwcs" class="rwcs" value="<%= todaywork_list[i].fields.worksl %>"><span class="tips"></span></td>
+                    <td><input type="number" name="rwcs" class="rwcs" value="<%= todaywork_list[i].fields.worksl %>" readonly><span class="tips"></span></td>
                     <td><input type="text" name="scsl" class="scsl" value="<%= todaywork_list[i].fields.plsl %>"><span class="tips"></span></td>
                     <td><input type="number" name="scxh" class="scxh" value="<%= todaywork_list[i].fields.scxh %>"></td>
                     <td><input type="text" name="scbz" class="scbz" value="<%= todaywork_list[i].fields.bz %>"></td>
@@ -153,8 +155,8 @@
               <% } %>
             </tbody>
         </table>
-        <input type="hidden" name="proof" value="<%- spl %>">
-        <input type="hidden" name="xdr" value="<%- username %>">
+        <input type="hidden" name="proof" id="proof" value="<%- spl %>">
+        <input type="hidden" name="xdr" value="<%- user_id %>">
         <div class="form-actions well-sm clearfix">
             <a href="/admin/bc_production/scjhb/{{ object_id }}/delete/" class="btn btn-danger deletelink col-xs-2 show-xs"><i class="fa fa-trash-o"></i></a>
             <div class="btn-group clearfix show-xs save-group col-xs-10">
@@ -166,7 +168,7 @@
                 <input type="submit" class="btn btn-default" value="保存并增加另一个" name="_addanother"  />
                 <input type="submit" class="btn btn-default" value="保存并继续编辑" name="_continue" />
             </div>
-            <a href="/admin/bc_production/scjhb/{{ object_id }}/delete/" class="btn btn-danger deletelink pull-right hide-xs"><i class="fa fa-trash-o"></i> 删除</a>
+            <a href="javascript:;" class="btn btn-danger deletelink pull-right hide-xs scjhb_delete"><i class="fa fa-trash-o"></i> 删除</a>
         </div>
     </script>
 </div>

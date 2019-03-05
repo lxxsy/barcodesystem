@@ -18,7 +18,7 @@
 
 {% block content %}
     <div class="container">
-        <form class="form-horizontal" method="post" action="/product/product_save" enctype="multipart/form-data" id="form_submit">
+        <form class="form-horizontal" method="post" action="/product/save_product" enctype="multipart/form-data" id="form_submit">
             {%csrf_token%}
             <div class="form-group has-feedback">
                 <label class="col-sm-2 control-label">产品编号<span class="" style="color: red">*</span></label>
@@ -40,6 +40,7 @@
                 <label class="col-sm-2 control-label">单包重</label>
                 <div class="col-sm-4 form-box">
                     <input type="text" class="form-control" name="dbz" id="dbz" value="">
+                    <span class="tips"></span>
                 </div>
             </div>
             <div class="form-group">
@@ -49,18 +50,56 @@
                 </div>
                 <label class="col-sm-2 control-label">标准编号</label>
                 <div class="col-sm-4 form-box">
-                    <input type="text" class="form-control" name="bz" id="bz" value="">
+                    <input type="text" class="form-control" name="bzbh" id="bzbh" value="">
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">配方编号<span class="" style="color: red">*</span></label>
                 <div class="col-sm-4 form-box">
-                    <input list="data" class="form-control" id="datas" name="datas" autocomplete="off">
+                    <input list="data_cpml_pbbh" class="form-control data_cpml_pbbh" name="data_cpml_pbbh" autocomplete="off">
                     <span class="tips"></span>
-                    <datalist id="data">
+                    <datalist id="data_cpml_pbbh">
                         <select class="form-control" name="pbbh" id="pbbh">
                         </select>
                     </datalist>
+                </div>
+                <label class="col-sm-2 control-label">配方名称<span class="" style="color: red">*</span></label>
+                <div class="col-sm-4 form-box">
+                    <input list="data_cpml_pbname" class="form-control data_cpml_pbname" name="data_cpml_pbname" autocomplete="off">
+                    <span class="tips"></span>
+                    <datalist id="data_cpml_pbname">
+                        <select class="form-control" name="pbname" id="pbname">
+                        </select>
+                    </datalist>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">包装上限</label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="cpsx" id="cpsx" value="">
+                    <span class="tips"></span>
+                </div>
+                <label class="col-sm-2 control-label">包装下限</label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="cpxx" id="cpxx" value="">
+                    <span class="tips"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">保质期</label>
+                <div class="col-sm-4 form-box">
+                    <input type="number" class="form-control" name="zbq" id="zbq" value="">
+                    <span class="tips"></span>
+                </div>
+                <label class="col-sm-2 control-label">储存条件</label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="cctj" id="cctj" value="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">产品商标</label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="cpsb" id="cpsb" value="">
                 </div>
                 <label class="col-sm-2 control-label">产品许可证</label>
                 <div class="col-sm-4 form-box">
@@ -68,48 +107,24 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-2 control-label">包装上限</label>
+                <label class="col-sm-2 control-label">产品图片</label>
                 <div class="col-sm-4 form-box">
-                    <input type="number" class="form-control" name="cpsx" id="cpsx" value="">
+                    <input type="file" class="form-control" name="cppic" id="cppic">
+                    <span class="tips"></span>
                 </div>
-                <label class="col-sm-2 control-label">包装下限</label>
+                <label class="col-sm-2 control-label">产品说明</label>
                 <div class="col-sm-4 form-box">
-                    <input type="number" class="form-control" name="cpxx" id="cpxx" value="">
+                    <input type="file" class="form-control" name="cpsm" id="cpsm" value="">
+                    <span class="tips"></span>
                 </div>
             </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">保质期</label>
-            <div class="col-sm-4 form-box">
-                <input type="number" class="form-control" name="zbq" id="zbq" value="">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">成品标签模板</label>
+                <div class="col-sm-4 form-box">
+                    <input type="file" class="form-control" name="tempname" value="" id="tempname">
+                    <span class="tips"></span>
+                </div>
             </div>
-            <label class="col-sm-2 control-label">储存条件</label>
-            <div class="col-sm-4 form-box">
-                <input type="text" class="form-control" name="cctj" id="cctj" value="">
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">产品商标</label>
-            <div class="col-sm-4 form-box">
-                <input type="text" class="form-control" name="cpsb" id="cpsb" value="">
-            </div>
-            <label class="col-sm-2 control-label">产品图片<span class="" style="color: red">*</span></label>
-            <div class="col-sm-4 form-box">
-                <input type="file" class="form-control" name="cppic" id="cppic">
-                <span class="tips"></span>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">产品说明<span class="" style="color: red">*</span></label>
-            <div class="col-sm-4 form-box">
-                <input type="file" class="form-control" name="cpsm" id="cpsm" value="">
-                <span class="tips"></span>
-            </div>
-            <label class="col-sm-2 control-label">成品标签模板<span class="" style="color: red">*</span></label>
-            <div class="col-sm-4 form-box">
-                <input type="file" class="form-control" name="tempname" value="" id="tempname">
-                <span class="tips"></span>
-            </div>
-        </div>
             <div class="form-actions well-sm clearfix">
                 <div class="btn-group clearfix show-xs save-group col-xs-12">
                     <button type="submit" class="default btn btn-primary col-xs-10" name="_save" data-loading-text="保存中.."><i class="fa fa-save"></i> 保存</button>

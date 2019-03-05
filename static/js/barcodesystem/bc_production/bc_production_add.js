@@ -58,31 +58,12 @@ $(function () {
      */
     $('#sl').blur(function () {
         sl_judge();
-        /*
-        var bool = true;
-        var sl = $(this).val();
-        var cs = $('#cs').val();
-        var re = /^[0-9]+$/;
-        if (re.test(cs) && re.test(sl)){
-            select_product(cs, bool);
-        };*/
     });
     /*
         批次数失去焦点触发，判断输入的值是否合理
      */
     $('#cs').blur(function () {
         cs_judge();
-        /*
-        $('.tbody').children().remove();
-        var re = /^[0-9]+$/;
-        var bool = true;
-        var cs = $(this).val();
-        var sl = $('#sl').val();
-        if (re.test(cs) && (re.test(sl) || sl === '')){
-            for (var i = 0; i<cs; i++){
-                tbody_append(bool);
-            };
-        };*/
     });
     /*
         班次失去焦点触发，判断输入的值是否合理
@@ -266,7 +247,7 @@ $(function () {
      */
     function bc_judge() {
         var bc = $('#bc').val();
-        var re = /\D/;
+        var re = /^[1-9][0-9]?$/;
         if (re.test(bc)){
             $('#bc').next().text('格式不正确或没有正确输入整数!').show();
             error_bc = false;

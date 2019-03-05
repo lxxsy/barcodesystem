@@ -24,28 +24,16 @@ $(function () {
     $('#cpmc').blur(function () {
         cpmc_judge();
     });
-    $('#gg').blur(function () {
-        gg_judge();
-    });
-
-    $('#cpsm').change(function () {
-        cpsm_judge();
-    });
-    $('#tempname').change(function () {
-        tempname_judge();
-    });
-
     $('#form_submit').submit(function () {
         if ($('#pbbh').val().length === 0){
             error_pbbh = false;
         };
         cpid_judge();
         cpmc_judge();
-        gg_judge();
-        cpsm_judge();
-        tempname_judge();
-        if (error_cpid === true && error_cpmc === true && error_pbbh === true && error_gg === true &&
-            error_cpsm === true && error_tempname === true){
+        //gg_judge();
+        //cpsm_judge();
+        //tempname_judge();
+        if (error_cpid === true && error_cpmc === true && error_pbbh === true){
             return true;
         }else{
             return false;

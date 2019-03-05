@@ -135,7 +135,6 @@ $(function () {
             type:"get",
             async:false,
             success:function(data){
-                console.log('aaaa');
                 $('.data_enterstock_ylname').val(data.ylname);
                 $('#dbz').val(data.piedw);
                 $('.data_enterstock_stockinfo').val(data.stockname);

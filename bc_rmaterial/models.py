@@ -175,6 +175,24 @@ class Leavestock(models.Model):
 '''
 
 
+class Llyl(models.Model):
+    rq = models.DateTimeField(verbose_name='日期')
+    ylid = models.CharField(verbose_name='原料代码', max_length=50)
+    ylname = models.CharField(max_length=50, verbose_name='原料名称')
+    sl = models.DecimalField(max_digits=15, decimal_places=2, verbose_name='理论用量')
+    yllx = models.IntegerField(verbose_name='原料类型', blank=True, null=True)
+    stockid = models.CharField(verbose_name='仓库编号', max_length=20, blank=True, null=True)
+    zsdzl = models.DecimalField(max_digits=15, decimal_places=2, verbose_name='整数袋重量', blank=True, null=True)
+    scxh = models.IntegerField(verbose_name='生产线号', blank=True, null=True)
+    bz = models.CharField(verbose_name='备注', max_length=200, blank=True, null=True)
+    spl = models.CharField(max_length=20, verbose_name='计划单号', default='')
+
+    class Meta:
+        db_table = 'llyl'
+        verbose_name = '原料领用计算'
+        verbose_name_plural = '原料领用计算'
+
+
 class SystemParameter(models.Model):
     id = models.CharField(max_length=10, primary_key=True, verbose_name='寻找数据的唯一标识')
     lldh = models.IntegerField(verbose_name='领料单号生成')

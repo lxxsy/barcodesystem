@@ -9,6 +9,7 @@ class Pb(models.Model):
     scxh = models.IntegerField(blank=True, null=True, verbose_name='默认生产线')  # 1
     yx = models.BooleanField(default=True, verbose_name='有效配方')
     bz = models.CharField(max_length=200, blank=True, null=True, verbose_name='备注')
+    validity = models.BooleanField(default=False, verbose_name='有无产品')  # 产品与配方一对一关系，如配方有了对应的产品，则改为True
 
     def __str__(self):
         return str(self.pbbh)

@@ -26,6 +26,7 @@ class ScjhbXadmin(object):
     inlines = [Todayworks, ]
     add_form_template = 'bc_production/production_add.html'
     change_form_template = 'bc_production/production_update.html'
+    remove_permissions = ['delete']  # 在列表页上禁用的功能，默认为空，可选项为视图view，增加add，修改change 删除delete
 
 
 xadmin.site.register(Scjhb, ScjhbXadmin)
