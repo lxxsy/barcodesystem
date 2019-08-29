@@ -1,0 +1,156 @@
+{% extends base_template %}
+{% load i18n %}
+
+{% load xadmin_tags %}
+{% load crispy_forms_tags %}
+{% block extrastyle %}
+    <link rel="stylesheet" href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <script src="/static/js/jquery-1.12.4.min.js"></script>
+    <script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/static/lightbox2-master/dist/css/lightbox.css">
+    <script src="/static/lightbox2-master/dist/js/lightbox.min.js"></script>
+    <script src="/static/js/template-web.js"></script>
+    <script src="/static/js/barcodesystem/bc_product/bc_product_update.js"></script>
+    <link rel="stylesheet" href="/static/css/production.css">
+{% endblock %}
+
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+
+{% block nav_title %}{% if model_icon %}<i class="{{model_icon}}"><sub class="fa fa-{% if add%}plus{%else%}pencil{%endif%}"></sub></i> {% endif %}
+{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <input type="hidden" id="product_id" value="{{ object_id }}">
+        <form class="form-horizontal" method="post" action="{% url 'product:save_product' %}" enctype="multipart/form-data" id="form_submit">
+        </form>
+        <script type="text/template" id="product">
+            {%csrf_token%}
+            <div class="form-group has-feedback">
+                <label class="col-sm-2 control-label">产品编号<span class="" style="color: red">*</span></label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="cpid" id="cpid" value="<%- cpid %>" aria-describedby="inputSuccess2Status">
+                    <span class="tips"></span>
+                </div>
+                <label class="col-sm-2 control-label">产品名称<span class="" style="color: red">*</span></label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="cpmc" id="cpmc" value="<%- cpmc %>">
+                    <span class="tips"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">规格</label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="gg" id="gg" value="<%- gg %>">
+                </div>
+                <label class="col-sm-2 control-label">单包重</label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="dbz" id="dbz" value="<%- dbz %>">
+                    <span class="tips"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">批准文号</label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="pw" id="pw" value="<%- pw %>">
+                </div>
+                <label class="col-sm-2 control-label">标准编号</label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="bz" id="bz" value="<%- bz %>">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">配方编号<span class="" style="color: red">*</span></label>
+                <div class="col-sm-4 form-box">
+                    <input list="data_cpml_pbbh" class="form-control data_cpml_pbbh" name="data_cpml_pbbh" value="<%- pbbh %>"autocomplete="off">
+                    <span class="tips"></span>
+                    <datalist id="data_cpml_pbbh">
+                        <select class="form-control" name="pbbh" id="pbbh">
+                        </select>
+                    </datalist>
+                </div>
+                <label class="col-sm-2 control-label">配方名称<span class="" style="color: red">*</span></label>
+                <div class="col-sm-4 form-box">
+                    <input list="data_cpml_pbname" class="form-control data_cpml_pbname" name="data_cpml_pbname" value="<%- pbname %>"autocomplete="off">
+                    <span class="tips"></span>
+                    <datalist id="data_cpml_pbname">
+                        <select class="form-control" name="pbname" id="pbname">
+                        </select>
+                    </datalist>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">包装上限</label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="cpsx" id="cpsx" value="<%- cpsx %>">
+                    <span class="tips"></span>
+                </div>
+                <label class="col-sm-2 control-label">包装下限</label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="cpxx" id="cpxx" value="<%- cpxx %>">
+                    <span class="tips"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">保质期</label>
+                <div class="col-sm-4 form-box">
+                    <input type="number" class="form-control" name="zbq" id="zbq" value="<%- zbq %>">
+                    <span class="tips"></span>
+                </div>
+                <label class="col-sm-2 control-label">储存条件</label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="cctj" id="cctj" value="<%- cctj %>">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">产品商标</label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="cpsb" id="cpsb" value="<%- cpsb %>">
+                </div>
+                <label class="col-sm-2 control-label">产品许可证</label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="cpxkz" id="cpxkz" value="<%- cpxkz %>">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">成品标签模板</label>
+                <div class="col-sm-4 form-box">
+                    <b>目前：</b>
+                    <a href="/static/media/<%- tempname %>" target="_blank" name="judge_tempname" id="judge_tempname"><%- tempname_name %></a>
+                    <input type="file" class="form-control" name="tempname" value="<%- tempname %>" id="tempname">
+                    <span class="tips"></span>
+                </div>
+                <label class="col-sm-2 control-label">产品说明</label>
+                <div class="col-sm-4 form-box">
+                    <b>目前：</b>
+                    <a href="/static/media/<%- cpsm %>" target="_blank" name="judge_cpsm" id="judge_cpsm"><%- cpsm_name %></a>
+                    <input type="file" class="form-control" name="cpsm" id="cpsm" value="<%- cpsm %>">
+                    <span class="tips"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">产品图片</label>
+                <div class="col-sm-4 form-box">
+                    <a href="/static/media/<%- cppic %>" data-lightbox="<%- cppic %>" name="judge_cppic" id="judge_cppic" title="点击查看大图">
+                        <img src="/static/media/<%- cppic %>" id="dynamic_pic" width="100" height="80" alt="产品图片">
+                    </a>
+                    <input type="file" class="form-control" name="cppic" id="cppic" value="<%- cppic %>">
+                    <span class="tips"></span>
+                </div>
+            </div>
+            <input type="hidden" name="proof" value="<%- cpid %>">
+            <div class="form-actions well-sm clearfix">
+                <div class="btn-group clearfix show-xs save-group col-xs-10">
+                    <button type="submit" class="default btn btn-primary col-xs-10" name="_save" data-loading-text="保存中.."><i class="fa fa-save"></i> 保存</button>
+                    <button type="button" class="more btn btn-primary col-xs-2" data-toggle="collapse" data-target=".nav-collapse.more-btns"><i class="fa fa-ellipsis-vertical"></i></button>
+                </div>
+                <button type="submit" class="default btn btn-primary hide-xs" name="_save"><i class="fa fa-save"></i> 保存</button>
+                <div class="nav-collapse collapse more-btns">
+                    <input type="submit" class="btn btn-default" value="保存并增加另一个" name="_addanother"  />
+                    <input type="submit" class="btn btn-default" value="保存并继续编辑" name="_continue" />
+                </div>
+                <a href="javascript:;" class="btn btn-danger deletelink pull-right hide-xs product_delete"><i class="fa fa-trash-o"></i> 删除</a>
+            </div>
+        </script>
+    </div>
+{% endblock %}

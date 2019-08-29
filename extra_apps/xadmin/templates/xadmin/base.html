@@ -17,7 +17,9 @@
   {% endif %}
   {% vendor 'font-awesome.css' 'xadmin.main.css' 'xadmin.plugins.css' 'xadmin.responsive.css' %}
   {{ media.css }}
-  {% block extrastyle %}{% endblock %}
+  {% block extrastyle %}
+      <!--继承-->
+  {% endblock %}
   {% vendor 'jquery.js' %}
   {% url 'xadmin:index' as indexurl %}
   <script type="text/javascript">

@@ -1,136 +1,109 @@
-{% extends 'base.html'%}
+{% extends base_template %}
+{% load i18n %}
 
-{%block head%}
-<script src="/static/js/barcodesystem/bc_production.js"></script>
-<link rel="stylesheet" href="/static/css/production.css">
-{%endblock head%}
+{% load xadmin_tags %}
+{% load crispy_forms_tags %}
+{% block extrastyle %}
+    <link rel="stylesheet" href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <script src="/static/js/jquery-1.12.4.min.js"></script>
+    <script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="/static/js/barcodesystem/bc_production/bc_production_add.js"></script>
+    <script src="/static/js/CreateControl.js"></script>
+    <link rel="stylesheet" href="/static/css/production.css">
+{% endblock %}
 
-{%block body%}
-<div class="navbar navbar-default">
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+
+{% block nav_title %}{% if model_icon %}<i class="{{model_icon}}"><sub class="fa fa-{% if add%}plus{%else%}pencil{%endif%}"></sub></i> {% endif %}
+{{ title }}{% endblock %}
+
+{% block content %}
     <div class="container">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="/admin/bc_production/scjhb" id="production" style="color: royalblue">
-                <span class="glyphicon glyphicon-chevron-left"></span>返回
-            </a>
-        </div>
+        <form class="form-horizontal" method="post" action="{% url 'production:save_production' %}" id="form_submit">
+            {%csrf_token%}
+            <div class="form-group has-feedback">
+                <label class="col-sm-2 control-label">计划单号<span class="" style="color: red">*</span></label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="spl" id="spl" value="" aria-describedby="inputSuccess2Status">
+                    <span class="tips"></span>
+                </div>
+                <label class="col-sm-2 control-label">日期<span class="" style="color: red">*</span></label>
+                <div class="col-sm-4 form-box">
+                    <input type="date" class="form-control" name="scrq" id="scrq" value="">
+                    <span class="tips"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">产品编号<span class="" style="color: red">*</span></label>
+                <div class="col-sm-4 form-box">
+                    <input list="data_production_cpid" class="form-control data_production_cpid" name="data_production_cpid" autocomplete="off" value="">
+                    <span class="tips"></span>
+                    <datalist id="data_production_cpid">
+                        <select class="form-control" name="cpid" id="cpid">
+                        </select>
+                    </datalist>
+                </div>
+                <label class="col-sm-2 control-label">产品名称<span class="" style="color: red">*</span></label>
+                <div class="col-sm-4 form-box">
+                    <input list="data_production_cpname" class="form-control data_production_cpname" name="data_production_cpname" autocomplete="off" value="">
+                    <span class="tips"></span>
+                    <datalist id="data_production_cpname">
+                        <select class="form-control" name="cpname" id="cpname">
+                        </select>
+                    </datalist>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">生产数量<span class="" style="color: red">*</span></label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="sl" id="sl" value="">
+                    <span class="tips"></span>
+                </div>
+                <label class="col-sm-2 control-label">批次数<span class="" style="color: red">*</span></label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="cs" id="cs" value="1">
+                    <span class="tips"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">单位</label>
+                <div class="col-sm-4 form-box">
+                    <select class="form-control" name="dw" id="dw">
+                        <option value="kg">kg</option>
+                        <option value="kg">g</option>
+                    </select>
+                </div>
+                <label class="col-sm-2 control-label">班次</label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="bc" id="bc">
+                    <span class="tips"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">备注</label>
+                <div class="col-sm-4 form-box">
+                    <input type="text" class="form-control" name="bz" id="bz">
+                </div>
+            </div>
+             <div class="form-group">
+                <div class="col-sm-offset-1 col-sm-4">
+                    <label class="control-label">
+                        <input type="checkbox" name="zt" checked="checked" value="1" id="zt"> 启用
+                    </label>
+                </div>
+            </div>
+            <input type="hidden" name="xdr" value="{{ user.id }}">
+            <div class="form-actions well-sm clearfix">
+                <div class="btn-group clearfix show-xs save-group col-xs-12">
+                    <button type="submit" class="default btn btn-primary col-xs-10" name="_save" data-loading-text="保存中.."><i class="fa fa-save"></i> 保存</button>
+                    <button type="button" class="more btn btn-primary col-xs-2" data-toggle="collapse" data-target=".nav-collapse.more-btns"><i class="fa fa-ellipsis-vertical"></i></button>
+                </div>
+                <button type="submit" class="default btn btn-primary hide-xs" name="_save"><i class="fa fa-save"></i> 保存</button>
+                <div class="nav-collapse collapse more-btns">
+                    <input type="submit" class="btn btn-default" value="保存并增加另一个" name="_addanother"  />
+                    <input type="submit" class="btn btn-default" value="保存并继续编辑" name="_continue" />
+                </div>
+            </div>
+        </form>
     </div>
-</div>
-<div class="navbar navbar-default">
-    <div class="container">
-        <div class="navbar-header">
-            <span class="navbar-brand">增加生产计划</span>
-        </div>
-    </div>
-</div>
-<div class="container">
-    <form class="form-horizontal" method="post" action="/production/production_add" id="form_submit">
-        {%csrf_token%}
-        <div class="form-group has-feedback">
-            <label class="col-sm-2 control-label">计划单号<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
-            <div class="col-sm-4">
-                <input type="text" class="form-control" name="spl" id="spl" aria-describedby="inputSuccess2Status">
-            </div>
-            <label class="col-sm-1 control-label">日期<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
-            <div class="col-sm-4">
-                <input type="date" class="form-control" name="rq" id="rq">
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">产品编号<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
-
-            <div class="col-sm-4">
-                <select class="form-control" name="cpid" id="cpid">
-                </select>
-            </div>
-            <label class="col-sm-1 control-label">数量<span class="glyphicon glyphicon-asterisk" style="color: red"></span></label>
-            <div class="col-sm-4">
-                <input type="number" class="form-control" name="sl" id="sl">
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">批次数</label>
-            <div class="col-sm-4">
-                <input type="number" class="form-control" name="cs" id="cs">
-            </div>
-            <label class="col-sm-1 control-label">单位</label>
-            <div class="col-sm-4">
-                <select class="form-control" name="dw" id="dw">
-                    <option>kg</option>
-                    <option>g</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">班次</label>
-            <div class="col-sm-4">
-                <input type="number" class="form-control" name="bc" id="bc">
-            </div>
-            <label class="col-sm-1 control-label">备注</label>
-            <div class="col-sm-4">
-                <input type="text" class="form-control" name="bz" id="bz">
-            </div>
-        </div>
-        <div class="form-group">
-
-            <div class="col-sm-offset-2 col-sm-4">
-                <label class="control-label">
-                    <input type="checkbox" name="zt" checked="checked" value="1"> 启用状态
-                </label>
-            </div>
-        </div>
-
-        <div class="navbar navbar-default">
-            <div class="navbar-header">
-                <span class="navbar-brand">增加生产计划</span>
-            </div>
-            <a href="javascript:;" class="add-detailed glyphicon glyphicon-plus navbar-right"></a>
-        </div>
-        <table class="table table-condensed">
-            <thead>
-                <tr class="tr">
-                    <th>生产批号<span class="glyphicon glyphicon-asterisk" style="color: red"></span></th>
-                    <th>计划日期<span class="glyphicon glyphicon-asterisk" style="color: red"></span></th>
-                    <th>生产顺序<span class="glyphicon glyphicon-asterisk" style="color: red"></span></th>
-                    <th>产品编号</th>
-                    <th>产品名称</th>
-                    <th>配方编号</th>
-                    <th>配方名称</th>
-                    <th>任务次数<span class="glyphicon glyphicon-asterisk" style="color: red"></span></th>
-                    <th>数量(kg)</th>
-                    <th>生产线号</th>
-                    <th>备注</th>
-                    <th>班次</th>
-                    <th>防交叉污染顺序</th>
-                    <th>下单人</th>
-                    <th>启用</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><input type="text" name="scph" class="scph"></td>
-                    <td><input type="date" name="jhrq" class="jhrq"></td>
-                    <td><input type="number" name="scsx" class="scsx"></td>
-                    <td><input type="text" name="cpbh" class="cpbh"></td>
-                    <td><input type="text" name="cpmc" class="cpmc"></td>
-                    <td><input type="text" name="pfbh" class="pfbh"></td>
-                    <td><input type="text" name="pfmc" class="pfmc"></td>
-                    <td><input type="text" name="rwcs" class="rwcs"></td>
-                    <td><input type="text" name="scsl" class="scsl"></td>
-                    <td><input type="text" name="scxh" class="scxh"></td>
-                    <td><input type="text" name="scbz" class="scbz"></td>
-                    <td><input type="text" name="scbc" class="scbc"></td>
-                    <td><input type="text" name="wrsx" class="wrsx"></td>
-                    <td><input type="text" name="scxdr" class="scxdr"></td>
-                    <td><input type="checkbox" name="sczt" checked="checked" class="sczt" value="1"></td>
-                    <td><a href="#" class="glyphicon glyphicon-plus"></a></td>
-                </tr>
-            </tbody>
-        </table>
-        <a>ssssss</a>
-        <a>saaaaaa</a>
-    </form>
-</div>
-
-
-
-{%endblock body%}
+{% endblock %}

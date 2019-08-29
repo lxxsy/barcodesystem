@@ -1,16 +1,143 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<form method="post" action="/aaa/index1">
-    {%csrf_token%}
-    <input type="text" name="uname" value="{{a}}">
-    <input type="checkbox" name="jizhu" checked="checked" value="1">
-    <input type="checkbox" name="jizhu1" checked="checked" value="1">
-    <input type="submit">
-</form>
-</body>
-</html>
+{% extends base_template %}
+{% load i18n %}
+
+{% load xadmin_tags %}
+{% load crispy_forms_tags %}
+{% block extrastyle %}
+    <link rel="stylesheet" href="/static/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <script src="/static/js/jquery-1.12.4.min.js"></script>
+    <script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="/static/js/template-web.js"></script>
+    <script src="/static/js/barcodesystem/bc_formula/bc_formula_add.js"></script>
+    <link rel="stylesheet" href="/static/css/formula.css">
+{% endblock %}
+
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+
+{% block nav_title %}{% if model_icon %}<i class="{{model_icon}}"><sub class="fa fa-{% if add%}plus{%else%}pencil{%endif%}"></sub></i> {% endif %}
+{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <form class="form-horizontal" method="post" action="{% url 'formula:save_formula' %}" id="form_submit">
+        {%csrf_token%}
+        <div class="form-group has-feedback">
+            <label class="col-sm-2 control-label">配方编号<span class="" style="color: red">*</span></label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="pbbh" id="pbbh" value="" autocomplete="off">
+                <span class="tips"></span>
+            </div>
+            <label class="col-sm-2 control-label">配方名称<span class="" style="color: red">*</span></label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="pbname" id="pbname" value="">
+                <span class="tips"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">配方类型</label>
+            <div class="col-sm-4 form-box">
+                <select class="form-control" name="pftype" id="pftype">
+                    <option value="0">标准配方</option>
+                    <option value="1">比例配方</option>
+                </select>
+            </div>
+            <label class="col-sm-2 control-label">生产顺序<span class="" style="color: red">*</span></label>
+            <div class="col-sm-4 form-box">
+                <input type="number" class="form-control" name="scsx" id="scsx" value="">
+                <span class="tips"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">生产线<span class="" style="color: red">*</span></label>
+            <div class="col-sm-4 form-box">
+                <input type="number" class="form-control" name="scxh" id="scxh" value="1">
+                <span class="tips"></span>
+            </div>
+            <label class="col-sm-2 control-label">备注</label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="bz" id="bz">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-1 col-sm-4">
+                <label class="control-label">
+                    <input type="checkbox" name="yx" checked="checked" value="1" id="yx"> 有效配方
+                </label>
+            </div>
+        </div>
+        <div class="navbar navbar-default">
+            <div class="navbar-header">
+                <span class="navbar-brand">增加配方明细</span>
+            </div>
+            <a href="javascript:;" class="add-detailed glyphicon glyphicon-plus navbar-right"></a>
+        </div>
+        <table class="table table-condensed">
+            <thead class="thead">
+                <tr class="tr">
+                    <th class="b_title">序号<span class=""></span></th>
+                    <th class="b_title">原料代码<span class="" style="color: red">*</span></th>
+                    <th class="b_title">原料名称<span class="" style="color: red">*</span></th>
+                    <th class="b_title">标准值<span class="" style="color: red">*</span></th>
+                    <th class="b_title">上限</th>
+                    <th class="b_title">下限</th>
+                    <th class="b_title">单位</th>
+                    <th class="b_title">投料顺序<span class="" style="color: red">*</span></th>
+                    <th class="b_title">称零头</th>
+                    <th class="b_title">追溯</th>
+                </tr>
+            </thead>
+            <tbody class="tbody">
+                <tr class="bodytr">
+                    <td><input type="text" name="plno" class="plno" value="1" readonly><span class="tips"></span></td>
+                    <td>
+                        <input list="data" class="form-control datas" name="datas" autocomplete="off" value="">
+                        <span class="tips"></span>
+                        <datalist id="data">
+                            <select class="form-control" name="ylid" id="ylid">
+                            </select>
+                        </datalist>
+                    </td>
+                    <td>
+                        <input list="data_name" class="form-control data_name" name="data_name" autocomplete="off" value="">
+                        <span class="tips"></span>
+                        <datalist id="data_name">
+                            <select class="form-control" name="ylname" id="ylname">
+                            </select>
+                        </datalist>
+                    </td>
+                    <td><input type="text" name="bzgl" class="bzgl" value=""><span class="tips"></span></td>
+                    <td><input type="text" name="topz" class="topz" value=""><span class="tips"></span></td>
+                    <td><input type="text" name="lowz" class="lowz" value=""><span class="tips"></span></td>
+                    <td>
+                        <select class="form-control dw" name="dw">
+                            <option value="kg">kg</option>
+                            <option value="g">g</option>
+                        </select>
+                    </td>
+                    <td><input type="number" name="jno" class="jno" value="" readonly><span class="tips"></span></td>
+                    <td>
+                        <input type="checkbox" name="lt" checked="checked" value="1" class="lt">
+                        <input type="hidden" name="hlt" value="1" class="hlt">
+                    </td>
+                    <td>
+                        <input type="checkbox" name="zs" checked="checked" value="1" class="zs">
+                        <input type="hidden" name="hzs" value="1" class="hzs">
+                    </td>
+                    <td><a href="javascript:;" class="glyphicon glyphicon-remove f_delete"></a></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="form-actions well-sm clearfix">
+            <div class="btn-group clearfix show-xs save-group col-xs-12">
+                <button type="submit" class="default btn btn-primary col-xs-10" name="_save" data-loading-text="保存中.."><i class="fa fa-save"></i> 保存</button>
+                <button type="button" class="more btn btn-primary col-xs-2" data-toggle="collapse" data-target=".nav-collapse.more-btns"><i class="fa fa-ellipsis-vertical"></i></button>
+            </div>
+            <button type="submit" class="default btn btn-primary hide-xs" name="_save"><i class="fa fa-save"></i> 保存</button>
+            <div class="nav-collapse collapse more-btns">
+                <input type="submit" class="btn btn-default" value="保存并增加另一个" name="_addanother"  />
+                <input type="submit" class="btn btn-default" value="保存并继续编辑" name="_continue" />
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -13,6 +13,7 @@
  *
  * @author Brian Reavis <brian@thirdroute.com>
  */
+
 .selectize-control.plugin-drag_drop.multi > .selectize-input > div.ui-sortable-placeholder {
   visibility: visible !important;
   background: #f2f2f2 !important;
@@ -398,4 +399,7 @@
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
+}
+.selectize-input{
+  padding: 6px 25px;
 }

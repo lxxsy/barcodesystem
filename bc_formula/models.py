@@ -2,50 +2,43 @@ from django.db import models
 
 
 class Pb(models.Model):
-    PFLX = (
-        (0, '标准配方'),
-        (1, '比例配方'),
-    )
     pbbh = models.CharField(primary_key=True, max_length=50, verbose_name='配方编号')
-    pbname = models.CharField(max_length=50, blank=True, null=True, verbose_name='配方名称')
-    pftype = models.IntegerField(blank=True, null=True, choices=PFLX, default=0, verbose_name='配方类型(0：标准配方；1：比例配方)')
-    shr = models.CharField(max_length=50, blank=True, null=True, verbose_name='审核人')
-    fwrsx = models.IntegerField(blank=True, null=True, verbose_name='防交叉污染生产顺序')
-    scxh = models.IntegerField(blank=True, null=True, verbose_name='默认生产线')
-    pfsj = models.DateTimeField(auto_now_add=True, blank=True, null=True, verbose_name='配方建立日期')
-    sh = models.BooleanField(default=True, verbose_name='审核状态')
-    bz = models.CharField(max_length=220, blank=True, null=True, verbose_name='备注')
+    pbname = models.CharField(max_length=50, verbose_name='配方名称')
+    pftype = models.CharField(verbose_name='配方类型', max_length=15)  # 0:标准配方， 1:比例配方
+    scsx = models.IntegerField(blank=True, null=True, verbose_name='生产顺序')
+    scxh = models.IntegerField(blank=True, null=True, verbose_name='默认生产线')  # 1
     yx = models.BooleanField(default=True, verbose_name='有效配方')
+    bz = models.CharField(max_length=300, blank=True, null=True, verbose_name='备注')
+    validity = models.BooleanField(default=False, verbose_name='有无产品')  # 产品与配方一对一关系，如配方有了对应的产品，则改为True
 
     def __str__(self):
-        return self.pbbh
+        return str(self.pbbh)
 
     class Meta:
         db_table = 'pb'
         verbose_name = '配方'
-        verbose_name_plural = '配方'
+        verbose_name_plural = '配方信息'
 
 
 class Pbf(models.Model):
-    JLDW = (
-        ('0', 'kg'),
-        ('1', 'g'),
-    )
-    pbbh = models.ForeignKey('Pb', on_delete=models.CASCADE, verbose_name='配方编号(与主表关联)')  # 关联配方主表
-    plno = models.SmallIntegerField(verbose_name='称量顺序号')
-    ylid = models.ForeignKey('bc_rmaterial.Ylinfo', on_delete=models.CASCADE, verbose_name='原料代码')
+    pbbh = models.ForeignKey('Pb', on_delete=models.CASCADE, verbose_name='配方编号')  # 关联配方主表
+    plno = models.IntegerField(verbose_name='序号')
+    ylid = models.ForeignKey('bc_rmaterial.Ylinfo', on_delete=models.CASCADE, verbose_name='原料代码')  # 关联的原料删除不影响此数据
+    ylname = models.CharField(max_length=50, verbose_name='原料名称')
     bzgl = models.FloatField(verbose_name='标准值')
-    topz = models.FloatField(verbose_name='上限值')
-    lowz = models.FloatField(verbose_name='下限值')
-    dw = models.CharField(max_length=20, blank=True, null=True, choices=JLDW, default='0', verbose_name='单位(Kg or g)')
-    cno = models.IntegerField(blank=True, null=True, verbose_name='使用电子秤端口号')
-    jno = models.IntegerField(verbose_name='加料顺序')
+    topz = models.FloatField(verbose_name='上限', blank=True, null=True)
+    lowz = models.FloatField(verbose_name='下限', blank=True, null=True)
+    dw = models.CharField(verbose_name='单位', max_length=20)  # 默认kg
+    jno = models.IntegerField(verbose_name='投料顺序')  # 默认原料分类ID;
     lt = models.BooleanField(default=True, verbose_name='称零头')
-    zsxs = models.BooleanField(default=True, verbose_name='外部追溯显示')
+    zs = models.BooleanField(default=True, verbose_name='追溯')
+
+    def __str__(self):
+        return str(self.pbbh)
 
     class Meta:
         db_table = 'pbf'
-        verbose_name = '配方副表'
-        verbose_name_plural = '配方副表'
+        verbose_name = '配方明细'
+        verbose_name_plural = '配方明细'
 
 

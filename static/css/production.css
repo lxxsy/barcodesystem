@@ -3,7 +3,10 @@
     border: 0;
 }
 .navbar-default{
-    background-color: #f8f8f8;
+    background-color: #FFF;
+}
+.form-control[readonly]{
+    background-color: #fff;
 }
 .table-condensed>tbody>tr>td,
 .table-condensed>tbody>tr>th,
@@ -13,96 +16,89 @@
 .table-condensed>thead>tr>th{
     padding: 0px;
 }
+/*
+    生产计划页面
+ */
 .tr th{
     text-align: center;
 }
-.scph{
+.tbody input{
     padding: 5px;
-    width: 100px;
     border: 1px solid #ccc;
     text-align: center;
+    width: 95px;
 }
-.jhrq{
-    padding: 5px;
-    width: 135px;
-    border: 1px solid #ccc;
-    text-align: center;
+table .scph{
+    width: 120px;
 }
-.scsx{
-    padding: 5px;
-    width: 80px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-.cpbh{
-    padding: 5px;
-    width: 80px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-.cpmc{
-    padding: 5px;
-    width: 80px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-.pfbh{
-    padding: 5px;
-    width: 80px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-.pfmc{
-    padding: 5px;
-    width: 80px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-.rwcs{
-    padding: 5px;
-    width: 80px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-.scsl{
-    padding: 5px;
-    width: 80px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-.scxh{
-    padding: 5px;
-    width: 80px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-.scbz{
-    padding: 5px;
-    width: 80px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-.scbc{
-    padding: 5px;
-    width: 80px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-.wrsx{
+table .jhrq{
     padding: 5px;
     width: 120px;
-    border: 1px solid #ccc;
-    text-align: center;
 }
-.scxdr{
-    padding: 5px;
-    width: 80px;
-    border: 1px solid #ccc;
-    text-align: center;
+table .scsx{
+    width: 70px;
 }
-.sczt{
-    padding: 5px;
+table .cpbh{
+    width: 150px;
+}
+table .cpmc{
+    width: 150px;
+}
+table .rwcs{
+    width: 70px;
+}
+table .scxh{
+    width: 65px;
+}
+table .sczt{
     width: 30px;
-    border: 1px solid #ccc;
-    text-align: center;
+}
+.tips{
+    color: red;
+}
+
+/* 继承xadmin改写的css*/
+select {
+    max-width: 400px;
+}
+.control-label {
+    padding: 7px 10px;
+    font-weight: bold;
+}
+
+/*原料基础表css*/
+/*
+#piedw{
+    text-align:right;
+    padding-right: 0px;
+}
+
+#zbq{
+    text-align:right;
+    padding-right: 0px;
+}
+#goodzbq{
+    text-align:right;
+    padding-right: 0px;
+}*/
+.state{
+    position: absolute;
+    left: 375px;
+    top: 18px;
+    font-size: 16px;
+    font-style:normal;
+}
+.control-label{
+    font-size: 16px;
+}
+.form-box {
+    padding-top: 12px;
+}
+.panel-default>.panel-heading .badge {
+    color: #f5f5f5;
+    background-color: #999999;
+}
+.panel-info>.panel-heading .badge {
+    color: #f5f5f5;
+    background-color: #999999;
 }

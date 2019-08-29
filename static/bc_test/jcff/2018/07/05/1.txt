@@ -1,5 +1,0 @@
-def a():
-	print('haha')
-【类方法---@classmethod
-			def a(cls):
-				pass】

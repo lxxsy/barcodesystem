@@ -1,8 +1,9 @@
 import xadmin
 from .models import *
 from xadmin.layout import Main, Tab, Fieldset, Row, TabHolder, AppendedText, Side, Field, Col
+from bc_rmaterial.models import *
 
-
+'''
 class QypqyXadmin(object):  # 样品取样
     list_display = ['ID', 'ylid', 'cpmc', 'ylpc']
     search_fields = ['ID', 'ylid']
@@ -25,24 +26,25 @@ class Qjybgfs(object):  # 检验报告副表
     extra = 1
 
 
+
 class QjybgXadmin(object):  # 检验报告
-    list_display = ['bgbh', 'qypqy', 'qjybz', 'fl']
+    list_display = ['bgbh', 'qypqy', 'cpmc', 'pzr']
     search_fields = ['bgbh', 'qypqy']
     form_layout = (
         Fieldset('',
-            Row('bgbh'),
-            Row('qypqy', 'qjybz'),
+            Row('bgbh', 'qypqy'),
+            # Row('qypqy', 'qjybz'),
             Row('cpmc', 'scrq'),
-            Row('ylpc', 'gg'),
-            Row('cyrq', 'jyyj'),
-            Row('jyjl', 'fl'),
-            Row('pzr', 'shr'),
-            Row('bzr', 'bz'),
-            Row('jybgfile', 'sh'),
+            Row('pzr', 'gg'),
+            # Row('cyrq', 'jyyj'),
+            # Row('jyjl', 'fl'),
+            # Row('pzr', 'shr'),
+            # Row('bzr', 'bz'),
+            Row('jybgfile', 'bz'),
             css_class='unsort no_title'
         ),
     )
-    inlines = [Qjybgfs, ]
+    # inlines = [Qjybgfs, ]
 
 
 class Qjybzfs(object):  # 检验标准副表
@@ -88,8 +90,10 @@ class QjcffXadmin(object):  # 检测方法
             css_class='unsort no_title'
         ),
     )
-xadmin.site.register(Qypqy, QypqyXadmin)
-xadmin.site.register(Qjybg, QjybgXadmin)
-xadmin.site.register(Qjybz, QjybzXadmin)
-xadmin.site.register(Qjcxm, QjcxmXadmin)
-xadmin.site.register(Qjcff, QjcffXadmin)
+'''
+
+# xadmin.site.register(Qypqy, QypqyXadmin)
+# xadmin.site.register(Qjybg, QjybgXadmin)
+# xadmin.site.register(Qjybz, QjybzXadmin)
+# xadmin.site.register(Qjcxm, QjcxmXadmin)
+# xadmin.site.register(Qjcff, QjcffXadmin)

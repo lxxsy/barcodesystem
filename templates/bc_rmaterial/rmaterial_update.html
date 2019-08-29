@@ -1,0 +1,149 @@
+{% extends base_template %}
+{% load i18n %}
+
+{% load xadmin_tags %}
+{% load crispy_forms_tags %}
+{% block extrastyle %}
+    <link rel="stylesheet" href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <script src="/static/js/jquery-1.12.4.min.js"></script>
+    <script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="/static/js/template-web.js"></script>
+    <script src="/static/js/barcodesystem/bc_rmaterial/bc_rmaterial_update.js"></script>
+    <link rel="stylesheet" href="/static/css/production.css">
+{% endblock %}
+
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+
+{% block nav_title %}{% if model_icon %}<i class="{{model_icon}}"><sub class="fa fa-{% if add%}plus{%else%}pencil{%endif%}"></sub></i> {% endif %}
+{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <input type="hidden" id="ylinfo_id" value="{{ object_id }}">
+    <form class="form-horizontal" method="post" action="{% url 'rmaterial:save_rmaterial' %}" id="form_submit">
+    </form>
+    <script type="text/template" id="ylinfo">
+        {%csrf_token%}
+        <div class="form-group has-feedback">
+            <label class="col-sm-2 control-label">原料代码<span class="" style="color: red">*</span></label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="ylid" id="ylid" value="<%- ylid %>" readonly>
+                <span class="tips"></span>
+            </div>
+            <label class="col-sm-2 control-label">原料名称<span class="asteriskField" style="color: red">*</span></label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="ylname" id="ylname" value="<%- ylname %>" readonly>
+                <span class="tips"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">计量单位</label>
+            <div class="col-sm-4 form-box">
+                <select class="form-control" name="dw" id="dw">
+                    <% if (dw == '1')
+                        { %> <option value="1">kg</option>
+                             <option value="2">g</option> <% }
+                    else
+                        { %> <option value="2">g</option>
+                             <option value="1">kg</option> <% }
+                    %>
+                </select>
+            </div>
+            <label class="col-sm-2 control-label">单包重量(kg)<span class="" style="color: red">*</span></label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="piedw" id="piedw" value="<%- piedw %>"><i class="state"></i>
+                <span class="tips"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">最长质保期(天)</label>
+            <div class="col-sm-4 form-box">
+                <input type="number" class="form-control" name="zbq" id="zbq" value="<%- zbq %>"><i class="state"></i>
+            </div>
+            <label class="col-sm-2 control-label">最佳质保期(天)</label>
+            <div class="col-sm-4 form-box">
+                <input type="number" class="form-control" name="goodzbq" id="goodzbq" value="<%- goodzbq %>"><i class="state"></i>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">仓位</label>
+            <div class="col-sm-4 form-box">
+                <input type="number" class="form-control" name="park" id="park" value="<%- park %>">
+            </div>
+            <label class="col-sm-2 control-label">单价</label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="pieprice" id="pieprice" value="<%- pieprice %>">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">最小库存</label>
+            <div class="col-sm-4 form-box">
+                <input type="number" class="form-control" name="minsl" id="minsl" value="<%- minsl %>">
+            </div>
+            <label class="col-sm-2 control-label">最大库存</label>
+            <div class="col-sm-4 form-box">
+                <input type="number" class="form-control" name="maxsl" id="maxsl" value="<%- maxsl %>">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">分类<span class="" style="color: red">*</span></label>
+            <div class="col-sm-4 form-box">
+                <select class="form-control" name="zf" id="zf">
+                    <option value="<%- zf_id %>"><%- zf_name %></option>
+                </select>
+            </div>
+            <label class="col-sm-2 control-label">默认仓库<span class="" style="color: red">*</span></label>
+            <div class="col-sm-4 form-box">
+                <select class="form-control" name="stockid" id="stockid">
+                    <option value="<%- stockid %>"><%- stockid_name %></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">通用名称</label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="tymc" id="tymc" value="<%- tymc %>">
+            </div>
+            <label class="col-sm-2 control-label">验收标准号</label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="ysbz" id="ysbz" value="<%- ysbz %>">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">原料条形码</label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="barcode" id="barcode" value="<%- barcode %>">
+            </div>
+            <label class="col-sm-2 control-label">备注</label>
+            <div class="col-sm-4 form-box">
+                <input type="text" class="form-control" name="bz" id="bz" value="<%- bz %>">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-1 col-sm-4">
+                <label class="control-label">
+                    <% if (ylzt)
+                            { %> <input type="checkbox" name="ylzt" checked="checked" id="ylzt" value="1">可用 <% }
+                        else
+                            { %> <input type="checkbox" name="ylzt" id="ylzt" value="1">可用 <% }
+                    %>
+                </label>
+            </div>
+        </div>
+        <input type="hidden" name="proof" value="<%- ylid %>">
+        <div class="form-actions well-sm clearfix">
+            <a href="/admin/bc_rmaterial/ylinfo/{{ object_id }}/delete/" class="btn btn-danger deletelink col-xs-2 show-xs"><i class="fa fa-trash-o"></i></a>
+            <div class="btn-group clearfix show-xs save-group col-xs-10">
+                <button type="submit" class="default btn btn-primary col-xs-10" name="_save" data-loading-text="保存中.."><i class="fa fa-save"></i> 保存</button>
+                <button type="button" class="more btn btn-primary col-xs-2" data-toggle="collapse" data-target=".nav-collapse.more-btns"><i class="fa fa-ellipsis-vertical"></i></button>
+            </div>
+            <button type="submit" class="default btn btn-primary hide-xs" name="_save"><i class="fa fa-save"></i> 保存</button>
+            <div class="nav-collapse collapse more-btns">
+                <input type="submit" class="btn btn-default" value="保存并增加另一个" name="_addanother"  />
+                <input type="submit" class="btn btn-default" value="保存并继续编辑" name="_continue" />
+            </div>
+            <a href="/admin/bc_rmaterial/ylinfo/{{ object_id }}/delete/" class="btn btn-danger deletelink pull-right hide-xs"><i class="fa fa-trash-o"></i> 删除</a>
+        </div>
+    </script>
+</div>
+{% endblock %}

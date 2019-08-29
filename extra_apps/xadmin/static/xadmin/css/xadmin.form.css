@@ -1,81 +1,74 @@
-
 /* CUSTOM FORM FIELDS */
 select.selectmultiple {
-  width: 100%;
-  height: 120px;
+    width: 100%;
+    height: 120px;
 }
 .select2-container{
-  width: 100%;
+    width: 100%;
 }
 .select2-container.form-control{
-  padding: 0px;
-  border: 0px;
+    padding: 0px;
+    border: 0px;
 }
 .select2-container .select2-choice {
-  height: 35px;
-  padding-top: 3px;
+    height: 35px;
+    padding-top: 3px;
 }
-
 /* form css */
 .form-container .column{
-  min-height: 60px;
+    min-height: 60px;
 }
 .form-group {
-  margin-right: -15px;
-  margin-left: -15px;
+    margin-right: -15px;
+    margin-left: -15px;
 }
 .control-label {
-  padding: 7px 10px;
-  font-weight: bold;
+    padding: 7px 10px;
+    font-weight: bold;
 }
 .form-horizontal .control-label {
-  margin-bottom: 5px;
+    margin-bottom: 5px;
 }
 .controls {
-  padding: 0px 15px 0px 15px;
+    padding: 0px 15px 0px 15px;
 }
 .controls:before,
 .controls:after {
-  display: table;
-  content: " ";
+    display: table;
+    content: " ";
 }
 .controls:after {
-  clear: both;
+    clear: both;
 }
 .control-wrap {
-  display: block;
-  width: 100%;
-  padding-right: 45px;
+    display: block;
+    width: 100%;
+    padding-right: 45px;
 }
 .asteriskField, .asterisk-field {
-  color: red;
+    color: red;
 }
 .controls > .radio:first-child,
 .controls > .checkbox:first-child,
 .control-wrap > .radio:first-child,
 .control-wrap > .checkbox:first-child {
-  margin-top: -7px;
+    margin-top: -7px;
 }
 .controls > span {
-  padding: 5px 0;
-  display: inline-block;
+    padding: 5px 0;
+    display: inline-block;
 }
-
 .help-block {
-  margin-bottom: 0px;
+    margin-bottom: 0px;
 }
-
 .form-row .row {
-  margin: 0px !important;
+    margin: 0px !important;
 }
-
 .fieldset .panel-body {
-  padding-bottom: 0px;
+    padding-bottom: 0px;
 }
-
 @media (min-width: 768px) {
-
-  .text-field, 
+  .text-field,
   .textinput,
   .url-field,
   select,
@@ -170,26 +163,25 @@ select.selectmultiple {
     text-align: right;
   }
 }
-
 /** detail page **/
 img.field_img {
-  max-height: 100px;
+    max-height: 100px;
 }
 
 /** revision form **/
 .diff_field .control-label {
-  color: #FF8040;
+    color: #FF8040;
 }
 .diff_field .controls{
-  background-color: #FCF8E3;
+    background-color: #FCF8E3;
 }
 
 /** tabs **/
 .nav.nav-tabs {
-  margin-bottom: 15px;
+    margin-bottom: 15px;
 }
 
 /** selectize **/
 .selectize-input {
-  vertical-align: bottom;
+    vertical-align: bottom;
 }
