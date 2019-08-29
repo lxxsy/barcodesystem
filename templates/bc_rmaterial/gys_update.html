@@ -20,7 +20,7 @@
 {% block content %}
 <div class="container">
     <input type="hidden" id="gys_id" value="{{ object_id }}">
-    <form class="form-horizontal" method="post" action="/rmaterial/save_gys" id="form_submit">
+    <form class="form-horizontal" method="post" action="{% url 'rmaterial:save_gys' %}" id="form_submit">
     </form>
     <script type="text/template" id="gys">
         {%csrf_token%}
@@ -55,7 +55,7 @@
             </div>
             <label class="col-sm-2 control-label">邮箱</label>
             <div class="col-sm-4 form-box">
-                <input type="text" class="form-control" name="email" id="email" value="<%- email %>">
+                <input type="text" class="form-control" name="emai" id="emai" value="<%- emai %>">
                 <span class="tips"></span>
             </div>
         </div>
@@ -83,7 +83,7 @@
         <div class="form-group">
             <label class="col-sm-2 control-label">备注</label>
             <div class="col-sm-4 form-box">
-                <input type="text" class="form-control" name="bz" id="bz" value="<%- bz %>">
+                <input type="text" class="form-control" name="memo" id="memo" value="<%- memo %>">
             </div>
         </div>
         <input type="hidden" name="proof" value="<%- gyscode %>">

@@ -3,14 +3,15 @@ import os
 import uuid
 
 
+# 存储图片时，进行一次分类判断
 def user_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
     ext = filename.split('.')[-1]
-    filename = '{}.{}'.format(uuid.uuid4().hex[:8], ext)
-    sub_folder = 'file'
+    # filename = '{}.{}'.format(uuid.uuid4().hex[:8], ext)
+    sub_folder = 'grf'
     if ext.lower() in ["jpg", "png", "gif"]:
         sub_folder = "picture"
-    if ext.lower() in ["pdf", "docx", 'doc', 'wps']:
+    elif ext.lower() not in ["grf"]:
         sub_folder = "document"
     return os.path.join(str(instance.user.id), sub_folder, filename)
 
@@ -18,10 +19,10 @@ def user_directory_path(instance, filename):
 class Cpml(models.Model):
     cpid = models.CharField(primary_key=True, max_length=50, verbose_name='产品编号')
     cpmc = models.CharField(max_length=50, verbose_name='产品名称')
-    gg = models.CharField(max_length=50, blank=True, null=True, verbose_name='规格')
+    gg = models.CharField(max_length=20, blank=True, null=True, verbose_name='规格')
     dbz = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True, verbose_name='单包重')
     pw = models.CharField(max_length=50, blank=True, null=True, verbose_name='批准文号')
-    bzbh = models.CharField(max_length=50, blank=True, null=True, verbose_name='标准编号')
+    bz = models.CharField(max_length=50, blank=True, null=True, verbose_name='标准编号')
     cpxkz = models.CharField(max_length=50, blank=True, null=True, verbose_name='产品许可证')
     pbbh = models.OneToOneField('bc_formula.Pb', on_delete=models.CASCADE, verbose_name='配方编号')
     cpsx = models.FloatField(blank=True, null=True, verbose_name=' 包装上限')

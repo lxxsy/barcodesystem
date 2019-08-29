@@ -2,7 +2,7 @@ $(function () {
     var error_gyscode = false;
     var error_gysname = false;
     var error_tel = false;
-    var error_email = false;
+    var error_emai = false;
     var error_web = false;
     /*
         供应商代码失去焦点后触发
@@ -25,8 +25,8 @@ $(function () {
     /*
         邮箱失去焦点后触发
      */
-    $('#email').blur(function () {
-        email_judge();
+    $('#emai').blur(function () {
+        emai_judge();
     });
     /*
         网址失去焦点后触发
@@ -47,9 +47,9 @@ $(function () {
             return false;
         };
         tel_judge();
-        email_judge();
+        emai_judge();
         web_judge();
-        if (error_gyscode === true && error_gysname === true && error_tel === true && error_email === true &&
+        if (error_gyscode === true && error_gysname === true && error_tel === true && error_emai === true &&
             error_web === true)
         {
             return true
@@ -72,7 +72,7 @@ $(function () {
                 type:"get",
                 async:false,
                 success:function(data){
-                    if (data.bool === 0){
+                    if (data.bool_gys === 0){
                         $('#gyscode').next().text('供应商代码已存在!').show();
                         error_gyscode = false;
                     }else {
@@ -131,20 +131,20 @@ $(function () {
     /*
         功能: 判断邮箱输入是否合理
      */
-    function email_judge() {
-        var email = $('#email').val();
+    function emai_judge() {
+        var emai = $('#emai').val();
         var re = /^[a-z0-9][\w\.-]*@[\w\-]+(\.[a-z]{2,5}){1}$/i;
-        if (email.length === 0){
-            $('#email').next().hide();
-            error_email = true;
+        if (emai.length === 0){
+            $('#emai').next().hide();
+            error_emai = true;
             return false;
         };
-        if (re.test(email)){
-            $('#email').next().hide();
-            error_email = true;
+        if (re.test(emai)){
+            $('#emai').next().hide();
+            error_emai = true;
         }else{
-            $('#email').next().text('你输入的邮箱格式不正确').show();
-            error_email = false;
+            $('#emai').next().text('你输入的邮箱格式不正确').show();
+            error_emai = false;
         };
     };
     /*

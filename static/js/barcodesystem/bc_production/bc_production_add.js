@@ -257,26 +257,3 @@ $(function () {
         };
     };
 });
-    /*
-        功能：操作计划明细表的产品，配方输入框的值
-
-    function select_product(cs, bool) {
-        var cpid = $('#cpid').val();
-        var sl = $('#sl').val();
-        var num = parseInt(sl/cs);
-        $.get('/production/select_product2', {cpid: cpid}, function (data) {
-            if (data.product_null != ''){
-                $('.cpbh').val(data.cpbh);
-                $('.cpmc').val(data.cpmc);
-                $('.pfbh').val(data.pfbh);
-                $('.pfmc').val(data.pfmc);
-                $('.scxh').val(data.pfsc);
-                if (bool === false){
-                    $('.jhrq').eq(-1).val(year+'-'+month+'-'+day);
-                }else {
-                    $('.jhrq').val(year+'-'+month+'-'+day);
-                };
-                $('.scsl').val(num);
-            };
-        });
-    };*/

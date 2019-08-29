@@ -8,8 +8,50 @@
     <script src="/static/js/jquery-1.12.4.min.js"></script>
     <script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
     <script src="/static/js/template-web.js"></script>
+    <script src="/static/js/CreateControl.js"></script>
     <script src="/static/js/barcodesystem/bc_production/bc_production_update.js"></script>
     <link rel="stylesheet" href="/static/css/production.css">
+    <!--
+    <script>
+        CreateReport("Report");
+        var data_dict = {};
+        function btnPreview_onclick() {
+            let cpid = $('.data_production_cpid').val();
+            let spl = $('#spl').val();
+            $.ajax({
+                url: '/production/request_data',
+                type: 'get',
+                data: {cpid: cpid, spl: spl},
+                async:false,
+                success: function (data) {
+                    data_dict['cpid']=data.cpid;
+                    data_dict['cpmc']=data.cpmc;
+                    data_dict['dbz']=data.dbz;
+                    data_dict['barcode']=data.barcode;
+                    data_dict['tempname']=data.tempname;
+                },
+                error: function () {
+                    alert(data.errors);
+                }
+            });
+            Report.LoadFromURL("/static/media/" + data_dict.tempname);
+            Report.PrepareLoadData();
+	        //报表记录集对象
+	        var Recordset = Report.DetailGrid.Recordset;
+	        //报表记录集的各个字段
+	        var fldcpid = Report.FieldByName("cpid");
+	        var fldcpmc = Report.FieldByName("cpmc");
+	        var flddbz = Report.FieldByName("dbz");
+	        var fldbarcode = Report.FieldByName("barcode");
+            Recordset.Append();
+	        fldcpid.Value = data_dict.cpid;
+		    fldcpmc.Value = data_dict.cpmc;
+		    flddbz.Value = data_dict.dbz;
+		    fldbarcode.Value = data_dict.barcode;
+            Recordset.Post();
+            Report.PrintPreview(true);
+        };
+    </script> -->
 {% endblock %}
 
 {% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
@@ -20,7 +62,7 @@
 {% block content %}
 <div class="container">
     <input type="hidden" name="scjhb_bh" id="scjhb_bh" value="{{ object_id }}">
-    <form class="form-horizontal" method="post" action="/production/save_production" id="form_submit">
+    <form class="form-horizontal" method="post" action="{% url 'production:save_production' %}" id="form_submit">
     </form>
     <script id="scjhb" type="text/template">
         {%csrf_token%}
@@ -72,12 +114,12 @@
             <label class="col-sm-1 control-label">单位</label>
             <div class="col-sm-4 form-box">
                 <select class="form-control" name="dw" id="dw">
-                    <% if (dw == 1)
-                        { %> <option value="1">kg</option>
-                             <option value="2">g</option> <% }
+                    <% if (dw == 'kg')
+                        { %> <option value="kg">kg</option>
+                             <option value="g">g</option> <% }
                     else
-                        { %> <option value="2">g</option>
-                             <option value="1">kg</option> <% }
+                        { %> <option value="g">g</option>
+                             <option value="kg">kg</option> <% }
                     %>
                 </select>
             </div>
@@ -167,6 +209,8 @@
             <div class="nav-collapse collapse more-btns">
                 <input type="submit" class="btn btn-default" value="保存并增加另一个" name="_addanother"  />
                 <input type="submit" class="btn btn-default" value="保存并继续编辑" name="_continue" />
+                <input type="button" class="btn btn-default" id="btnPreview" value="打印预览" />
+                <!--<input type="button" class="btn btn-default" id="btnPrint" onclick="return btnPrint_onclick()" value="直接打印" />-->
             </div>
             <a href="javascript:;" class="btn btn-danger deletelink pull-right hide-xs scjhb_delete"><i class="fa fa-trash-o"></i> 删除</a>
         </div>

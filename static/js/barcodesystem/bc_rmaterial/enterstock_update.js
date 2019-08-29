@@ -33,19 +33,6 @@ $(function () {
             };
         }
     });
-    /*
-        页面加载完毕后获取原料与供应商信息
-
-    $.get('/rmaterial/query_enterstock1', function (data) {
-        $.each(JSON.parse(data.ylinfo_list), function (index, item) {
-            $('#ylid').append('<option value='+item.pk+'>'+item.pk+'</option>');
-            $('#ylname').append('<option value='+item.fields.ylname+'>'+item.fields.ylname+'</option>');
-        });
-        $.each(JSON.parse(data.stockinfo_list), function (index, item) {
-            $('#rkck').append('<option value='+item.fields.stockname+'>'+item.fields.stockname+'</option>');
-        });
-    });
-     */
     var zl_old = $('#zl').val();  // 获取原入库重量
     /*
         原料代码失去焦点后触发
@@ -116,7 +103,7 @@ $(function () {
         功能：当提交表单时触发此函数判断原料代码，和输入框判断不同
      */
     function submit_ylid_judge() {
-        var ylid = $('.data_enterstock_ylid').val();
+        let ylid = $('.data_enterstock_ylid').val();
         $.ajax({
             url:'/rmaterial/query_enterstock2',
             data:{ylid: ylid},
@@ -327,20 +314,23 @@ $(function () {
         功能：判断删除的数据是否可以删除
      */
     function enterstock_delete() {
-        var enterstock_id = $('#proof_id').val();
-        var ylid = $('.data_enterstock_ylid').val();
-        var zl = $('#zl').val();
-        $.ajax({
-            url:'/rmaterial/query_enterstock7',
-            data:{enterstock_id: enterstock_id, ylid: ylid, zl: zl},
-            type:"get",
-            success:function(data){
-                if (data.bool === 0){
-                    alert('原料已用，不能删除此条记录');
-                }else{
-                    location.href='/admin/bc_rmaterial/enterstock/';
-                };
-            }
-        });
+        if (confirm('确定要删除吗?')){
+            var enterstock_id = $('#proof_id').val();
+            var ylid = $('.data_enterstock_ylid').val();
+            var zl = $('#zl').val();
+            $.ajax({
+                url:'/rmaterial/query_enterstock7',
+                data:{enterstock_id: enterstock_id, ylid: ylid, zl: zl},
+                type:"get",
+                success:function(data){
+                    if (data.bool === 0){
+                        alert('原料已用，不能删除此条记录');
+                    }else{
+                        location.href='/admin/bc_rmaterial/enterstock/';
+                    };
+                }
+            });
+        }
+
     };
 });

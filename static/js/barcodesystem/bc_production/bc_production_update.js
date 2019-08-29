@@ -2,22 +2,9 @@
  * Created by LILI on 2018/7/10.
  */
 $(function () {
-    //var error_spl = false;
-    //var error_cs = false;
-    //var error_scph = false;
-    //var error_jhrq = false;
-    var error_scrq = false;
-    var error_cpid = false;
-    var error_cpname = false;
-    var error_sl = false;
-    var error_bc = false;
-    var error_ScsxRwcs = false;
-    var error_scsl = false;
-    var sl_judge_submit = 0;
-    var date = new Date();
-    var year = date.getFullYear();
-    var month = date.getMonth()+1;
-    var day = date.getDate();
+    var error_scrq = false, error_cpid = false, error_cpname = false, error_sl = false;
+    var error_bc = false, error_ScsxRwcs = false, error_scsl = false, sl_judge_submit = 0;
+    var date = new Date(), year = date.getFullYear(), month = date.getMonth()+1, day = date.getDate();
     if (month.toString().length === 1){
         month = '0'+month;
     };
@@ -43,8 +30,27 @@ $(function () {
                     todaywork_list: JSON.parse(data.todaywork_list)}));
             }
         });
-
     };
+    /*
+        打印预览功能，转向RDP预览页面
+     */
+    $('#btnPreview').click(function () {
+        let cpid = $('.data_production_cpid').val();
+        let spl = $('#spl').val();
+        $.ajax({
+            url: '/production/request_data',
+            type: 'get',
+            data: {cpid: cpid, spl: spl},
+            async:false,
+            success: function (data) {
+                location.href="http://localhost:8080/RDP-SERVER/rdppage/main/976d4e53fd140bd323c1d92657f6daec?spl="+data.spl+"&cpid="+data.cpid;
+                /*location.href="http://localhost:8080/RDP-SERVER/rdppage/main/aec846ee60e81578f3feb5a8eca89c4d?spl="+data.spl+"&cpid="+data.cpid;*/
+                },
+            error: function () {
+                alert(data.errors);
+            }
+        });
+    });
     /*
         页面加载完毕后，判断计划明细副表的行数，如果只有一行那么就不提供删除副表行数功能
      */
@@ -394,177 +400,4 @@ $(function () {
             });
         }
     };
-    /*
-        点击增加生产计划副表时触发，追加一行表格
-    $('.add-detailed').click(function () {
-        $('#cs').val(parseInt($('#cs').val()) + 1);
-        $('.tbody').append('<tr>'+
-                    '<td><input type="text" name="scph" class="scph"><span class="tips"></span></td>'+
-                    '<td><input type="date" name="jhrq" class="jhrq"><span class="tips"></span></td>'+
-                    '<td><input type="number" name="scsx" class="scsx"><span class="tips"></span></td>'+
-                    '<td><input type="text" name="cpbh" class="cpbh" readonly></td>'+
-                    '<td><input type="text" name="cpmc" class="cpmc" readonly></td>'+
-                    '<td><input type="text" name="pfbh" class="pfbh" readonly></td>'+
-                    '<td><input type="text" name="pfmc" class="pfmc" readonly></td>'+
-                    '<td><input type="number" name="rwcs" class="rwcs" value="1"><span class="tips"></span></td>'+
-                    '<td><input type="text" name="scsl" class="scsl"><span class="tips"></span></td>'+
-                    '<td><input type="number" name="scxh" class="scxh"></td>'+
-                    '<td><input type="text" name="scbz" class="scbz"></td>'+
-                    '<td><input type="checkbox" name="sczt" checked="checked" class="sczt" value="1" disabled></td>'+
-                    '<td><a href="javascript:;" class="glyphicon glyphicon-remove f_delete"></a></td>'+
-                '</tr>');
-        var judge = 1;  // 当新增计划明细时，该值等于1，说明
-        select_product(judge);
-    });
-    */
-
-    /*
-        计划单号失去焦点触发，判断输入的值是否合理
-    $('#spl').blur(function () {
-        spl_judge();
-    });
-    */
-
-    /*
-        var judge = 0;
-        select_product(judge);
-
-        功能：操作计划明细表的产品，配方输入框的值
-
-    function select_product(judge) {
-        var cpid = $('#datas').val();
-        $.get('/production/query_production2', {cpid: cpid}, function (data) {
-            if (data.product_null != ''){
-                $('.cpbh').val(data.cpbh);
-                $('.cpmc').val(data.cpmc);
-                $('.pfbh').val(data.pfbh);
-                $('.pfmc').val(data.pfmc);
-                $('.scxh').val(data.pfsc);
-                if (judge === 1){
-                    $('.jhrq').eq(-1).val(year+'-'+month+'-'+day);
-                };
-            };
-        });
-    };
-     */
-
-    /*
-        判断计划明细表的生产批号是否合理
-    $('.tbody').on('blur', '.scph', function () {
-        var $this_scph = $(this);
-        var scph = $(this).val();
-        scph_judge($this_scph, scph);
-    });
-        var Original = $('#spl').val(); // 页面加载完毕，获取计划单号值，有值则为修改，ajax判断该值
-        var arr = [];
-        $('.scph').each(function () {
-            arr.push($(this).val());
-        });
-      //  功能： 判断计划明细表生产批号的输入是否合理
-
-    function scph_judge($this_scph, scph) {
-        $('.scph').next().hide();
-        var re = /\W+/;
-        var judge = 0;
-        $.each($('.scph').not($($this_scph)) ,function (index, item) {
-            if (scph === item.value){
-                $($this_scph).next().text('生产批号已存在').show();
-                error_scph = false;
-                judge = 1;
-                return false;
-            };
-        });
-        if (judge === 1){
-            return false;
-        };
-        if (scph === ''){
-            $($this_scph).next().text('生产批号不能为空！').show();
-            error_scph = false;
-        }else {
-            if (re.test(scph)){
-                $($this_scph).next().text('生产批号含有不允许符号!').show();
-                error_scph = false;
-            }else {
-                $.ajax({
-                    url:'/production/query_production4',
-                    data:{"arr":arr, "scph": scph},
-                    type:"get",
-                    traditional:true,
-                    async:false,
-                    success:function(data){
-                        if (data.scph_bool === 0){
-                            $($this_scph).next().text('生产批号已存在').show();
-                            error_scph = false;
-                        }else {
-                            $($this_scph).next().hide();
-                            error_scph = true;
-                        };
-                    }
-                });
-            };
-        };
-    };
-    */
-
-    /*
-        判断计划明细表的计划日期是否合理
-    $('.tbody').on('blur', '.jhrq', function () {
-        var $this_jhrq = $(this);
-        var jhrq = $(this).val();
-        jhrq_judge($this_jhrq, jhrq);
-    });
-
-        功能： 判断计划明细表计划日期的输入是否合理
-
-    function jhrq_judge($this_jhrq, jhrq) {
-        var scrq = $('#scrq').val();
-        var scrq_arry = scrq.split('-');
-        var jhrq_arry = jhrq.split('-');
-        if (scrq === '' || jhrq === ''){
-            $($this_jhrq).next().text('请把生产计划表或明细表日期填写完整').show();
-            error_jhrq = false;
-        }else {
-            if (scrq_arry[0].length != 4 || jhrq_arry[0].length != 4){
-                $($this_jhrq).next().text('请正确填写年份').show();
-                error_jhrq = false;
-            }else if(jhrq_arry[0] < scrq_arry[0]){
-                $($this_jhrq).next().text('计划明细表年份不能小于计划年份').show();
-                error_jhrq = false;
-            }else if(jhrq_arry[0] > scrq_arry[0]){
-                $($this_jhrq).next().hide();
-                error_jhrq = true;
-            }else if(jhrq_arry[1] < scrq_arry[1]){
-                $($this_jhrq).next().text('计划明细表月份不能小于计划月份').show();
-                error_jhrq = false;
-            }else if(jhrq_arry[2] < scrq_arry[2]){
-                $($this_jhrq).next().text('计划明细表日期不能小于计划日期').show();
-                error_jhrq = false;
-            }else {
-                $($this_jhrq).next().hide();
-                error_jhrq = true;
-            };
-        };
-    };
-    */
-    /*
-        功能： 判断批次数的输入是否合理
-
-    function cs_judge() {
-        var cs = $('#cs').val();
-        var re = /^[1-9][0-9]?$/;
-        if (re.test(cs)){
-            $('#cs').next().hide();
-            error_cs = true;
-        }else {
-            $('#cs').next().text('至多为2位数字或没有正确输入整数！').show();
-            error_cs = false;
-        };
-    };
-
-        // 批次数失去焦点触发，判断输入的值是否合理
-
-    $('#cs').blur(function () {
-        cs_judge();
-    });
-    */
 });

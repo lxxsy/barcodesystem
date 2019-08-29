@@ -1,16 +1,9 @@
 
 $(function () {
-    var error_cpid = false;
-    var error_cpmc = false;
-    var error_dbz = false;
-    var error_pbbh = false;
-    var error_pbname = false;
-    var error_cpsx = false;
-    var error_cpxx = false;
-    var error_zbq = false;
-    var error_cppic = false;
-    var error_cpsm = false;
-    var error_tempname = false;
+    var error_cpid = false, error_cpmc = false, error_dbz = false;
+    var error_pbbh = false, error_pbname = false, error_cpsx = false;
+    var error_cpxx = false, error_zbq = false, error_cppic = false;
+    var error_cpsm = false, error_tempname = false;
     /*
         页面加载完毕后，获取所有配方信息
      */
@@ -123,7 +116,7 @@ $(function () {
                 type:"get",
                 async:false,
                 success:function(data){
-                    if (data.bool === 0){
+                    if (data.bool_product === 0){
                         $('#cpid').next().text('产品编号已存在!').show();
                         error_cpid = false;
                     }else {
@@ -149,7 +142,7 @@ $(function () {
                 type:"get",
                 async:false,
                 success:function(data){
-                    if (data.bool === 0){
+                    if (data.bool_product === 0){
                         $('#cpmc').next().text('产品名称已存在!').show();
                         error_cpmc = false;
                     }else {
@@ -186,9 +179,11 @@ $(function () {
         };
     };
     /*
-        功能：当提交表单时触发此函数判断原料代码，和输入框判断不同
+        功能：当提交表单时触发此函数判断配方代码，和输入框判断不同
      */
     function submit_pbbh_judge() {
+        $('.data_cpml_pbbh').next().hide();
+        $('.data_cpml_pbname').next().hide();
         var pbbh = $('.data_cpml_pbbh').val();
         $.ajax({
             url:'/product/query_product4',
@@ -201,7 +196,7 @@ $(function () {
                     error_pbbh = false;
                     error_pbname = false;
                 }else if (data.pb_bool === 2){
-                    $('.data_cpml_pbbh').next().text('配方以使用').show();
+                    $('.data_cpml_pbbh').next().text('配方已使用').show();
                     error_pbbh = false;
                     error_pbname = false;
                 }else {
@@ -257,7 +252,7 @@ $(function () {
                     $('.data_cpml_pbname').next().text('配方不存在').show();
                     error_pbname = false;
                 }else if (data.pb_bool === 2){
-                    $('.data_cpml_pbname').next().text('配方以使用').show();
+                    $('.data_cpml_pbname').next().text('配方已使用').show();
                     error_pbname = false;
                 }else {
                     $('.data_cpml_pbname').next().hide();
@@ -348,6 +343,7 @@ $(function () {
             var cppic_name = cppic_dict.name.toLowerCase().split('.');
             var cppic_type = cppic_name[cppic_name.length-1];
             var cppic_size = cppic_dict.size;
+            console.log(cppic_dict.name);
             if (cppic_type != 'png' && cppic_type != 'jpg' && cppic_type != 'gif') {
                 $('#cppic').next().text('请上传一个二进制文件').show();
                 error_cppic = false;
@@ -379,7 +375,7 @@ $(function () {
             var cpsm_size = cpsm_dict.size;
             console.log(cpsm_size);
             if (cpsm_type === 'png' || cpsm_type === 'jpg' || cpsm_type === 'gif') {
-                $('#cpsm').next().text('请上传文本文件').show();
+                $('#cpsm').next().text('请上传一个文本文件').show();
                 error_cpsm = false;
             }else if (cpsm_size > 5000000){
                 $('#cpsm').next().text('请上传不超过5M大小的文件').show();
@@ -394,7 +390,8 @@ $(function () {
         功能： 判断成品模板的输入是否合理
      */
     function tempname_judge() {
-        if ($('#tempname').val() === ''){
+        let tempname = $('#tempname').val();
+        if (tempname.length === 0) {
             $('#tempname').next().text('成品标签文件不能为空').show();
             error_tempname = false;
         }else{
@@ -402,10 +399,9 @@ $(function () {
             var tempname_name = tempname_dict.name.toLowerCase().split('.');
             var tempname_type = tempname_name[tempname_name.length-1];
             var tempname_size = tempname_dict.size;
-            console.log(tempname_dict.name);
-            if (tempname_type === 'png' || tempname_type === 'jpg' || tempname_type === 'gif') {
+            if (tempname_type !== 'grf') {
                 // $('#tempname').next().text('文件格式必须是htm,html,xml的一种').show();
-                $('#tempname').next().text('请上传一个文本文件').show();
+                $('#tempname').next().text('请上传一个扩展名为grf的文件').show();
                 error_tempname = false;
             }else if (tempname_size > 5000000){
                 $('#tempname').next().text('请上传不超过5M的文件').show();
@@ -417,15 +413,3 @@ $(function () {
         };
     };
 });
-/*
-    function gg_judge() {
-        var gg = $('#gg').val();
-        if (gg.length === 0){
-            $('#gg').next().text('产品规格不能为空!').show();
-            error_gg = false;
-        }else {
-            $('#gg').next().hide();
-            error_gg = true;
-        };
-    };
- */

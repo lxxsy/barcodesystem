@@ -19,8 +19,7 @@ $(function () {
                     '<td class="tbody-td">'+item.fields.ylname+'</td>' +
                     '<td class="tbody-td">'+item.fields.quantity+'</td>' +
                     '<td class="tbody-td">'+item.fields.qcsl+'</td>' +
-                    '<td class="tbody-td">'+item.fields.qa_hg+'</td>' +
-                    '<td class="tbody-td">'+item.fields.bz+'</td></tr>');
+                    '<td class="tbody-td">'+item.fields.qa_hg+'</td></tr>');
             });
         });
         $('#changelist-form').remove();
@@ -41,8 +40,7 @@ $(function () {
                     '<td class="tbody-td">'+item.fields.ylname+'</td>' +
                     '<td class="tbody-td">'+item.fields.quantity+'</td>' +
                     '<td class="tbody-td">'+item.fields.qcsl+'</td>' +
-                    '<td class="tbody-td">'+item.fields.qa_hg+'</td>' +
-                    '<td class="tbody-td">'+item.fields.bz+'</td></tr>');
+                    '<td class="tbody-td">'+item.fields.qa_hg+'</td></tr>');
             });
         });
     });

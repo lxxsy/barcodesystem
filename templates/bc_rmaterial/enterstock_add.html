@@ -18,7 +18,7 @@
 
 {% block content %}
     <div class="container">
-        <form class="form-horizontal" method="post" action="/rmaterial/save_enterstock" id="form_submit">
+        <form class="form-horizontal" method="post" action="{% url 'rmaterial:save_enterstock' %}" id="form_submit">
             {%csrf_token%}
             <div class="form-group has-feedback">
                 <label class="col-sm-2 control-label">原料代码<span class="" style="color: red">*</span></label>

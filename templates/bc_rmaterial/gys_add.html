@@ -18,7 +18,7 @@
 
 {% block content %}
     <div class="container">
-        <form class="form-horizontal" method="post" action="/rmaterial/save_gys" id="form_submit">
+        <form class="form-horizontal" method="post" action="{% url 'rmaterial:save_gys' %}" id="form_submit">
             {%csrf_token%}
             <div class="form-group has-feedback">
                 <label class="col-sm-2 control-label">供应商代码<span class="" style="color: red">*</span></label>
@@ -50,7 +50,7 @@
                 </div>
                 <label class="col-sm-2 control-label">邮箱</label>
                 <div class="col-sm-4 form-box">
-                    <input type="text" class="form-control" name="email" id="email">
+                    <input type="text" class="form-control" name="emai" id="emai">
                     <span class="tips"></span>
                 </div>
             </div>
@@ -78,7 +78,7 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">备注</label>
                 <div class="col-sm-4 form-box">
-                    <input type="text" class="form-control" name="bz" id="bz">
+                    <input type="text" class="form-control" name="memo" id="memo">
                 </div>
             </div>
             <div class="form-actions well-sm clearfix">

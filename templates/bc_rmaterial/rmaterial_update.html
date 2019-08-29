@@ -20,7 +20,7 @@
 {% block content %}
 <div class="container">
     <input type="hidden" id="ylinfo_id" value="{{ object_id }}">
-    <form class="form-horizontal" method="post" action="/rmaterial/save_rmaterial" id="form_submit">
+    <form class="form-horizontal" method="post" action="{% url 'rmaterial:save_rmaterial' %}" id="form_submit">
     </form>
     <script type="text/template" id="ylinfo">
         {%csrf_token%}
@@ -32,7 +32,7 @@
             </div>
             <label class="col-sm-2 control-label">原料名称<span class="asteriskField" style="color: red">*</span></label>
             <div class="col-sm-4 form-box">
-                <input type="text" class="form-control" name="ylname" id="ylname" value="<%- ylname %>">
+                <input type="text" class="form-control" name="ylname" id="ylname" value="<%- ylname %>" readonly>
                 <span class="tips"></span>
             </div>
         </div>

@@ -1,6 +1,7 @@
 from django.db import models
 
 
+# 原料基础信息模型
 class Ylinfo(models.Model):
     ylid = models.CharField(primary_key=True, max_length=50, verbose_name='原料代码')
     ylname = models.CharField(max_length=50, verbose_name='原料名称')
@@ -24,11 +25,15 @@ class Ylinfo(models.Model):
         return str(self.ylid)
 
     class Meta:
+        # 定义数据表名
         db_table = 'ylinfo'
+        # 增删改查具体一行数据时，显示的中文名字
         verbose_name = '原料'
+        # admin后台导航栏进入此数据表的中文名字
         verbose_name_plural = '原料基础信息'
 
 
+# 仓库信息模型
 class Stockinfo(models.Model):
     stockid = models.CharField(primary_key=True, max_length=20, verbose_name='仓库编号')
     stockname = models.CharField(max_length=50, blank=True, null=True, verbose_name='仓库名称')
@@ -42,6 +47,7 @@ class Stockinfo(models.Model):
         verbose_name_plural = '仓库信息'
 
 
+# 原料分类信息模型
 class Ylfl(models.Model):
     flid = models.IntegerField(primary_key=True, verbose_name='分类ID')
     fldm = models.CharField(max_length=10, blank=True, null=True, verbose_name='分类代码')
@@ -57,6 +63,7 @@ class Ylfl(models.Model):
         verbose_name_plural = '原料分类'
 
 
+# 原料入库信息模型
 class Enterstock(models.Model):
     barcode = models.CharField(max_length=50, verbose_name='原料条码')
     ylid = models.ForeignKey('Ylinfo', on_delete=models.CASCADE, verbose_name='原料代码')
@@ -84,18 +91,19 @@ class Enterstock(models.Model):
         verbose_name_plural = '原料入库信息'
 
 
+# 供应商信息模型
 class Gys(models.Model):
     gyscode = models.CharField(primary_key=True, max_length=20, verbose_name='供应商代码')
-    gysname = models.CharField(max_length=50, verbose_name='供应商名称')
+    gysname = models.CharField(max_length=60, verbose_name='供应商名称')
     addr = models.CharField(max_length=60, blank=True, null=True, verbose_name='地址')
-    tel = models.CharField(max_length=15, blank=True, null=True, verbose_name='电话')
+    tel = models.CharField(max_length=50, blank=True, null=True, verbose_name='电话')
     fax = models.CharField(max_length=50, blank=True, null=True, verbose_name='传真')
     men = models.CharField(max_length=50, blank=True, null=True, verbose_name='人员')
-    email = models.EmailField(max_length=50, blank=True, null=True, verbose_name='邮箱')
+    emai = models.EmailField(max_length=50, blank=True, null=True, verbose_name='邮箱')
     web = models.URLField(max_length=50, blank=True, null=True, verbose_name='网址')
-    bz = models.CharField(max_length=200, blank=True, null=True, verbose_name='备注')
-    scdz = models.CharField(max_length=50, blank=True, null=True, verbose_name='生产地址')
-    yyzzbh = models.CharField(max_length=50, blank=True, null=True, verbose_name='营业执照编号')
+    memo = models.CharField(max_length=200, blank=True, null=True, verbose_name='备注')
+    scdz = models.CharField(max_length=20, blank=True, null=True, verbose_name='生产地址')
+    yyzzbh = models.CharField(max_length=20, blank=True, null=True, verbose_name='营业执照编号')
 
     def __str__(self):
         return str(self.gyscode)
@@ -106,6 +114,7 @@ class Gys(models.Model):
         verbose_name_plural = '供应商信息'
 
 
+# 合格供应商信息模型
 class Ylinfo_HGML(models.Model):
     ylid = models.ForeignKey('bc_rmaterial.Ylinfo', on_delete=models.CASCADE, verbose_name='原料代码')  # FK
     ylname = models.CharField(max_length=50, verbose_name='原料名称')
@@ -116,6 +125,7 @@ class Ylinfo_HGML(models.Model):
     cpbzbh = models.CharField(verbose_name='产品标准编号', max_length=50, blank=True, null=True)
     jkcpdjz = models.CharField(verbose_name='进口产品登记证号', max_length=50, blank=True, null=True)
     bz = models.CharField(verbose_name='备注', max_length=200, blank=True, null=True)
+    ispublic = models.BooleanField(verbose_name='向公众开放', default=True)  # 默认向公众开放
 
     def __str__(self):
         return str(self.ylid)
@@ -126,6 +136,7 @@ class Ylinfo_HGML(models.Model):
         verbose_name_plural = '合格原料供应商'
 
 
+# 原料结存信息模型
 class Stock(models.Model):
     ylid = models.CharField(max_length=50, verbose_name='原料代码')
     ylname = models.CharField(max_length=50, verbose_name='原料名称')
@@ -133,7 +144,6 @@ class Stock(models.Model):
     qcsl = models.FloatField(blank=True, null=True, verbose_name='上期结存')  # 在库数量加减之前，首先把在库数量的值填充到这个字段中
     stockid = models.ForeignKey('Stockinfo', on_delete=models.CASCADE, verbose_name='仓库编号')
     qa_hg = models.FloatField(blank=True, null=True, verbose_name='合格数量')  # 默认为在库数量
-    bz = models.CharField(max_length=100, blank=True, null=True, verbose_name='备注')
 
     class Meta:
         db_table = 'stock'
@@ -175,6 +185,7 @@ class Leavestock(models.Model):
 '''
 
 
+# 原料理论用量领用计算信息模型
 class Llyl(models.Model):
     rq = models.DateTimeField(verbose_name='日期')
     ylid = models.CharField(verbose_name='原料代码', max_length=50)
@@ -193,6 +204,7 @@ class Llyl(models.Model):
         verbose_name_plural = '原料领用计算'
 
 
+# 系统参数信息模型
 class SystemParameter(models.Model):
     id = models.CharField(max_length=10, primary_key=True, verbose_name='寻找数据的唯一标识')
     lldh = models.IntegerField(verbose_name='领料单号生成')

@@ -1,82 +1,95 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from .models import *
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
+# 序列化数据
 from django.core import serializers
-from django.db import connection
+# 远程连接数据库包
+from django.db import connection, transaction
 from bc_formula.models import *
-import psycopg2
 import re
 
 
+# 供应商ajax查询判断函数
 def query_gys(request, num):
+    # 值为1操作供应商代码字段
     if num == 1:
         gyscode = request.GET.get('gyscode')
-        original = request.GET.get('Original')
-        bool = 1
-        if gyscode == original:
-            return JsonResponse({'bool': bool})
-        gys_list = Gys.objects.filter(gyscode=gyscode)
-        if gys_list:
-            bool = 0
-        return JsonResponse({'bool': bool})
+        original_code = request.GET.get('Original_code')
+        bool_gys = 1
+        # 若新值与原值相同，说明未作修改，bool_gys=1返回True，正确
+        if not gyscode == original_code:
+            # 两值不同则对新值进行查询，返回True说明已有此数据，不能修改返回False，错误
+            if Gys.objects.filter(gyscode=gyscode).exists():
+                bool_gys = 0
+        return JsonResponse({'bool_gys': bool_gys})
+    # 值为2操作供应商名称字段
     if num == 2:
         gysname = request.GET.get('gysname')
         original_name = request.GET.get('Original_name')
-        bool = 1
-        if gysname == original_name:
-            return JsonResponse({'bool': bool})
-        gys_list = Gys.objects.filter(gysname=gysname)
-        if gys_list:
-            bool = 0
-        return JsonResponse({'bool': bool})
+        bool_gys = 1
+        # 若新值与原值相同，说明未作修改，bool_gys=1返回True，正确
+        if not gysname == original_name:
+            # 两值不同则对新值进行查询，返回True说明已有此数据，不能修改返回False，错误
+            if Gys.objects.filter(gysname=gysname).exists():
+                bool_gys = 0
+        return JsonResponse({'bool_gys': bool_gys})
 
 
+# 供应商修改页面数据获取函数
 def update_gys(request):
     gys_id = request.GET.get('gys_id')
-    gys = Gys.objects.get(gyscode=gys_id)
-    bool = 1
-    if gys:
+    bool_gys = 1
+    # 查询供应商表是否有此供应商代码，出现异常则进入except环节
+    try:
+        gys = Gys.objects.get(gyscode=gys_id)
+    # 出现错误，将错误返回到前端
+    except Exception as e:
+        print(e)
+        return JsonResponse({'bool_gys': e})
+    # 没有错误，讲此行数据的信息提取出来，填充到修改页面
+    else:
         gyscode = gys.gyscode
         gysname = gys.gysname
         addr = gys.addr
         tel = gys.tel
         fax = gys.fax
         men = gys.men
-        email = gys.email
+        emai = gys.emai
         web = gys.web
-        bz = gys.bz
+        memo = gys.memo
         scdz = gys.scdz
         yyzzbh = gys.yyzzbh
-        return JsonResponse({'bool': bool, 'gyscode': gyscode, 'gysname': gysname, 'addr': addr, 'tel': tel, 'fax': fax,
-                             'men': men, 'email': email, 'web': web, 'bz': bz, 'scdz': scdz, 'yyzzbh': yyzzbh})
-    else:
-        bool = 0
-        return JsonResponse({'bool': bool})
+        return JsonResponse({'bool_gys': bool_gys, 'gyscode': gyscode, 'gysname': gysname, 'addr': addr, 'tel': tel, 'fax': fax,
+                             'men': men, 'emai': emai, 'web': web, 'memo': memo, 'scdz': scdz, 'yyzzbh': yyzzbh})
 
 
+# 保存供应商信息到数据库
 def save_gys(request):
     if request.method == 'POST':
-        proof = request.POST.get('proof')
+        proof = request.POST.get('proof')  # 作用:判断是新增数据还是修改数据。如在修改页面进行的提交，则此变量不为''，
         gyscode = request.POST.get('gyscode')
         gysname = request.POST.get('gysname')
         addr = request.POST.get('addr')
         tel = request.POST.get('tel')
         fax = request.POST.get('fax')
-        email = request.POST.get('email')
+        emai = request.POST.get('emai')
         web = request.POST.get('web')
         yyzzbh = request.POST.get('yyzzbh')
         men = request.POST.get('men')
         scdz = request.POST.get('scdz')
-        bz = request.POST.get('bz')
-        addanother = request.POST.get('_addanother')
-        add_edit = request.POST.get('_continue')
+        memo = request.POST.get('memo')
+        addanother = request.POST.get('_addanother')  # 按钮含义:保存并增加另一个，没有选择此按钮时为None
+        add_edit = request.POST.get('_continue')  # 按钮含义:保存并继续编辑，没有选择此按钮时为None
+        # 判断一些必填字段的值是否为空，为空则重定向到新增供应商页面
         if gyscode == '' or gysname == '':
             return redirect('/admin/bc_rmaterial/gys/add/')
+        # 连接数据库，得到一个游标
         cursor = connection.cursor()
+        # proof为空说明是新增数据
         if not proof:
             try:
-                cursor.callproc('gys_I', (gyscode, gysname, addr, tel, fax, men, email, web, bz, scdz, yyzzbh))
+                cursor.callproc('gys_I', (gyscode, gysname, addr, tel, fax, men, emai, web, memo, scdz, yyzzbh))
                 connection.commit()
                 cursor.close()
                 connection.close()
@@ -91,9 +104,10 @@ def save_gys(request):
                 cursor.close()
                 connection.close()
                 return redirect('/admin/bc_rmaterial/gys/add/')
+        # 不为空则说明是修改已有数据
         else:
             try:
-                cursor.callproc('gys_U', (gyscode, gysname, addr, tel, fax, men, email, web, bz, scdz, yyzzbh, proof))
+                cursor.callproc('gys_U', (gyscode, gysname, addr, tel, fax, men, emai, web, memo, scdz, yyzzbh, proof))
                 connection.commit()
                 cursor.close()
                 connection.close()
@@ -110,12 +124,15 @@ def save_gys(request):
                 return redirect('/admin/bc_rmaterial/gys/add/')
 
 
+# 原料入库ajax查询判断函数
 def query_enterstock(request, num):
+    # 值为1获取原料基础信息与原料仓库信息
     if num == 1:
+        # 因QuerySet类型不能直接当作json字符串类型传递过去，所以需要先转换为json字符串类型
         ylinfo_list = serializers.serialize('json', Ylinfo.objects.all())
-        gys_list = serializers.serialize('json', Gys.objects.all())
         stockinfo_list = serializers.serialize('json', Stockinfo.objects.all())
-        return JsonResponse({'ylinfo_list': ylinfo_list, 'gys_list': gys_list, 'stockinfo_list': stockinfo_list})
+        return JsonResponse({'ylinfo_list': ylinfo_list, 'stockinfo_list': stockinfo_list})
+    # 值为2判断此原料基础信息是否存在,此原料是否有合格供应商 【查询条件为原料代码】
     if num == 2:
         ylid = request.GET.get('ylid')
         # Original_ylid = request.GET.get('Original_ylid')
@@ -125,20 +142,25 @@ def query_enterstock(request, num):
         piedw = ''
         stockname = ''
         ylid_list = Ylinfo.objects.filter(ylid=ylid)
-        if ylid_list:
+        # 有此原料信息时，获取此行的数据
+        if ylid_list.exists():
             ylid_bool = 1
             ylname = ylid_list[0].ylname
             piedw = ylid_list[0].piedw
             stockname = ylid_list[0].stockid.stockname
+            # 分支判断，获取此原料信息的所以的合格供应商
             ylinfo_hgml = Ylinfo_HGML.objects.filter(ylid=ylid)
-            if ylinfo_hgml:
+            # 有合格供应商则进行序列化，转化为json类型
+            if ylinfo_hgml.exists():
                 ylinfo_hgml_bool = 1
                 ylinfo_hgml = serializers.serialize('json', ylinfo_hgml)
+            # 没有合格供应商，将空[]赋值给ylinfo_hgml变量
             else:
                 ylinfo_hgml = []
+        # 无此原料信息时，将空[]赋值给ylinfo_hgml变量，其余需传递的参数均为默认值
         else:
             ylinfo_hgml = []
-            ylinfo_hgml_bool = 1
+            # ylinfo_hgml_bool = 1
         return JsonResponse({'ylid_bool': ylid_bool, 'ylname': ylname, 'ylinfo_hgml': ylinfo_hgml,
                              'ylinfo_hgml_bool': ylinfo_hgml_bool, 'piedw': piedw, 'stockname': stockname})
     if num == 3:
@@ -210,6 +232,7 @@ def query_enterstock(request, num):
         return JsonResponse({'bool': bool})
 
 
+# 原料入库修改页面数据获取函数
 def update_enterstock(request):
     enterstock_id = request.GET.get('enterstock_id')
     enterstock = Enterstock.objects.get(id=enterstock_id)
@@ -245,6 +268,7 @@ def update_enterstock(request):
         return JsonResponse({'bool': bool})
 
 
+# 保存原料入库信息到数据库
 def save_enterstock(request):
     if request.method == 'POST':
         proof_id = request.POST.get('proof_id')
@@ -318,6 +342,7 @@ def save_enterstock(request):
                 return redirect('/admin/bc_rmaterial/enterstock/add/')
 
 
+# 合格供应商ajax查询判断函数
 def query_ylinfo_hgml(request, num):
     if num == 1:
         ylinfo_list = serializers.serialize('json', Ylinfo.objects.all())
@@ -401,6 +426,7 @@ def query_ylinfo_hgml(request, num):
         return JsonResponse({'gysname_bool': gysname_bool, 'gyscode': gyscode, 'ylinfo_hgml_bool': ylinfo_hgml_bool})
 
 
+# 合格供应商修改页面数据获取函数
 def update_ylinfo_hgml(request):
     ylinfo_hgml_id = request.GET.get('ylinfo_hgml_id')
     ylinfo_hgml = Ylinfo_HGML.objects.get(id=ylinfo_hgml_id)
@@ -422,6 +448,7 @@ def update_ylinfo_hgml(request):
         return JsonResponse({'bool': bool})
 
 
+# 保存合格供应商信息到数据库
 def save_ylinfo_hgml(request):
     if request.method == 'POST':
         proof_ylid = request.POST.get('proof_ylid')
@@ -481,6 +508,7 @@ def save_ylinfo_hgml(request):
                 return redirect('/admin/bc_rmaterial/ylinfo_hgml/add/')
 
 
+# 原料基础信息ajax查询判断函数
 def query_rmaterial(request, num):
     if num == 1:
         ylfl_list = serializers.serialize('json', Ylfl.objects.all())
@@ -508,6 +536,7 @@ def query_rmaterial(request, num):
         return JsonResponse({'bool': bool})
 
 
+# 原料基础信息修改页面数据获取函数
 def update_rmaterial(request):
     ylinfo_id = request.GET.get('ylinfo_id')
     ylinfo = Ylinfo.objects.get(ylid=ylinfo_id)
@@ -532,8 +561,6 @@ def update_rmaterial(request):
         barcode = ylinfo.barcode
         bz = ylinfo.bz
         ylzt = ylinfo.ylzt
-        print('------------------------------')
-        print(type(piedw))
         if pieprice is None:
             pieprice = ''
         return JsonResponse({'bool': bool, 'ylid': ylid, 'ylname': ylname, 'dw': dw, 'piedw': piedw,
@@ -545,6 +572,7 @@ def update_rmaterial(request):
         return JsonResponse({'bool': bool})
 
 
+# 保存原料基础信息到数据库
 def save_rmaterial(request):
     proof = request.POST.get('proof')
     ylid = request.POST.get('ylid')
@@ -620,21 +648,9 @@ def save_rmaterial(request):
             cursor.close()
             connection.close()
             return redirect('/admin/bc_rmaterial/ylinfo/add/')
-        '''
-        ylinfo = Ylinfo.objects.filter(ylid=proof)
-        # pbf_list = ylinfo[0].pbf_set.all()
-        ylinfo.update(ylid=ylid, ylname=ylname, dw=dw, piedw=piedw, zbq=zbq, goodzbq=goodzbq, park=park, pieprice=pieprice,
-                      minsl=minsl, maxsl=maxsl, zf_id=zf, stockid_id=stockid, tymc=tymc, ysbz=ysbz, barcode=barcode,
-                      bz=bz, ylzt=ylzt)
-        if addanother is None and add_edit is None:
-            return redirect('/admin/bc_rmaterial/ylinfo/')
-        elif addanother is not None and add_edit is None:
-            return redirect('/admin/bc_rmaterial/ylinfo/add/')
-        elif addanother is None and add_edit is not None:
-            return redirect('/admin/bc_rmaterial/ylinfo/' + ylinfo[0].ylid + '/update/')
-        '''
 
 
+# 原料结存ajax查询判断函数
 def query_stock(request, num):
     if num == 1:
         stockinfo_list = Stockinfo.objects.all().order_by('stockid')

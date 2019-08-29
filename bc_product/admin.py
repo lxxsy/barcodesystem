@@ -7,8 +7,10 @@ class CpmlXadmin(object):
     list_display = ['cpid', 'cpmc', 'pbbh', 'gg']
     search_fields = ['cpid', 'cpmc']
     add_form_template = 'bc_product/product_add.html'
-    # add_form_template = 'bc_product/aaa.html'
-    # change_form_template = 'bc_product/product_bridge.html'
+    change_form_template = 'bc_product/product_update.html'
+    remove_permissions = ['delete']
+    # 列表页列表显示使用的模板
+    # object_list_template = 'bc_rmaterial/stockinfo_list.html'
 
 
 class CprkXadmin(object):

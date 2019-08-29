@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
     <script src="/static/js/jquery-1.12.4.min.js"></script>
     <script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/static/lightbox2-master/dist/css/lightbox.css">
+    <script src="/static/lightbox2-master/dist/js/lightbox.min.js"></script>
     <script src="/static/js/barcodesystem/bc_product/bc_product_add.js"></script>
     <link rel="stylesheet" href="/static/css/production.css">
 {% endblock %}
@@ -18,7 +20,8 @@
 
 {% block content %}
     <div class="container">
-        <form class="form-horizontal" method="post" action="/product/save_product" enctype="multipart/form-data" id="form_submit">
+        <a href="/product/quality_trace_back?SPL=WORK000001">追溯</a>
+        <form class="form-horizontal" method="post" action="{% url 'product:save_product' %}" enctype="multipart/form-data" id="form_submit">
             {%csrf_token%}
             <div class="form-group has-feedback">
                 <label class="col-sm-2 control-label">产品编号<span class="" style="color: red">*</span></label>
@@ -50,7 +53,7 @@
                 </div>
                 <label class="col-sm-2 control-label">标准编号</label>
                 <div class="col-sm-4 form-box">
-                    <input type="text" class="form-control" name="bzbh" id="bzbh" value="">
+                    <input type="text" class="form-control" name="bz" id="bz" value="">
                 </div>
             </div>
             <div class="form-group">
@@ -107,9 +110,13 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-2 control-label">产品图片</label>
+                <label class="col-sm-2 control-label">成品标签模板</label>
+                <!-- 文件形式 <div class="col-sm-4 form-box">
+                    <input type="file" class="form-control" name="tempname" value="" id="tempname">
+                    <span class="tips"></span>
+                </div>-->
                 <div class="col-sm-4 form-box">
-                    <input type="file" class="form-control" name="cppic" id="cppic">
+                    <input type="text" class="form-control" name="tempname" value="" id="tempname">
                     <span class="tips"></span>
                 </div>
                 <label class="col-sm-2 control-label">产品说明</label>
@@ -119,9 +126,9 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-2 control-label">成品标签模板</label>
+                <label class="col-sm-2 control-label">产品图片</label>
                 <div class="col-sm-4 form-box">
-                    <input type="file" class="form-control" name="tempname" value="" id="tempname">
+                    <input type="file" class="form-control" name="cppic" id="cppic">
                     <span class="tips"></span>
                 </div>
             </div>
@@ -134,7 +141,9 @@
                 <div class="nav-collapse collapse more-btns">
                     <input type="submit" class="btn btn-default" value="保存并增加另一个" name="_addanother"  />
                     <input type="submit" class="btn btn-default" value="保存并继续编辑" name="_continue" />
+                    <!--<input type="button" class="btn btn-default" id="btnPreview"  value="标签模板设计" />-->
                 </div>
+                <a href="/static/grf/模板.grf" class="btn btn-danger deletelink pull-right hide-xs">拷贝成品标签模板</a>
             </div>
     </form>
     </div>

@@ -2,7 +2,7 @@ $(function () {
     var error_gyscode = false;
     var error_gysname = false;
     var error_tel = false;
-    var error_email = false;
+    var error_emai = false;
     var error_web = false;
     /*
         获取要修改的原料id，请求视图加载模板并渲染数据
@@ -14,19 +14,19 @@ $(function () {
         type:"get",
         async:false,
         success:function(data){
-            if (data.bool === 1){
+            if (data.bool_gys === 1){
                 $('#form_submit').html(template('gys', {gyscode: data.gyscode, gysname: data.gysname, addr: data.addr,
-                    tel: data.tel, fax: data.fax, men: data.men, email: data.email, web: data.web,
-                    bz: data.bz, scdz: data.scdz, yyzzbh: data.yyzzbh}));
+                    tel: data.tel, fax: data.fax, men: data.men, emai: data.emai, web: data.web,
+                    memo: data.memo, scdz: data.scdz, yyzzbh: data.yyzzbh}));
             }else {
-                alert('异常');
+                alert(data.bool_gys);
             };
         }
     });
     /*
         获取页面上的供应商ID与供应商名称，称为原内容。目的是修改以后会拿原内容与新内容做比较，如果新内容和原内容相同则表示没有做修改
       */
-    var Original = $('#gyscode').val();
+    var Original_code = $('#gyscode').val();
     var Original_name = $('#gysname').val();
     /*
         供应商代码失去焦点后触发
@@ -49,8 +49,8 @@ $(function () {
     /*
         邮箱失去焦点后触发
      */
-    $('#email').blur(function () {
-        email_judge();
+    $('#emai').blur(function () {
+        emai_judge();
     });
     /*
         网址失去焦点后触发
@@ -71,9 +71,9 @@ $(function () {
             return false;
         };
         tel_judge();
-        email_judge();
+        emai_judge();
         web_judge();
-        if (error_gyscode === true && error_gysname === true && error_tel === true && error_email === true &&
+        if (error_gyscode === true && error_gysname === true && error_tel === true && error_emai === true &&
             error_web === true)
         {
             return true
@@ -92,11 +92,11 @@ $(function () {
         }else{
             $.ajax({
                 url:'/rmaterial/query_gys1',
-                data:{gyscode: gyscode, Original: Original},
+                data:{gyscode: gyscode, Original_code: Original_code},
                 type:"get",
                 async:false,
                 success:function(data){
-                    if (data.bool === 0){
+                    if (data.bool_gys === 0){
                         $('#gyscode').next().text('供应商代码已存在!').show();
                         error_gyscode = false;
                     }else {
@@ -155,20 +155,20 @@ $(function () {
     /*
         功能: 判断邮箱输入是否合理
      */
-    function email_judge() {
-        var email = $('#email').val();
+    function emai_judge() {
+        var emai = $('#emai').val();
         var re = /^[a-z0-9][\w\.-]*@[\w\-]+(\.[a-z]{2,5}){1}$/i;
-        if (email.length === 0){
-            $('#email').next().hide();
-            error_email = true;
+        if (emai.length === 0){
+            $('#emai').next().hide();
+            error_emai = true;
             return false;
         };
-        if (re.test(email)){
-            $('#email').next().hide();
-            error_email = true;
+        if (re.test(emai)){
+            $('#emai').next().hide();
+            error_emai = true;
         }else{
-            $('#email').next().text('你输入的邮箱格式不正确').show();
-            error_email = false;
+            $('#emai').next().text('你输入的邮箱格式不正确').show();
+            error_emai = false;
         };
     };
     /*

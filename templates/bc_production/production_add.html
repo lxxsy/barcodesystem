@@ -8,6 +8,7 @@
     <script src="/static/js/jquery-1.12.4.min.js"></script>
     <script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
     <script src="/static/js/barcodesystem/bc_production/bc_production_add.js"></script>
+    <script src="/static/js/CreateControl.js"></script>
     <link rel="stylesheet" href="/static/css/production.css">
 {% endblock %}
 
@@ -18,7 +19,7 @@
 
 {% block content %}
     <div class="container">
-        <form class="form-horizontal" method="post" action="/production/save_production" id="form_submit">
+        <form class="form-horizontal" method="post" action="{% url 'production:save_production' %}" id="form_submit">
             {%csrf_token%}
             <div class="form-group has-feedback">
                 <label class="col-sm-2 control-label">计划单号<span class="" style="color: red">*</span></label>
@@ -68,8 +69,8 @@
                 <label class="col-sm-2 control-label">单位</label>
                 <div class="col-sm-4 form-box">
                     <select class="form-control" name="dw" id="dw">
-                        <option value="1">kg</option>
-                        <option value="2">g</option>
+                        <option value="kg">kg</option>
+                        <option value="kg">g</option>
                     </select>
                 </div>
                 <label class="col-sm-2 control-label">班次</label>

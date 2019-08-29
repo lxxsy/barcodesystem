@@ -20,7 +20,7 @@
 {% block content %}
 <div class="container">
     <input type="hidden" id="enterstock_id" value="{{ object_id }}">
-    <form class="form-horizontal" method="post" action="/rmaterial/save_enterstock" id="form_submit">
+    <form class="form-horizontal" method="post" action="{% url 'rmaterial:save_enterstock' %}" id="form_submit">
     </form>
     <script type="text/template" id="enterstock">
         {%csrf_token%}
@@ -132,7 +132,6 @@
         <input type="hidden" name="proof_id" id="proof_id" value="{{ object_id }}">
         <input type="hidden" name="proof_zl" id="proof_zl" value="<%- zl %>">
         <div class="form-actions well-sm clearfix">
-            <a href="/admin/bc_rmaterial/enterstock/{{ object_id }}/delete/" class="btn btn-danger deletelink col-xs-2 show-xs"><i class="fa fa-trash-o"></i></a>
             <div class="btn-group clearfix show-xs save-group col-xs-10">
                 <button type="submit" class="default btn btn-primary col-xs-10" name="_save" data-loading-text="保存中.."><i class="fa fa-save"></i> 保存</button>
                 <button type="button" class="more btn btn-primary col-xs-2" data-toggle="collapse" data-target=".nav-collapse.more-btns"><i class="fa fa-ellipsis-vertical"></i></button>

@@ -2,7 +2,6 @@ import xadmin
 from xadmin.views import BaseAdminView, CommAdminView
 from xadmin.layout import Main, Tab, Fieldset, Row, TabHolder, AppendedText, Side, Field, Col
 from .models import *
-# from bc_product.models import *
 
 
 class ThemeXadmin(object):
@@ -10,6 +9,7 @@ class ThemeXadmin(object):
     use_bootswatch = True
 
 
+# 后台名称，可更改名称
 class GlobalSettings(object):
     site_title = "后台管理系统"
     site_footer = "后台管理系统"

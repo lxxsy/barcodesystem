@@ -1,11 +1,10 @@
 from django.shortcuts import render, redirect
-from xadmin.views import BaseAdminView
-from .models import *
-from django.http import JsonResponse, HttpResponse
+from django.db import connection
+from django.http import JsonResponse
 from bc_rmaterial.models import *
 from django.core import serializers
+from .models import *
 import re
-import psycopg2
 
 
 def update_formula(request):
@@ -13,6 +12,7 @@ def update_formula(request):
         修改配方时，由此视图处理
     '''
     pb_bh = request.GET.get('pb_bh')
+    # 将查询的数据返回到前端页面
     pb = Pb.objects.get(pbbh=pb_bh)
     pbbh = pb.pbbh
     pbname = pb.pbname
@@ -52,20 +52,18 @@ def save_formula(request):
     hzs = request.POST.getlist('hzs')
     yx = True if yx == '1' else False
     pattern = re.compile(r'\.+')
+    # 判断以下字段，有一项为t,重定向至起始页面
     if (pbbh == '' or pbname == '' or scsx == '' or scxh == '' or pattern.search(scsx) or pattern.search(scxh) or
             plno.count('') or ylid.count('') or ylname.count('') or bzgl.count('') or topz.count('') or lowz.count('') or jno.count('')):
         return redirect('/admin/bc_production/scjhb/add/')
-    connection = psycopg2.connect(database='barcodesystem', user='postgres', password='941128', port=5432,
-                                  host='localhost')
-    cursor = connection.cursor()
     new_plno = []
     new_bzgl = []
     new_topz = []
     new_lowz = []
-    new_dw = []
     new_jno = []
     new_hlt = []
     new_hzs = []
+    # 将这些字段值转换为Int或float类型进行存储，不然会报类型错误
     for plno_single in plno:
         new_plno.append(int(plno_single))
     for bzgl_single in bzgl:
@@ -74,8 +72,6 @@ def save_formula(request):
         new_topz.append(float(topz_single))
     for lowz_single in lowz:
         new_lowz.append(float(lowz_single))
-    for dw_single in dw:
-        new_dw.append(int(dw_single))
     for jno_single in jno:
         new_jno.append(int(jno_single))
     for hlt_single in hlt:
@@ -88,10 +84,13 @@ def save_formula(request):
             new_hzs.append(True)
         else:
             new_hzs.append(False)
+    cursor = connection.cursor()
+    # 判断proof字段，无值说明是新增
     if not proof:
+        # 执行新增配方过程，若成功返回指定页面，反之返回列表页
         try:
             cursor.callproc('pb_I', (pbbh, pbname, pftype, scsx, scxh, yx, bz, new_plno, ylname, new_bzgl, new_topz,
-                                     new_lowz, new_dw, new_jno, new_hlt, new_hzs, ylid))
+                                     new_lowz, dw, new_jno, new_hlt, new_hzs, ylid))
             connection.commit()
             cursor.close()
             connection.close()
@@ -106,10 +105,12 @@ def save_formula(request):
             cursor.close()
             connection.close()
             return redirect('/admin/bc_formula/pb/')  # 后续会返回一个错误页面
+    # 否则修改
     else:
+        # 执行新增配方过程，若成功返回指定页面，反之返回列表页
         try:
             cursor.callproc('pb_U', (pbbh, pbname, pftype, scsx, scxh, yx, bz, new_plno, ylname, new_bzgl, new_topz,
-                                     new_lowz, new_dw, new_jno, new_hlt, new_hzs, ylid, proof))
+                                     new_lowz, dw, new_jno, new_hlt, new_hzs, ylid, proof))
             connection.commit()
             cursor.close()
             connection.close()
@@ -127,6 +128,7 @@ def save_formula(request):
 
 
 def query_formula(request, num):
+    # 根据参数值不同，查询的数据也不同，都是普通的查询，具体请看bc_formula.js文件
     if num == 1:
         ylinfo = serializers.serialize('json', Ylinfo.objects.all())
         return JsonResponse({'ylinfo': ylinfo})
@@ -155,16 +157,20 @@ def query_formula(request, num):
         ylid = Ylinfo.objects.filter(ylid=current_value)
         ylid_bool = 0
         ylname = ''
+        zf = ''
         if ylid:
             ylid_bool = 1
             ylname = ylid[0].ylname
-        return JsonResponse({'ylid_bool': ylid_bool, 'ylname': ylname})
+            zf = ylid[0].zf_id
+        return JsonResponse({'ylid_bool': ylid_bool, 'ylname': ylname, 'zf': zf})
     elif num == 5:
         current_value = request.GET.get('current_value')
         ylname = Ylinfo.objects.filter(ylname=current_value)
         ylname_bool = 0
         ylid = ''
+        zf = ''
         if ylname:
             ylname_bool = 1
             ylid = ylname[0].ylid
-        return JsonResponse({'ylname_bool': ylname_bool, 'ylid': ylid})
+            zf = ylname[0].zf_id
+        return JsonResponse({'ylname_bool': ylname_bool, 'ylid': ylid, 'zf': zf})

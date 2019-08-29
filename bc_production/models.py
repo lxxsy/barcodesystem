@@ -8,7 +8,7 @@ class Scjhb(models.Model):
     cpname = models.CharField(max_length=50, verbose_name='产品名称')
     sl = models.DecimalField(max_digits=15, decimal_places=2, verbose_name='生产数量')
     cs = models.IntegerField(verbose_name='批次数')  # 生产批次(盘数/锅数/车) 默认1
-    dw = models.IntegerField(verbose_name='单位')  # 1:kg，2:g 默认kg
+    dw = models.CharField(verbose_name='单位', max_length=20)  # 默认kg
     bc = models.IntegerField(verbose_name='班次', blank=True, null=True)
     xdr = models.ForeignKey('auth.User', on_delete=models.CASCADE, verbose_name='下单人')
     zt = models.BooleanField(verbose_name='启用')
@@ -37,6 +37,7 @@ class Todaywork(models.Model):  # 生产计划下达后计划明细最少需要�
     scxh = models.IntegerField(verbose_name='生产线号', blank=True, null=True)
     bz = models.CharField(verbose_name='备注', max_length=200, blank=True, null=True)
     zt = models.BooleanField(verbose_name='启用')  # 默认为启用
+    oksl = models.IntegerField(verbose_name='已完成次数', default=0)
 
     class Meta:
         db_table = 'todaywork'

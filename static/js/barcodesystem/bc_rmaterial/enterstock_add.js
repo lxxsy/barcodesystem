@@ -22,7 +22,7 @@ $(function () {
         day = '0'+day;
     }
     /*
-        页面加载完毕后获取原料与供应商信息
+        页面加载完毕后获取原料基础信息与原料仓库信息
      */
     $.get('/rmaterial/query_enterstock1', function (data) {
         $.each(JSON.parse(data.ylinfo_list), function (index, item) {
@@ -99,8 +99,7 @@ $(function () {
         功能：当提交表单时触发此函数判断原料代码，和输入框判断不同
      */
     function submit_ylid_judge() {
-        var ylid = $('.data_enterstock_ylid').val();
-        console.log('aa');
+        let ylid = $('.data_enterstock_ylid').val();
         $.ajax({
             url:'/rmaterial/query_enterstock2',
             data:{ylid: ylid},
@@ -126,7 +125,7 @@ $(function () {
      function data_enterstock_ylid_judge() {
         $('.data_enterstock_ylid').next().hide();
         $('.data_enterstock_ylname').next().hide();
-        $('#gyscode').empty();
+        $('#gyscode').empty(); // 清空供应商信息
         $('#gysname').empty();
         var ylid = $('.data_enterstock_ylid').val();
         $.ajax({
